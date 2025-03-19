@@ -9,6 +9,8 @@ model = joblib.load("decision_tree_model.pkl")
 # Initialize session state to track the list of fields
 if "fields" not in st.session_state:
     st.session_state.fields = []
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
 
 # Function to add a new set of input fields
 def add_new_fields():
@@ -39,6 +41,19 @@ def delete_entry(index):
 
 # Display title
 st.title("Patient Data Entry & ML Model Prediction")
+
+# CSV file uploader
+uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    st.session_state.fields = df.to_dict(orient="records")
+    st.session_state.uploaded_file = uploaded_file
+    st.success("CSV uploaded and data loaded.")
+else:
+    if st.session_state.uploaded_file is not None:
+        st.session_state.fields = []  # Clear data if file is removed
+        st.session_state.uploaded_file = None
+        st.warning("CSV removed. Data cleared.")
 
 # Add a plus button to add new fields
 if st.button("➕ Add Another Entry"):
