@@ -1,7 +1,9 @@
 import pickle
 from pathlib import Path
+import joblib
 import streamlit as st
 import streamlit_authenticator as stauth
+import pandas as pd
 
 #user authentication
 names=['Peter Parker','Rebecca Miller']
@@ -10,7 +12,7 @@ file_path=Path(__file__).parent / 'hashed_pw.pkl'
 with file_path.open('rb') as file:
     hashed_passwords=pickle.load(file)
 
-authenticator=stauth.Authenticate(names,usernames,hashed_passwords,'sales_dashboard','abcdef',cookie_expiry_days=0)
+authenticator=stauth.Authenticate(names,usernames,hashed_passwords,'sales_dashboard','abcdef',cookie_expiry_days=30)
 name,authentication_status,username=authenticator.login('Login','main')
 
 if authentication_status is False:
@@ -18,6 +20,7 @@ if authentication_status is False:
 if authentication_status is None:
     st.warning('please enter')
 if authentication_status:
+    model = joblib.load("decision_tree_model.pkl")
     # Sidebar Navigation
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", ["Home", "Data Entry", "Stroke Self-Assessment"])
