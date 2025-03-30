@@ -18,7 +18,7 @@ name,authentication_status,username=authenticator.login('Login','main')
 if authentication_status is False:
     st.error('username/password incorrect')
 if authentication_status is None:
-    st.warning('please enter')
+    st.warning('please enter username and password')
 if authentication_status:
     model = joblib.load("decision_tree_model.pkl")
     # Sidebar Navigation
