@@ -11,4 +11,3 @@ python-dotenv
 djangorestframework
 django
 djangorestframework-simplejwt
-Note
