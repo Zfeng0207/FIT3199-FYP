@@ -25,5 +25,6 @@ urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("api-auth/", include("rest_framework.urls")),
-    path("api/", include("api.urls")),
+    path("api/", include("api.urls")), #whenever we go to something that has api/ and it was not one of the above
+    # were going to take what comes after the slash and we gonna send it to api.urls file
 ]
