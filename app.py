@@ -1,28 +1,141 @@
 import streamlit as st
-import joblib
 import pandas as pd
+import joblib
 
-# Load Model
-model = joblib.load("decision_tree_model.pkl")
+# ====== CSS STYLING ======
+st.markdown("""
+    <style>
+    /* Remove default padding and center alignment */
+    .block-container {
+        padding: 0 !important;
+        margin: 0 auto;
+        max-width: 100% !important;
+    }
 
-# Sidebar Navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Data Entry", "Stroke Self-Assessment"])
-st.session_state.page = page
+    body {
+        background-color: #eef4fb;
+    }
 
-# Home Page
-if st.session_state.page == "Home":
-    user = st.experimental_user  # Store user info
-    if user and hasattr(user, "name"):
-        st.header(f"Hello {user.name} 👋")
-        if hasattr(user, "picture"):
-            st.image(user.picture, width=100)
-    st.title("Welcome to the Healthcare Prediction System")
-    st.write("This project uses machine learning to predict patient outcomes based on medical data.")
+    /* NAVBAR */
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #062f5f;
+        padding: 10px 40px;
+        color: white;
+    }
 
-# Data Entry Page
-elif st.session_state.page == "Data Entry":
-    st.title("Patient Data Entry & ML Model Prediction")
+    .navbar h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 30px;
+        font-size: 16px;
+    }
+
+    .navbar a:hover {
+        text-decoration: underline;
+    }
+
+    .main {
+        background-color: #ffffff;
+        padding: 30px 40px;
+    }
+
+    .title {
+        font-size: 40px;
+        color: #88227c;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        font-size: 22px;
+        color: #444;
+        margin-bottom: 30px;
+    }
+
+    .info-box {
+        background-color: #dce7f9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+
+    .stButton>button {
+        background-color: #b93c9f;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        height: 3em;
+        width: auto;
+        margin: 5px 0;
+    }
+
+    .stFileUploader {
+        margin-bottom: 20px;
+    }
+
+    .st-expander {
+        background-color: #f2f6fd;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    .st-expanderHeader {
+        font-weight: bold;
+        font-size: 18px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ====== NAVBAR ======
+st.markdown("""
+    <div class="navbar">
+        <h1>Predict Health</h1>
+        <div>
+            <a href="/?page=home">Home</a>
+            <a href="/?page=data">Data Entry</a>
+            <a href="/?page=assessment">Stroke Self Assessment</a>
+            <a href="/?page=chatbot">Chatbot</a>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+# ====== PAGE ROUTING ======
+query_params = st.query_params
+page = query_params.get("page", "home")
+
+# ====== MAIN WRAPPER ======
+st.markdown('<div class="main">', unsafe_allow_html=True)
+
+# ====== HOME PAGE ======
+if page == "home":
+    st.markdown('<div class="title">Welcome to Predict Health</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">A medical assistant platform for time-series prediction and health support.</div>', unsafe_allow_html=True)
+    st.image("https://images.unsplash.com/photo-1588776814546-ec7ee5ab8e19", use_container_width=True)
+
+# ====== DATA ENTRY PAGE ======
+elif page == "data":
+    st.markdown('<div class="title">Patient Data Entry</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Enter or upload time-series health records for model prediction.</div>', unsafe_allow_html=True)
+
+    st.markdown("""
+        <div class="info-box">
+            <strong>Note:</strong> Each entry contains vitals recorded at different time points.
+            You can upload a CSV or enter them manually below.
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Load model
+    model = joblib.load("decision_tree_model.pkl")
 
     if "fields" not in st.session_state:
         st.session_state.fields = []
@@ -43,14 +156,17 @@ elif st.session_state.page == "Data Entry":
         })
 
     for i, field in enumerate(st.session_state.fields):
-        with st.expander(f"Entry {i + 1}"):
-            for key in field:
-                unique_key = f"{key}_{i}"  # Ensure unique key for each input
-                st.session_state.fields[i][key] = st.number_input(
-                    key.capitalize(), value=field[key], key=unique_key
+        with st.expander(f"🗂️ Entry {i + 1}", expanded=False):
+            col1, col2, col3 = st.columns(3)
+            keys = list(field.keys())
+            for j, key in enumerate(keys):
+                unique_key = f"{key}_{i}"
+                col = [col1, col2, col3][j % 3]
+                field[key] = col.number_input(
+                    key.replace("_", " ").capitalize(), value=field[key], key=unique_key
                 )
 
-    if st.button("Run ML Model"):
+    if st.button("🏃 Run ML Model"):
         if not st.session_state.fields:
             st.error("No entries to process.")
         else:
@@ -59,37 +175,15 @@ elif st.session_state.page == "Data Entry":
             st.subheader("Model Prediction")
             st.write(f"Prediction: {prediction[0]}")
 
-# Stroke Self-Assessment Page
-elif st.session_state.page == "Stroke Self-Assessment":
-    st.title("🩺 Stroke Risk Assessment")
-    risk_factors = [
-        "Is your blood pressure greater than 120/80 mmHg?",
-        "Have you been diagnosed with atrial fibrillation?",
-        "Is your blood sugar greater than 100 mg/dL?",
-        "Is your body mass index greater than 25 kg/m²?",
-        "Is your diet high in unhealthy fats or excess calories?",
-        "Is your total blood cholesterol greater than 160 mg/dL?",
-        "Have you been diagnosed with diabetes mellitus?",
-        "Do you get less than 150 minutes of exercise per week?",
-        "Do you have a family history of stroke or heart attack?",
-        "Do you use tobacco or vape?"
-    ]
+# ====== STROKE ASSESSMENT PAGE ======
+elif page == "assessment":
+    st.markdown('<div class="title">Stroke Self Assessment</div>', unsafe_allow_html=True)
+    st.markdown("Coming soon: A guided self-evaluation tool to assess stroke symptoms and risk.")
 
-    if "responses" not in st.session_state:
-        st.session_state.responses = [None] * len(risk_factors)
+# ====== CHATBOT PAGE ======
+elif page == "chatbot":
+    st.markdown('<div class="title">Health Assistant Chatbot</div>', unsafe_allow_html=True)
+    st.markdown("Coming soon: Talk to our AI assistant for help with symptoms, data, and predictions.")
 
-    with st.form("stroke_assessment_form"):
-        for i, factor in enumerate(risk_factors):
-            st.session_state.responses[i] = st.radio(factor, ["Yes or unknown", "No"], key=f"q_{i}")
-        submitted = st.form_submit_button("Submit")
-
-    if submitted:
-        risk_score = sum(1 for response in st.session_state.responses if response == "Yes or unknown")
-        st.subheader("Total Score:")
-        st.write(f"**{risk_score} points**")
-        if risk_score >= 6:
-            st.error("⚠️ High Risk: Consult a healthcare professional.")
-        elif risk_score >= 3:
-            st.warning("⚠️ Moderate Risk: Consider lifestyle changes.")
-        else:
-            st.success("✅ Low Risk: Maintain a healthy lifestyle.")
+# ====== CLOSE MAIN WRAPPER ======
+st.markdown('</div>', unsafe_allow_html=True)
