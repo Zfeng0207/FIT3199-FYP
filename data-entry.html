@@ -171,7 +171,7 @@
 
       <div class="mb-6 pt-4">
         <label class="formbold-form-label formbold-form-label-2">
-          Upload File
+          Upload File (only CSV files are allowed)
         </label>
 
         <div class="formbold-mb-5 formbold-file-input">
@@ -221,26 +221,32 @@
       <div>
         <button class="formbold-btn w-full">Process Data</button>
       </div>
+
+      <div class="loader-overlay" id="loader" style="display: none;">
+        <div class="loader"></div>
+      </div>
+      
     </form>
   </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const form = document.querySelector(".formbold-form-wrapper form"); // Selects the form without needing an ID
-      const submitButton = form.querySelector(".formbold-btn");
+      const form = document.querySelector(".formbold-form-wrapper form");
+      const loader = document.getElementById("loader");
   
       form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Stop form from submitting
-        submitButton.classList.add("loading");
+        e.preventDefault(); // Prevent actual form submission for demo
+        loader.style.display = "flex";
   
-        // Simulate loading
+        // Simulate data processing
         setTimeout(() => {
-          submitButton.classList.remove("loading");
-          alert("Processing complete!"); // You can replace this with a real response
-          // form.submit(); // Uncomment if you want to actually submit the form afterward
-        }, 2000); // 2-second delay for animation
+          loader.style.display = "none";
+          alert("Data processed successfully!");
+          // form.submit(); // Uncomment if you want to actually submit
+        }, 2000); // Adjust duration as needed
       });
     });
-</script>
+  </script>
+  
   
