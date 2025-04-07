@@ -175,15 +175,16 @@
         </label>
 
         <div class="formbold-mb-5 formbold-file-input">
-          <input type="file" name="file" id="file" />
-          <label for="file">
-            <div>
-              <span class="formbold-drop-file"> Drop files here </span>
-              <span class="formbold-or"> Or </span>
-              <span class="formbold-browse"> Browse </span>
-            </div>
-          </label>
+            <input type="file" name="file" id="file" />
+            <label for="file">
+              <div>
+                <span class="formbold-drop-file"> Drop files here </span>
+                <span class="formbold-or"> Or </span>
+                <span class="formbold-browse"> Browse </span>
+              </div>
+            </label>
         </div>
+          
 
         <div class="formbold-file-list formbold-mb-5">
           <div class="formbold-file-item">
@@ -223,3 +224,23 @@
     </form>
   </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector(".formbold-form-wrapper form"); // Selects the form without needing an ID
+      const submitButton = form.querySelector(".formbold-btn");
+  
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Stop form from submitting
+        submitButton.classList.add("loading");
+  
+        // Simulate loading
+        setTimeout(() => {
+          submitButton.classList.remove("loading");
+          alert("Processing complete!"); // You can replace this with a real response
+          // form.submit(); // Uncomment if you want to actually submit the form afterward
+        }, 2000); // 2-second delay for animation
+      });
+    });
+</script>
+  
