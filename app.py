@@ -66,22 +66,29 @@ rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 def login():
     return render_template('login.html')
 
-
+# later move this to a config file or database
+users = {
+    "itadmin": {"password": "password", "role": "staff"},
+    "staff2": {"password": "pass123", "role": "staff"},
+    "customer1": {"password": "password", "role": "customer"},
+    "customer2": {"password": "custpass", "role": "customer"}
+}
 
 @app.route("/login", methods=["POST"])
 def handle_login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    #if username == "zfeng" and password == "password":
-    if username == "itadmin" and password == "password":
+    # Check if the username exists in the users dictionary
+    user = users.get(username)
+
+    if user and user["password"] == password:
         session["user"] = username
+        session["role"] = user["role"]
         return redirect(url_for("chat_page"))
     else:
         flash("Invalid credentials. Please try again.")
-        return redirect(url_for("login")) 
-
-
+        return redirect(url_for("login"))
 
 @app.route("/chat")
 def chat_page():
