@@ -120,80 +120,100 @@
 <!-- ============================================ -->
 <!--                  File Upload                 -->
 <!-- ============================================ -->
- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Upload CSV</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
-</head>
-<body>
-  <div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
-      <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
-        <div class="formbold-mb-5">
-          <label class="formbold-form-label">
-            Upload File (only CSV files are allowed)
-          </label>
 
-          <div class="formbold-file-input">
-            <input type="file" name="file" id="file" accept=".csv" required />
-            <label for="file">
-              <div>
-                <span class="formbold-drop-file">Drop CSV file here</span>
-                <span class="formbold-or">or</span>
-                <span class="formbold-browse">Browse</span>
-              </div>
-            </label>
+<div class="formbold-main-wrapper">
+  <div class="formbold-form-wrapper">
+    <form id="uploadForm">
+      <label class="formbold-form-label formbold-form-label-2">
+        Upload File (only CSV files are allowed)
+      </label>
+
+      <!-- Dropzone -->
+      <div class="formbold-mb-5 formbold-file-input">
+        <input type="file" name="file" id="file" accept=".csv" hidden />
+        <label for="file" class="formbold-dropzone">
+          <div>
+            <span class="formbold-drop-file"> Drop files here </span>
+            <span class="formbold-or"> Or </span>
+            <button type="button" onclick="document.getElementById('file').click()" class="formbold-browse">Browse</button>
           </div>
+        </label>
+      </div>
 
-          <div class="formbold-file-list formbold-mb-5" id="file-list" style="display: none;">
-            <div class="formbold-file-item">
-              <span id="file-name" class="formbold-file-name"></span>
-              <button type="button" onclick="removeFile()">✕</button>
-            </div>
-            <div class="formbold-progress-bar">
-              <div class="formbold-progress" id="progress-bar" style="width: 100%;"></div>
-            </div>
-          </div>
+      <!-- File List with Progress -->
+      <div class="formbold-file-list formbold-mb-5" id="fileList" style="display: none;">
+        <div class="formbold-file-item">
+          <span class="formbold-file-name" id="fileName">filename.csv</span>
+          <button type="button" onclick="clearFile()">
+            ✕
+          </button>
         </div>
-
-        <div>
-          <button type="submit" class="formbold-btn w-full">Process Data</button>
+        <div class="formbold-progress-bar">
+          <div class="formbold-progress" id="progressBar" style="width: 0%"></div>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <!-- Submit -->
+      <div>
+        <br><br>
+        <button class="formbold-btn w-full" type="submit">Process Data</button>
+      </div>
+
+      <!-- Loader Overlay -->
+      <div class="loader-overlay" id="loader" style="display: none;">
+        <div class="loader"></div>
+      </div>
+    </form>
   </div>
+</div>
 
-  <!-- Loader overlay (optional) -->
-  <div class="loader-overlay" id="loader" style="display: none;">
-    <div class="loader"></div>
-  </div>
+<script>
+  const fileInput = document.getElementById("file");
+  const fileList = document.getElementById("fileList");
+  const fileNameSpan = document.getElementById("fileName");
+  const progressBar = document.getElementById("progressBar");
 
-  <script>
-    const fileInput = document.getElementById('file');
-    const fileList = document.getElementById('file-list');
-    const fileName = document.getElementById('file-name');
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (file && file.name.endsWith(".csv")) {
+      fileNameSpan.textContent = file.name;
+      fileList.style.display = "block";
 
-    fileInput.addEventListener('change', function () {
-      if (this.files.length > 0) {
-        fileList.style.display = 'block';
-        fileName.textContent = this.files[0].name;
-      }
-    });
-
-    function removeFile() {
+      // Fake progress animation
+      progressBar.style.width = "0%";
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 10;
+        progressBar.style.width = percent + "%";
+        if (percent >= 100) clearInterval(interval);
+      }, 100);
+    } else {
+      alert("Please upload a CSV file.");
       fileInput.value = "";
-      fileList.style.display = 'none';
+      fileList.style.display = "none";
+    }
+  });
+
+  function clearFile() {
+    fileInput.value = "";
+    fileList.style.display = "none";
+    progressBar.style.width = "0%";
+  }
+
+  // Submit handling
+  document.getElementById("uploadForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!fileInput.files[0]) {
+      alert("Please upload a file first.");
+      return;
     }
 
-    function showLoader() {
-      document.getElementById('loader').style.display = 'flex';
-    }
-  </script>
-</body>
-</html>
-
-  
+    document.getElementById("loader").style.display = "flex";
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      alert("Data processed successfully!");
+      clearFile();
+    }, 2000);
+  });
+</script>
   
