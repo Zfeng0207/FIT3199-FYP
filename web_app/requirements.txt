@@ -1,20 +1,13 @@
+#langchain-huggingfacelangchain
+langchain
 flask
 pypdf
 python-dotenv
-
-# Core LangChain
-langchain
-langchain-community
-langchain-openai
-langchain-experimental
-
-# Pinecone vector DB
-pinecone-client[grpc]
+pinecone[grpc]
 langchain-pinecone
-
-# Optional: Hugging Face support
-huggingface-hub
-transformers
-
-# For acceleration (typo fix)
+langchain_community
+langchain_openai
+langchain_experimental
 accelerate
+langchain_huggingface
+#-e .
