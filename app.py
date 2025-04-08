@@ -104,12 +104,17 @@ def logout():
     return redirect(url_for('login'))  # or wherever your login page is
 
 @app.route('/data-entry')
-def data_entry():
+def data_entry_routing():
     return render_template('data_entry.html')
 
 @app.route('/chatbot')
-def chatbot():
+def chatbot_routing():
     return render_template('chat.html')
+
+@app.route('/self_assessment')
+def self_assesment_routing():
+    return render_template('self_assesment.html')
+
 
 
 if __name__ == '__main__':

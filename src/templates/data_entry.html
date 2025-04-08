@@ -29,7 +29,7 @@
             <div class="cs-ul-wrapper">
                 <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
                     <li class="cs-li">
-                        <a href="{{ url_for('chatbot') }}" class="cs-li-link">Chatbot</a>
+                        <a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a>
                     </li>                      
                     <li class="cs-li">
                         <a href="" class="cs-li-link">
@@ -38,13 +38,13 @@
                     </li>
                     <li class="cs-li">
                         <li class="cs-li">
-                            <a href="{{ url_for('data_entry') }}" class="cs-li-link">Data Entry</a>
+                            <a href="{{ url_for('data_entry_routing') }}" class="cs-li-link">Data Entry</a>
                         </li>
                     </li>
                     <li class="cs-li">
-                        <a href="" class="cs-li-link">
-                            Self Assesment
-                        </a>
+                        <li class="cs-li">
+                            <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assesment</a>
+                        </li>
                     </li>
                 </ul>
             </div>
