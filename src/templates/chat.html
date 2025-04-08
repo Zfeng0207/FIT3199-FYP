@@ -29,26 +29,24 @@
             <div class="cs-ul-wrapper">
                 <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
                     <li class="cs-li">
-                        <a href="" class="cs-li-link cs-active">
-                            Chatbot
-                        </a>
+                        <a href="" class="cs-li-link cs-active">Chatbot</a>
                     </li>
                     <li class="cs-li">
-                        <a href="" class="cs-li-link">
-                            About Us
-                        </a>
+                        <a href="" class="cs-li-link">About Us</a>
                     </li>
+                
+                    {% if session['role'] == 'staff' %}
                     <li class="cs-li">
-                        <li class="cs-li">
-                            <a href="{{ url_for('data_entry_routing') }}" class="cs-li-link">Data Entry</a>
-                        </li>
+                        <a href="{{ url_for('data_entry_routing') }}" class="cs-li-link">Data Entry</a>
                     </li>
+                    {% endif %}
+                
+                    {% if session['role'] == 'customer' %}
                     <li class="cs-li">
-                        <li class="cs-li">
-                            <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assesment</a>
-                        </li>
+                        <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a>
                     </li>
-                </ul>
+                    {% endif %}
+                </ul>                
             </div>
         </nav>
         <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button">Logout</a>
