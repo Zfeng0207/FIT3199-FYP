@@ -9,6 +9,7 @@ system_prompt = (
     "don't know. Use three sentences maximum and keep the "
     "answer concise. "
     "Give an example of the dicussion point in every response."
+    "Greet the user before answering the question. "
     "\n\n"
     "{context}"
 )
