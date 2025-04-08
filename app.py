@@ -103,6 +103,14 @@ def logout():
     session.clear()  # or: session.pop('user', None)
     return redirect(url_for('login'))  # or wherever your login page is
 
+@app.route('/data-entry')
+def data_entry():
+    return render_template('data_entry.html')
+
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chat.html')
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)
