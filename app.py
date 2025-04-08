@@ -63,8 +63,12 @@ prompt = ChatPromptTemplate.from_messages(
 question_answer_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-@app.route("/")
-def login():
+@app.route('/')
+def welcome_routing():
+    return render_template('welcome.html')  # File must be in templates/
+
+@app.route('/login')
+def login_routing():
     return render_template('login.html')
 
 # later move this to a config file or database

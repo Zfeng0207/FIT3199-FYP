@@ -1,0 +1,39 @@
+<!-- templates/welcome.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+
+    .login-btn {
+      padding: 1.5rem 3rem;
+      font-size: 1.8rem;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .login-btn:hover {
+      background-color: #4338ca;
+    }
+  </style>
+</head>
+<body>
+  <form action="/login">
+    <button type="submit" class="login-btn">Log In</button>
+  </form>
+</body>
+</html>
