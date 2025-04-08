@@ -10,7 +10,11 @@ from dotenv import load_dotenv
 from src.prompt import *
 import os
 import openai
-app = Flask(__name__)
+# app = Flask(__name__)
+# app = Flask(__name__, template_folder='src/templates')
+app = Flask(__name__, 
+            template_folder='src/templates', 
+            static_folder='src/static')
 
 load_dotenv()
 
@@ -29,6 +33,7 @@ app.secret_key = FLASKAPP_API_KEY
 embeddings = download_hugging_face_embeddings()
 
 index_name = "medicalbot"
+# index_name = "darrenchenhw"
 
 # Embed each chunk and upsert the embeddings into your Pinecone index.
 docsearch = PineconeVectorStore.from_existing_index(
@@ -68,7 +73,8 @@ def handle_login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    if username == "zfeng" and password == "password":
+    #if username == "zfeng" and password == "password":
+    if username == "itadmin" and password == "password":
         session["user"] = username
         return redirect(url_for("chat_page"))
     else:
