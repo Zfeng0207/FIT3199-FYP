@@ -122,6 +122,18 @@ def chatbot_routing():
 def self_assesment_routing():
     return render_template('self_assesment.html')
 
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files.get('file')
+        if file and file.filename.endswith('.csv'):
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+            flash('CSV uploaded successfully!', 'success')
+            return redirect(url_for('upload_file'))
+        else:
+            flash('Only CSV files are allowed.', 'danger')
+            return redirect(url_for('upload_file'))
+    return render_template('upload.html')
 
 
 if __name__ == '__main__':
