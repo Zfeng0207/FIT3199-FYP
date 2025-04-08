@@ -98,6 +98,11 @@ def chat():
     print("Response : ", response["answer"])
     return str(response["answer"])
 
+@app.route('/logout')
+def logout():
+    session.clear()  # or: session.pop('user', None)
+    return redirect(url_for('login'))  # or wherever your login page is
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)
