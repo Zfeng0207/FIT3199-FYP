@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from src.prompt import *
 import os
 import openai
+from werkzeug.utils import secure_filename
 # app = Flask(__name__)
 # app = Flask(__name__, template_folder='src/templates')
 app = Flask(__name__, 
@@ -125,14 +126,18 @@ def self_assesment_routing():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        email = request.form.get('email')
         file = request.files.get('file')
+
         if file and file.filename.endswith('.csv'):
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-            flash('CSV uploaded successfully!', 'success')
-            return redirect(url_for('upload_file'))
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('thanks.html', name=firstname)  # or redirect
         else:
-            flash('Only CSV files are allowed.', 'danger')
-            return redirect(url_for('upload_file'))
+            return "Invalid file", 400
+
     return render_template('upload.html')
 
 
