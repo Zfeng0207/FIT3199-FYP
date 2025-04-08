@@ -408,4 +408,9 @@ form.sign-in-form {
     bottom: 28%;
     left: 50%;
   }
+
+  /* Move the sign-in form down slightly */
+  .sign-in-form {
+    margin-top: 20px; /* Adjust as you like */
+  }
 }
