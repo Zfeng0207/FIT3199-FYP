@@ -1,4 +1,4 @@
-<!-- templates/welcome.html -->
+<!-- templates/welcome.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,4 +36,35 @@
     <button type="submit" class="login-btn">Log In</button>
   </form>
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hero Section</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_style.css') }}" />
+  </head>
+  <body>
+    <!-- ============================================ -->
+    <!--                    Hero                      -->
+    <!-- ============================================ -->
+    <section id="hero-82">
+      <div class="cs-container">
+        <h1 class="cs-title">Welcome to Stroke Hero</h1>
+        <p class="cs-text">
+          Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.        </p>        </p>
+        <form action="/login">
+          <button type="submit" class="cs-login-btn">Proceed</button>
+        </form>
+      </div>
+
+      <!-- Background Image -->
+      <picture class="cs-background">
+        <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/neural_network.jpeg') }}" />
+        <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/neural_network.jpeg') }}" />
+        <img decoding="async" src="{{ url_for('static', filename='images/neural_network.jepg') }}" alt="hero background" width="2250" height="1500" aria-hidden="true" />
+      </picture>
+    </section>
+  </body>
 </html>
