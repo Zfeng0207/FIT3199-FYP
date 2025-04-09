@@ -237,6 +237,26 @@ form.sign-in-form {
   font-size: 0.8rem;
 }
 
+
+/*.stroke-hero {
+  width: 500px;           
+  height: 500px;
+  background: transparent; 
+  display: block;
+  margin: 0 auto;           
+}*/
+
+.stroke-hero {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: auto;
+  opacity: 0.3;
+}
+
+
 .right-panel .image,
 .right-panel .content {
   transform: translateX(800px);
@@ -413,4 +433,11 @@ form.sign-in-form {
   .sign-in-form {
     margin-top: 20px; /* Adjust as you like */
   }
+
+  /* .stroke-hero {
+    width: 2%;
+    margin-top: 1px;
+    transition: transform 0.9s ease-in-out;
+    transition-delay: 0.6s;
+  } */
 }
