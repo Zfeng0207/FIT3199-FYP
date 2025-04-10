@@ -128,6 +128,10 @@ def chatbot_routing():
 def self_assesment_routing():
     return render_template('self_assesment.html')
 
+@app.route('/about_us')
+def about_us_routing():
+    return render_template('about_us.html')
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
