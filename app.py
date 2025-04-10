@@ -112,8 +112,9 @@ def chat():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # or: session.pop('user', None)
-    return redirect(url_for('login'))  # or wherever your login page is
+    session.clear()
+    return redirect(url_for('welcome_routing'))  # use the correct function name here
+
 
 @app.route('/data-entry')
 def data_entry_routing():

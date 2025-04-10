@@ -53,18 +53,17 @@
       <div class="cs-container">
         <h1 class="cs-title">Welcome to Stroke Hero</h1>
         <p class="cs-text">
-          Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.        </p>        </p>
+          Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.
+        </p>
         <form action="/login">
           <button type="submit" class="cs-login-btn">Proceed</button>
         </form>
       </div>
-
-      <!-- Background Image -->
-      <picture class="cs-background">
-        <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/neural_network.jpeg') }}" />
-        <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/neural_network.jpeg') }}" />
-        <img decoding="async" src="{{ url_for('static', filename='images/neural_network.jepg') }}" alt="hero background" width="2250" height="1500" aria-hidden="true" />
-      </picture>
-    </section>
+    
+      <!-- Background Video -->
+      <video autoplay muted loop playsinline class="cs-background-video">
+        <source src="{{ url_for('static', filename='videos/neural_network_background.mp4') }}" type="video/mp4" />        
+      </video>
+    </section>    
   </body>
 </html>

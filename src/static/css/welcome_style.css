@@ -87,7 +87,7 @@ body {
         width: 100%;
         height: 100%;
         background: #000;
-        opacity: 0.7;
+        opacity: 0.4;
         position: absolute;
         display: block;
         top: 0;
@@ -105,6 +105,17 @@ body {
         object-fit: cover;
     }
 
+    .cs-background-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        z-index: -1; /* Makes it appear behind content */
+        opacity: 1;
+      }
+
     #hero-82 .cs-container {
         width: 100%;
         max-width: 67.5rem;
@@ -113,13 +124,15 @@ body {
 
     #hero-82 .cs-title {
         font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
-        font-weight: 700;
+        font-weight: 800; /* Slightly bolder */
         line-height: 1.2em;
         text-align: center;
         max-width: 51.8125rem;
         margin: 0 auto clamp(1rem, 4vw, 1.5rem);
         color: #fff;
         position: relative;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); /* 💥 Glow effect */
+        letter-spacing: 0.5px; /* Optional: add slight spacing */
     }
 
     #hero-82 .cs-title:after {
@@ -129,6 +142,7 @@ body {
         margin: clamp(1rem, 4vw, 1.5rem) auto clamp(1rem, 4vw, 1.5rem);
         background: var(--primary);
         opacity: 1;
+        text-shadow: 10px 10px 10px rgba(0, 0, 0, 0.6); /* Subtle glow for readability */
         position: relative;
         display: block;
     }
@@ -142,56 +156,50 @@ body {
         margin: 0 auto;
         margin-bottom: clamp(2.5rem, 4vw, 3rem);
         color: #fff;
-    }
-
-    #hero-82 .cs-button-solid {
-        font-size: 1rem;
-        line-height: 3.5rem;
-        text-decoration: none;
-        font-weight: 700;
-        margin: auto;
-        color: #fff;
-        padding: 0 1.5rem;
-        background-color: var(--primary);
-        border-radius: 0.25rem;
-        display: inline-block;
-        position: relative;
-        z-index: 1;
-    }
-
-    #hero-82 .cs-button-solid:before {
-        content: "";
-        position: absolute;
-        display: block;
-        height: 100%;
-        width: 0%;
-        background: #000;
-        opacity: 1;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        border-radius: 0.25rem;
-        transition: width 0.3s;
-    }
-
-    #hero-82 .cs-button-solid:hover:before {
-        width: 100%;
-    }
+        text-shadow: 20px 20px 20px rgba(0, 0, 0, 0.6); /* Subtle glow for readability */
+        font-weight: 500; /* Slightly bolder */
+        letter-spacing: 0.3px; /* Optional: slight spacing for elegance */
+    }    
 
     #hero-82 .cs-login-btn {
-        padding: 1rem 1.5rem;
+        padding: 1.2rem 2.5rem;
         font-size: 1.5rem;
-        background-color: #2896b8;
-        color: white;
+        font-weight: 700;
+        /* Initial gradient background */
+        background: linear-gradient(45deg, #14acd2, #0eafd7);
+        color: #fff;
         border: none;
-        border-radius: 0.75rem;
+        border-radius: 1rem;  /* More elegant, increased radius */
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        position: relative;
+        overflow: hidden;  /* Ensure pseudo-element doesn't overflow */
+        transition: transform 0.3s ease;
         margin-top: 1rem;
       }
       
-      #hero-82 .cs-login-btn:hover {
-        background-color: #ea7652;
+      #hero-82 .cs-login-btn:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        /* Hover gradient background for the pseudo-element */
+        background: linear-gradient(45deg, #ff7300, #1487e5);
+        transition: width 0.3s ease;
+        z-index: -1;  /* Place behind the button text */
+        border-radius: 1rem;
       }
       
+      #hero-82 .cs-login-btn:hover:before {
+        width: 100%;
+      }
+      
+      #hero-82 .cs-login-btn:hover {
+        background: linear-gradient(45deg, #a37c21, #1c7d9c);
+        transform: translateY(-3px);
+      }
+      
+    
+    
 }
