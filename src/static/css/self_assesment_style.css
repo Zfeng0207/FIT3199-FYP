@@ -180,3 +180,12 @@ body {
     font-size: 18px;
     cursor: pointer;
   }
+  .hero-text {
+    width: 350px !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+    margin-top: -20px; /* Adjust this value as needed */
+    margin-left: 0; /* start from here */
+    transform: translateX(-50px); /* moves 50px to the left */
+  }
