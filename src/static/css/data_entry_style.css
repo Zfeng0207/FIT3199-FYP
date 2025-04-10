@@ -662,3 +662,13 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .hero-text {
+    width: 350px !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+    margin-top: -20px; /* Adjust this value as needed */
+    margin-left: 0; /* start from here */
+    transform: translateX(-50px); /* moves 50px to the left */
+  }
