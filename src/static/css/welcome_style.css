@@ -198,8 +198,16 @@ body {
       #hero-82 .cs-login-btn:hover {
         background: linear-gradient(45deg, #a37c21, #1c7d9c);
         transform: translateY(-3px);
-      }
-      
-    
-    
+      }     
 }
+
+.hero-text {
+    width: 350px !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+    margin-top: -20px; /* Adjust this value as needed */
+    margin-left: 0; /* start from here */
+    transform: translateX(-50px); /* moves 50px to the left */
+  }
+
