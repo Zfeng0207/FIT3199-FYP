@@ -174,7 +174,7 @@ def logout():
 
 @app.route("/")
 def home():
-    user = session.get('user')  # if you need to pass the user token separately
+    user = session.get('user')
     return render_template("welcome.html", user=user, pretty=json.dumps(user, indent=4))
 
 if __name__ == '__main__':
