@@ -83,8 +83,8 @@ users = {
 
 @app.route("/chat")
 def chat_page():
-    # Render the chat page
-    return render_template('chat.html')
+    user = session.get('user')
+    return render_template("chat.html", user=user, pretty=json.dumps(user, indent=4))
 
 
 @app.route("/get", methods=["GET", "POST"])
@@ -99,19 +99,23 @@ def chat():
 
 @app.route('/data-entry')
 def stroke_prediction_routing():
-    return render_template('stroke_prediction.html')
+    user = session.get('user')
+    return render_template('stroke_prediction.html', user=user, pretty=json.dumps(user, indent=4))
 
 @app.route('/chatbot')
 def chatbot_routing():
-    return render_template('chat.html')
+    user = session.get('user')
+    return render_template('chat.html', user=user, pretty=json.dumps(user, indent=4))
 
 @app.route('/self_assessment')
 def self_assesment_routing():
-    return render_template('self_assesment.html')
+    user = session.get('user')
+    return render_template('self_assesment.html', user=user, pretty=json.dumps(user, indent=4))
 
 @app.route('/about_us')
 def about_us_routing():
-    return render_template('about_us.html')
+    user = session.get('user')
+    return render_template('about_us.html', user=user, pretty=json.dumps(user, indent=4))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
