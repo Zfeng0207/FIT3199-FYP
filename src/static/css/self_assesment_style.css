@@ -1,113 +1,251 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-/* Scope everything to self-assessment-container */
-.self-assessment-container {
-  font-family: 'Inter', sans-serif;
-  /* Override the global background if you want a simpler look: */
-  background: #ffffff !important;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-/* Reset inside container */
-.self-assessment-container * {
+/*-- -------------------------- -->
+<---          Form              -->
+<--- -------------------------- -*/
+                                
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+body {
+  font-family: "Inter", sans-serif;
+}
+.formbold-mb-5 {
+  margin-bottom: 20px;
+}
+.formbold-pt-3 {
+  padding-top: 12px;
+}
+.formbold-main-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
 
-.self-assessment-container .formbold-main-wrapper {
+.formbold-form-wrapper {
+  margin: 0 auto;
+  max-width: 550px;
+  width: 100%;
+  background: white;
+}
+.formbold-form-label {
+  display: block;
+  font-weight: 500;
+  font-size: 16px;
+  color: #07074d;
+  margin-bottom: 12px;
+}
+.formbold-form-label-2 {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.formbold-form-input {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  font-weight: 500;
+  font-size: 16px;
+  color: #6b7280;
+  outline: none;
+  resize: none;
+}
+.formbold-form-input:focus {
+  border-color: #6a64f1;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.formbold-btn {
+  text-align: center;
+  font-size: 16px;
+  border-radius: 6px;
+  padding: 14px 32px;
+  border: none;
+  font-weight: 600;
+  background-color: #6a64f1;
+  color: white;
+  cursor: pointer;
+}
+.formbold-btn:hover {
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.formbold--mx-3 {
+  margin-left: -12px;
+  margin-right: -12px;
+}
+.formbold-px-3 {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.flex {
+  display: flex;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.w-full {
+  width: 100%;
+}
+
+.formbold-file-input input {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.formbold-file-input label {
+  position: relative;
+  border: 1px dashed #e0e0e0;
+  border-radius: 6px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+}
+.formbold-drop-file {
+  display: block;
+  font-weight: 600;
+  color: #07074d;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.formbold-or {
+  font-weight: 500;
+  font-size: 16px;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 8px;
+}
+.formbold-browse {
+  font-weight: 500;
+  font-size: 16px;
+  color: #07074d;
+  display: inline-block;
+  padding: 8px 28px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.formbold-file-list {
+  border-radius: 6px;
+  background: #f5f7fb;
+  padding: 16px 32px;
+}
+
+.formbold-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formbold-file-item button {
+  color: #07074d;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.formbold-file-name {
+  font-weight: 500;
+  font-size: 16px;
+  color: #07074d;
+  padding-right: 12px;
+}
+.formbold-progress-bar {
+  margin-top: 20px;
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 8px;
+  background: #e2e5ef;
+}
+
+.formbold-progress {
+  position: absolute;
+  width: 75%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #6a64f1;
+  border-radius: 8px;
+}
+
+@media (min-width: 540px) {
+  .sm\:w-half {
+    width: 50%;
+  }
+}
+
+.formbold-file-input {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 6px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.formbold-file-input label {
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.formbold-file-input label div {
+  pointer-events: none; /* So clicking inside div doesn't trigger the file input */
+}
+
+.formbold-file-input input[type="file"] {
+  display: none; /* Hide default file input */
+}
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.self-assessment-container .formbold-form-wrapper {
-  margin: 0 auto;
-  max-width: 570px;
-  width: 100%;
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
 }
 
-.self-assessment-container .formbold-form-wrapper img {
-  display: block;
-  margin: 0 auto 30px;
-  max-width: 300px;
-  height: auto;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.self-assessment-container .formbold-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-}
-
-/* Question blocks */
-.self-assessment-container .formbold-question-block {
-  margin-bottom: 20px;
-}
-
-.self-assessment-container .formbold-form-label {
-  font-size: 18px;
-  font-weight: 600;
-  color: #07074d;
-  margin-bottom: 10px;
-  display: block;
-}
-
-.self-assessment-container .formbold-radio-flex {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-/* Inputs */
-.self-assessment-container .formbold-form-input {
-  width: 100%;
-  padding: 13px 22px;
-  border-radius: 5px;
-  border: 1px solid #dde3ec;
-  background: #ffffff;
-  font-size: 16px;
-  color: #536387;
-  outline: none;
-  resize: none;
-}
-
-/* Radio styling (if needed) */
-.self-assessment-container .formbold-radio-flex input[type="radio"] {
-  margin-right: 6px;
-}
-
-/* Button styling */
-.self-assessment-container .formbold-btn {
-  display: block;
-  text-align: center;
-  width: 100%;
-  font-size: 16px;
-  border-radius: 5px;
-  padding: 14px 25px;
-  border: none;
-  font-weight: 500;
-  background-color: #6a64f1;
-  color: white;
-  cursor: pointer;
-  margin-top: 25px;
-}
-.self-assessment-container .formbold-btn:hover {
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Example “hero-text” override if relevant */
-.self-assessment-container .hero-text {
+.hero-text {
   width: 350px !important;
   height: auto !important;
   display: block;
   margin: 0 auto;
-  margin-top: -20px;
-  margin-left: 0;
-  transform: translateX(-50px) !important;
+  margin-top: -20px; /* Adjust this value as needed */
+  margin-left: 0; /* start from here */
+  transform: translateX(-50px); /* moves 50px to the left */
 }
