@@ -75,15 +75,12 @@
                 </li>  
                 {% if session['role'] == 'staff' %}
                 <li class="cs-li">
-                    <a href="{{ url_for('data_entry_routing') }}" class="cs-li-link">Data Entry</a>
+                    <a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a>
                 </li>
                 {% endif %}
-            
-                {% if session['role'] == 'customer' %}
                 <li class="cs-li">
                     <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a>
                 </li>
-                {% endif %}
               </ul>   
             </div>
         </nav>

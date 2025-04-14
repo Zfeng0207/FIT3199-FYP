@@ -39,11 +39,9 @@
             <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
             <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
             {% if session['role'] == 'staff' %}
-            <li class="cs-li"><a href="{{ url_for('data_entry_routing') }}" class="cs-li-link">Data Entry</a></li>
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
             {% endif %}
-            {% if session['role'] == 'customer' %}
             <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-            {% endif %}
           </ul>
         </div>
       </nav>
