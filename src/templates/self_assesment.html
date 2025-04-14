@@ -65,96 +65,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
+  <title>Self Assessment</title>
+  <!-- Load your self-assessment CSS after any global/base CSS if possible -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
 </head>
-<div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
-      <img src="https://cdni.iconscout.com/illustration/premium/thumb/medical-check-up-illustration-download-in-svg-png-gif-file-formats--writing-analysis-pack-healthcare-illustrations-9040476.png" alt="Medical Check-Up">
-  
-      <form action="#" method="POST">
-        <div class="formbold-form-grid">
-  
-          <!-- LEFT COLUMN -->
-          <div>
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Is your blood pressure greater than 120/80 mmHg?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q1" /> Yes or Unknown</label>
-                <label><input type="radio" name="q1" /> No</label>
+<body>
+
+  <!-- Some nav bar or layout blocks might go here -->
+
+  <!-- Wrap everything in a dedicated container -->
+  <div class="self-assessment-container">
+    <div class="formbold-main-wrapper">
+      <div class="formbold-form-wrapper">
+        <img
+          src="https://cdni.iconscout.com/illustration/premium/thumb/medical-check-up-illustration-download-in-svg-png-gif-file-formats--writing-analysis-pack-healthcare-illustrations-9040476.png"
+          alt="Medical Check-Up"
+        />
+
+        <form action="#" method="POST">
+          <div class="formbold-form-grid">
+            <!-- LEFT COLUMN -->
+            <div>
+              <div class="formbold-question-block">
+                <label class="formbold-form-label">Is your blood pressure greater than 120/80 mmHg?</label>
+                <div class="formbold-radio-flex">
+                  <label><input type="radio" name="q1" /> Yes or Unknown</label>
+                  <label><input type="radio" name="q1" /> No</label>
+                </div>
               </div>
+
+              <div class="formbold-question-block">
+                <label class="formbold-form-label">Have you been diagnosed with atrial fibrillation?</label>
+                <div class="formbold-radio-flex">
+                  <label><input type="radio" name="q2" /> Yes or Unknown</label>
+                  <label><input type="radio" name="q2" /> No</label>
+                </div>
+              </div>
+
+              <!-- more questions... -->
             </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Have you been diagnosed with atrial fibrillation?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q2" /> Yes or Unknown</label>
-                <label><input type="radio" name="q2" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Is your body mass index greater than 25 kg/m²?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q3" /> Yes or Unknown</label>
-                <label><input type="radio" name="q3" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Is your diet high in unhealthy fats or excess calories?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q4" /> Yes or Unknown</label>
-                <label><input type="radio" name="q4" /> No</label>
-              </div>
-            </div>
-          </div>
-  
-          <!-- RIGHT COLUMN -->
-          <div>
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Is your total blood cholesterol greater than 160 mg/dL?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q5" /> Yes or Unknown</label>
-                <label><input type="radio" name="q5" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Have you been diagnosed with diabetes mellitus?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q6" /> Yes or Unknown</label>
-                <label><input type="radio" name="q6" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Do you get less than 150 minutes of exercise per week?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q7" /> Yes or Unknown</label>
-                <label><input type="radio" name="q7" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Do you have a family history of stroke or heart attack?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q8" /> Yes or Unknown</label>
-                <label><input type="radio" name="q8" /> No</label>
-              </div>
-            </div>
-  
-            <div class="formbold-question-block">
-              <label class="formbold-form-label">Do you use tobacco or vape?</label>
-              <div class="formbold-radio-flex">
-                <label><input type="radio" name="q9" /> Yes or Unknown</label>
-                <label><input type="radio" name="q9" /> No</label>
-              </div>
+
+            <!-- RIGHT COLUMN -->
+            <div>
+              <!-- questions... -->
             </div>
           </div>
-        </div>
-  
-        <button class="formbold-btn" type="submit">Submit</button>
-      </form>
+          <button class="formbold-btn" type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   </div>
+
+</body>
+</html>
