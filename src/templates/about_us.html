@@ -1,118 +1,172 @@
-<!-- ============================================ -->
-<!--                 Navigation                   -->
-<!-- ============================================ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
+  <title>About Us</title>
+
+  <!-- Load your nav bar styles first -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
 </head>
-<header id="cs-navigation">
-  <div class="cs-container">
-    <a href="" class="cs-logo" aria-label="back to home">
-      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
-    </a>
-    <nav class="cs-nav" role="navigation">
-      <button class="cs-toggle" aria-label="mobile menu toggle">
-        <div class="cs-box">
-          <span class="cs-line cs-line1"></span>
-          <span class="cs-line cs-line2"></span>
-          <span class="cs-line cs-line3"></span>
-        </div>
-      </button>
-      <div class="cs-ul-wrapper">
-        <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
-          <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
-          <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
-          {% if user %}
-          <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
-          {% endif %}
-          <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-        </ul>
-      </div>
-    </nav>
 
-    <!-- Show Login or Logout Button based on User Authentication -->
-      {% if user %}
-      <!-- If the user is logged in, show the Logout button -->
-      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
-      {% else %}
-      <!-- If the user is not logged in, show the Login button -->
-      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
-    {% endif %}
-  </div>
-</header>
+<body>
 
-
-<!-- ============================================ -->
-<!--                     Hero                     -->
-<!-- ============================================ -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
-</head>
-<section id="hero-1946">
+  <!-- Navigation Bar -->
+  <header id="cs-navigation">
     <div class="cs-container">
-        <div class="cs-content">
-            <h2 class="cs-title">Building Your Future Accommodation</h2>
-            <div class="cs-flex">
-                <p class="cs-text">We successfully cope with tasks of varying complexity, provide long-term guarantees and regularly master new technologies.</p>
-                <a href="" class="cs-button-solid">Read More</a>
-            </div>
+      <!-- Logo -->
+      <a href="" class="cs-logo" aria-label="back to home">
+        <img 
+          src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" 
+          class="hero-text" 
+          alt="Stroke Hero Logo" 
+          decoding="async"
+        />
+      </a>
+
+      <!-- Menu -->
+      <nav class="cs-nav" role="navigation">
+        <button class="cs-toggle" aria-label="mobile menu toggle">
+          <div class="cs-box">
+            <span class="cs-line cs-line1"></span>
+            <span class="cs-line cs-line2"></span>
+            <span class="cs-line cs-line3"></span>
+          </div>
+        </button>
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            {% endif %}
+            <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
+          </ul>
         </div>
-        <picture class="cs-picture">
-            <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png">
-            <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png">
-            <img decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png" alt="construction site" width="1280" height="510">
-        </picture>
-        <ul class="cs-card-group">
-            <li class="cs-item">
-                <picture class="cs-icon-picture">
-                    <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" decoding="async" alt="icon" width="40" height="40" aria-hidden="true">
-                </picture>
-                <!-- Text Grouped For Flexbox-->
-                <div class="cs-text-group">
-                    <h3 class="cs-h3">Construction</h3>
-                    <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
-                </div>
-            </li>
-            <li class="cs-item">
-                <picture class="cs-icon-picture">
-                    <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" decoding="async" alt="icon" width="40" height="40" aria-hidden="true">
-                </picture>
-                <!-- Text Grouped For Flexbox-->
-                <div class="cs-text-group">
-                    <h3 class="cs-h3">Project Development</h3>
-                    <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
-                </div>
-            </li>
-            <li class="cs-item">
-                <picture class="cs-icon-picture">
-                    <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" decoding="async" alt="icon" width="40" height="40" aria-hidden="true">
-                </picture>
-                <!-- Text Grouped For Flexbox-->
-                <div class="cs-text-group">
-                    <h3 class="cs-h3">Interior Design</h3>
-                    <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
-                </div>
-            </li>
-            <li class="cs-item">
-                <picture class="cs-icon-picture">
-                    <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" decoding="async" alt="icon" width="40" height="40" aria-hidden="true">
-                </picture>
-                <!-- Text Grouped For Flexbox-->
-                <div class="cs-text-group">
-                    <h3 class="cs-h3">Architecture</h3>
-                    <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
-                </div>
-            </li>
-        </ul>
+      </nav>
+
+      <!-- Show Login or Logout Button based on User Authentication -->
+      {% if user %}
+        <!-- If the user is logged in, show the Logout button -->
+        <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" 
+           style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">
+          Logout
+        </a>
+      {% else %}
+        <!-- If the user is not logged in, show the Login button -->
+        <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" 
+           style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">
+          Login
+        </a>
+      {% endif %}
     </div>
-</section>
-            
+  </header>
+
+  <!-- Hero / About Us Content -->
+  <section id="hero-1946">
+    <div class="cs-container">
+      <div class="cs-content">
+        <h2 class="cs-title">Building Your Future Accommodation</h2>
+        <div class="cs-flex">
+          <p class="cs-text">
+            We successfully cope with tasks of varying complexity, provide long-term guarantees 
+            and regularly master new technologies.
+          </p>
+          <a href="" class="cs-button-solid">Read More</a>
+        </div>
+      </div>
+
+      <picture class="cs-picture">
+        <source 
+          media="(min-width: 601px)"
+          srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png"
+        >
+        <source 
+          media="(max-width: 600px)"
+          srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png"
+        >
+        <img 
+          decoding="async" 
+          src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png" 
+          alt="construction site" 
+          width="1280" 
+          height="510"
+        />
+      </picture>
+
+      <ul class="cs-card-group">
+        <li class="cs-item">
+          <picture class="cs-icon-picture">
+            <img 
+              class="cs-icon" 
+              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
+              decoding="async" 
+              alt="icon" 
+              width="40" 
+              height="40" 
+              aria-hidden="true"
+            />
+          </picture>
+          <div class="cs-text-group">
+            <h3 class="cs-h3">Construction</h3>
+            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          </div>
+        </li>
+        <li class="cs-item">
+          <picture class="cs-icon-picture">
+            <img 
+              class="cs-icon" 
+              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
+              decoding="async" 
+              alt="icon" 
+              width="40" 
+              height="40" 
+              aria-hidden="true"
+            />
+          </picture>
+          <div class="cs-text-group">
+            <h3 class="cs-h3">Project Development</h3>
+            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          </div>
+        </li>
+        <li class="cs-item">
+          <picture class="cs-icon-picture">
+            <img 
+              class="cs-icon" 
+              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
+              decoding="async" 
+              alt="icon" 
+              width="40" 
+              height="40" 
+              aria-hidden="true"
+            />
+          </picture>
+          <div class="cs-text-group">
+            <h3 class="cs-h3">Interior Design</h3>
+            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          </div>
+        </li>
+        <li class="cs-item">
+          <picture class="cs-icon-picture">
+            <img 
+              class="cs-icon" 
+              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
+              decoding="async" 
+              alt="icon" 
+              width="40" 
+              height="40" 
+              aria-hidden="true"
+            />
+          </picture>
+          <div class="cs-text-group">
+            <h3 class="cs-h3">Architecture</h3>
+            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+</body>
+</html>
