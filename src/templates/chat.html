@@ -17,38 +17,44 @@
 </head>
 
 <body>
-  <!-- ============================================ -->
-  <!--                 Navigation                   -->
-  <!-- ============================================ -->
-  <header id="cs-navigation">
-    <div class="cs-container">
-      <a href="" class="cs-logo" aria-label="back to home">
-        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
-      </a>
-
-      <nav class="cs-nav" role="navigation">
-        <button class="cs-toggle" aria-label="mobile menu toggle">
-          <div class="cs-box">
-            <span class="cs-line cs-line1"></span>
-            <span class="cs-line cs-line2"></span>
-            <span class="cs-line cs-line3"></span>
-          </div>
-        </button>
-        <div class="cs-ul-wrapper">
-          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
-            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
-            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
-            {% if session['role'] == 'staff' %}
-            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
-            {% endif %}
-            <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-          </ul>
+<!-- ============================================ -->
+<!--                 Navigation                   -->
+<!-- ============================================ -->
+<header id="cs-navigation">
+  <div class="cs-container">
+    <a href="" class="cs-logo" aria-label="back to home">
+      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
+    </a>
+    <nav class="cs-nav" role="navigation">
+      <button class="cs-toggle" aria-label="mobile menu toggle">
+        <div class="cs-box">
+          <span class="cs-line cs-line1"></span>
+          <span class="cs-line cs-line2"></span>
+          <span class="cs-line cs-line3"></span>
         </div>
-      </nav>
+      </button>
+      <div class="cs-ul-wrapper">
+        <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+          <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+          <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+          {% if session.get('user_logged_in') %}
+          <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+          {% endif %}
+          <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
+        </ul>
+      </div>
+    </nav>
 
+    <!-- Show Login or Logout Button based on User Authentication -->
+    {% if session.get('user_logged_in') %}
+      <!-- If the user is logged in, show the Logout button -->
       <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
-    </div>
-  </header>
+    {% else %}
+      <!-- If the user is not logged in, show the Login button -->
+      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
+    {% endif %}
+  </div>
+</header>
 
   <!-- Spacer under fixed header -->
   <div style="height: 120px;"></div>

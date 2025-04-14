@@ -19,3 +19,7 @@ transformers
 
 # For acceleration (typo fix)
 accelerate
+
+#auth0
+authlib
+requests
