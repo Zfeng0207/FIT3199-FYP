@@ -11,6 +11,16 @@ from src.prompt import *
 import os
 import openai
 from werkzeug.utils import secure_filename
+
+#auth0 imports
+import json
+from os import environ as env
+from urllib.parse import quote_plus, urlencode
+
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
+
+
 # app = Flask(__name__)
 # app = Flask(__name__, template_folder='src/templates')
 app = Flask(__name__, 
@@ -32,7 +42,6 @@ os.environ["FLASKAPP_API_KEY"] = FLASKAPP_API_KEY
 openai.api_base = "https://openrouter.ai//v1"
 app.secret_key = FLASKAPP_API_KEY
 embeddings = download_hugging_face_embeddings()
-
 index_name = "medicalbot"
 # index_name = "darrenchenhw"
 
@@ -63,14 +72,6 @@ prompt = ChatPromptTemplate.from_messages(
 question_answer_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-@app.route('/')
-def welcome_routing():
-    return render_template('welcome.html')  # File must be in templates/
-
-@app.route('/login')
-def login_routing():
-    return render_template('login.html')
-
 # later move this to a config file or database
 users = {
     "itadmin": {"password": "password", "role": "staff"},
@@ -79,21 +80,6 @@ users = {
     "customer2": {"password": "custpass", "role": "customer"}
 }
 
-@app.route("/login", methods=["POST"])
-def handle_login():
-    username = request.form.get("username")
-    password = request.form.get("password")
-
-    # Check if the username exists in the users dictionary
-    user = users.get(username)
-
-    if user and user["password"] == password:
-        session["user"] = username
-        session["role"] = user["role"]
-        return redirect(url_for("chat_page"))
-    else:
-        flash("Invalid credentials. Please try again.")
-        return redirect(url_for("login"))
 
 @app.route("/chat")
 def chat_page():
@@ -109,11 +95,6 @@ def chat():
     response = rag_chain.invoke({"input": msg})
     print("Response : ", response["answer"])
     return str(response["answer"])
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('welcome_routing'))  # use the correct function name here
 
 
 @app.route('/data-entry')
@@ -149,6 +130,52 @@ def upload_file():
 
     return render_template('upload.html')
 
+#auth0 code
+app.secret_key = env.get("APP_SECRET_KEY")
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+@app.route("/")
+def home():
+    user = session.get('user')  # if you need to pass the user token separately
+    return render_template("welcome.html", user=user, pretty=json.dumps(user, indent=4))
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000))
