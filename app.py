@@ -117,8 +117,8 @@ def logout():
 
 
 @app.route('/data-entry')
-def data_entry_routing():
-    return render_template('data_entry.html')
+def stroke_prediction_routing():
+    return render_template('stroke_prediction.html')
 
 @app.route('/chatbot')
 def chatbot_routing():
