@@ -24,6 +24,7 @@
       </button>
       <div class="cs-ul-wrapper">
         <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+          <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
           <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
           <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
           {% if user %}
