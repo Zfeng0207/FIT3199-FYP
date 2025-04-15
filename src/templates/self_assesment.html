@@ -59,14 +59,27 @@
   <!-- Load your self-assessment CSS after any global/base CSS if possible -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
 </head>
+<!-- ============================================ -->
+<!--              Self-Assessment Page           -->
+<!-- ============================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Self Assessment</title>
+  <!-- Load your self-assessment CSS after any global/base CSS if possible -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
+</head>
+
 <div class="formbold-main-wrapper">
-  <!-- Author: FormBold Team -->
-  <!-- Learn More: https://formbold.com -->
-  <div class="formbold-form-wrapper", style="height: 120px;">
-    <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}">
+  <!-- Example branding/logo -->
+  <div class="formbold-form-wrapper" style="height: 120px;">
+    
     <form action="https://formbold.com/s/FORM_ID" method="POST">
+      <!-- Basic Info -->
       <div class="formbold-input-group">
-        <label for="name" class="formbold-form-label"> Name </label>
+        <label for="name" class="formbold-form-label">Name</label>
         <input
           type="text"
           name="name"
@@ -77,10 +90,10 @@
       </div>
 
       <div class="formbold-input-group">
-        <label for="email" class="formbold-form-label"> Email </label>
+        <label for="email" class="formbold-form-label">Email</label>
         <input
           type="email"
-          name="lastname"
+          name="email"
           id="email"
           placeholder="Enter your email"
           class="formbold-form-input"
@@ -88,9 +101,9 @@
       </div>
 
       <div class="formbold-input-group">
-        <label for="age" class="formbold-form-label"> Age </label>
+        <label for="age" class="formbold-form-label">Age</label>
         <input
-          type="text"
+          type="number"
           name="age"
           id="age"
           placeholder="Enter your age"
@@ -98,217 +111,314 @@
         />
       </div>
 
-      <div class="formbold-input-group">
-        <label class="formbold-form-label">
-          Which option best describes you?
-        </label>
-
-        <select class="formbold-form-select" name="occupation" id="occupation">
-          <option value="Student">Student</option>
-          <option value="designer">UX/UI Designer</option>
-          <option value="fullstack">Full Stack Developer</option>
-          <option value="frontend">Front End Developer</option>
-        </select>
-      </div>
-
+      <!-- 1. Blood Pressure -->
       <div class="formbold-input-radio-wrapper">
-        <label for="ans" class="formbold-form-label">
-          Would you recomend our site to a friend?
+        <label class="formbold-form-label">
+          1. Is your blood pressure greater than 120/80 mmHg?
         </label>
-
         <div class="formbold-radio-flex">
           <div class="formbold-radio-group">
-            <label class="formbold-radio-label">
+            <label class="formbold-radio-label" for="q1_yes">
               <input
                 class="formbold-input-radio"
                 type="radio"
-                name="ans"
-                id="ans"
+                name="q1"
+                id="q1_yes"
               />
-              Yes
+              Yes or Unknown
               <span class="formbold-radio-checkmark"></span>
             </label>
           </div>
-
           <div class="formbold-radio-group">
-            <label class="formbold-radio-label">
+            <label class="formbold-radio-label" for="q1_no">
               <input
                 class="formbold-input-radio"
                 type="radio"
-                name="ans"
-                id="ans"
+                name="q1"
+                id="q1_no"
               />
               No
               <span class="formbold-radio-checkmark"></span>
             </label>
           </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="ans"
-                id="ans"
-              />
-              Maybe
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
         </div>
+        <!-- Link to PDF for education -->
+        <a href="pdf/blood_pressure_info.pdf" target="_blank">Learn More (PDF)</a>
       </div>
 
+      <!-- 2. Atrial Fibrillation -->
       <div class="formbold-input-radio-wrapper">
         <label class="formbold-form-label">
-          Which languages & freameworks you know?
+          2. Have you been diagnosed with atrial fibrillation?
         </label>
-
         <div class="formbold-radio-flex">
           <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="c">
+            <label class="formbold-radio-label" for="q2_yes">
               <input
                 class="formbold-input-radio"
                 type="radio"
-                name="c"
-                id="c"
+                name="q2"
+                id="q2_yes"
               />
-              C
+              Yes or Unknown
               <span class="formbold-radio-checkmark"></span>
             </label>
           </div>
-
           <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="c++">
+            <label class="formbold-radio-label" for="q2_no">
               <input
                 class="formbold-input-radio"
                 type="radio"
-                name="c++"
-                id="c++"
+                name="q2"
+                id="q2_no"
               />
-              c++
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="java">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="java"
-                id="java"
-              />
-              Java
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="python">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="python"
-                id="python"
-              />
-              Python
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="javaScript">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="javaScript"
-                id="javaScript"
-              />
-              JavaScript
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="react">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="react"
-                id="react"
-              />
-              React
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="angular">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="angular"
-                id="angular"
-              />
-              Angular
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="django">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="django"
-                id="django"
-              />
-              Django
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="tailwind">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="tailwind"
-                id="tailwind"
-              />
-              Tailwind CSS
-              <span class="formbold-radio-checkmark"></span>
-            </label>
-          </div>
-
-          <div class="formbold-radio-group">
-            <label class="formbold-radio-label" for="bootstrap">
-              <input
-                class="formbold-input-radio"
-                type="radio"
-                name="bootstrap"
-                id="bootstrap"
-              />
-              Bootstrap
+              No
               <span class="formbold-radio-checkmark"></span>
             </label>
           </div>
         </div>
+        <a href="pdf/atrial_fibrillation_info.pdf" target="_blank">Learn More (PDF)</a>
       </div>
 
-      <div>
-        <label for="message" class="formbold-form-label">
-          Any comments or suggestions
+      <!-- 3. Body Mass Index -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          3. Is your body mass index greater than 25 kg/m²?
         </label>
-        <textarea
-          rows="6"
-          name="message"
-          id="message"
-          placeholder="Type here..."
-          class="formbold-form-input"
-        ></textarea>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q3_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q3"
+                id="q3_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q3_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q3"
+                id="q3_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/bmi_info.pdf" target="_blank">Learn More (PDF)</a>
       </div>
 
+      <!-- 4. Unhealthy Diet -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          4. Is your diet high in unhealthy fats or excess calories?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q4_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q4"
+                id="q4_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q4_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q4"
+                id="q4_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/unhealthy_diet_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- 5. Cholesterol -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          5. Is your total blood cholesterol greater than 160 mg/dL?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q5_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q5"
+                id="q5_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q5_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q5"
+                id="q5_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/cholesterol_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- 6. Diabetes Mellitus -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          6. Have you been diagnosed with diabetes mellitus?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q6_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q6"
+                id="q6_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q6_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q6"
+                id="q6_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/diabetes_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- 7. Physical Activity -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          7. Do you get less than 150 minutes of exercise per week?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q7_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q7"
+                id="q7_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q7_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q7"
+                id="q7_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/exercise_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- 8. Family History -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          8. Do you have a family history of stroke or heart attack?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q8_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q8"
+                id="q8_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q8_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q8"
+                id="q8_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/family_history_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- 9. Tobacco or Vape -->
+      <div class="formbold-input-radio-wrapper">
+        <label class="formbold-form-label">
+          9. Do you use tobacco or vape?
+        </label>
+        <div class="formbold-radio-flex">
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q9_yes">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q9"
+                id="q9_yes"
+              />
+              Yes or Unknown
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+          <div class="formbold-radio-group">
+            <label class="formbold-radio-label" for="q9_no">
+              <input
+                class="formbold-input-radio"
+                type="radio"
+                name="q9"
+                id="q9_no"
+              />
+              No
+              <span class="formbold-radio-checkmark"></span>
+            </label>
+          </div>
+        </div>
+        <a href="pdf/tobacco_info.pdf" target="_blank">Learn More (PDF)</a>
+      </div>
+
+      <!-- Submit Button -->
       <button class="formbold-btn">Submit</button>
     </form>
   </div>
