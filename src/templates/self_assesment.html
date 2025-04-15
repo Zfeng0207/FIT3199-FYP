@@ -48,18 +48,6 @@
 
 
 <!-- ============================================ -->
-<!--                 Self Assesment               -->
-<!-- ============================================ -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Self Assessment</title>
-  <!-- Load your self-assessment CSS after any global/base CSS if possible -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
-</head>
-<!-- ============================================ -->
 <!--              Self-Assessment Page           -->
 <!-- ============================================ -->
 <!DOCTYPE html>
@@ -68,8 +56,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Self Assessment</title>
-  <!-- Load your self-assessment CSS after any global/base CSS if possible -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
+  <style>
+    .result-box {
+      padding: 20px;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .low-risk {
+      background-color: green;
+    }
+    .medium-risk {
+      background-color: yellow;
+      color: black;
+    }
+    .high-risk {
+      background-color: red;
+    }
+  </style>
 </head>
 
 <div class="formbold-main-wrapper">
@@ -423,3 +429,45 @@
     </form>
   </div>
 </div>
+
+
+<script>
+  document.getElementById('assessmentForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent form submission
+
+    let score = 0;
+
+    // Calculate the score based on selected radio buttons
+    const questions = ['q1', 'q2']; // Add more question names as you add questions
+    questions.forEach(function (question) {
+      const selectedValue = document.querySelector(`input[name="${question}"]:checked`);
+      if (selectedValue) {
+        score += parseInt(selectedValue.value);
+      }
+    });
+
+    let resultMessage = '';
+    let resultClass = '';
+
+    // Determine risk level based on score
+    if (score <= 3) {
+      resultMessage = 'Low Risk';
+      resultClass = 'low-risk';
+    } else if (score <= 6) {
+      resultMessage = 'Medium Risk';
+      resultClass = 'medium-risk';
+    } else {
+      resultMessage = 'High Risk';
+      resultClass = 'high-risk';
+    }
+
+    // Display the result
+    const resultBox = document.getElementById('resultBox');
+    resultBox.style.display = 'block';
+    resultBox.className = `result-box ${resultClass}`;
+    resultBox.innerHTML = `${resultMessage}<br>Total Score: ${score}`;
+  });
+</script>
+
+</body>
+</html>
