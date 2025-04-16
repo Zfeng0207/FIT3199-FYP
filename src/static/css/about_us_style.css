@@ -1,17 +1,17 @@
-/*-- -------------------------- -->
-<---          Form              -->
-<--- -------------------------- -*/
-                                
+/* -------------------------- */
+/*       Global + Navbar      */
+/* -------------------------- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-  body {
+}
+body {
     font-family: "Inter", sans-serif;
-  }
+}
 
-  .loader-overlay {
+/* Loader */
+.loader-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -22,28 +22,228 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
     border-radius: 50%;
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
+}
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-  }
-  
-  .hero-text {
+}
+
+/* Logo */
+.hero-text {
     width: 350px !important;
     height: auto !important;
     display: block;
     margin: 0 auto;
-    margin-top: -20px; /* Adjust this value as needed */
-    margin-left: 0; /* start from here */
-    transform: translateX(-50px); /* moves 50px to the left */
-  }
+    margin-top: -20px;
+    margin-left: 0;
+    transform: translateX(-50px);
+}
+
+/* Spacer under fixed navbar */
+body::before {
+    content: "";
+    display: block;
+    height: 100px; /* Adjust to match your navbar height */
+    
+}
+
+/* -------------------------- */
+/*       Meet The Team        */
+/* -------------------------- */
+@media only screen and (min-width: 0rem) {
+    #meet-team-1332 {
+        padding: 4rem 1rem; /* replace var(--sectionPadding) if undefined */
+        overflow: hidden;
+    }
+    #meet-team-1332 .cs-container {
+        width: 100%;
+        max-width: 90rem;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(3rem, 6vw, 4rem);
+    }
+    #meet-team-1332 .cs-content {
+        text-align: center;
+        width: 100%;
+        max-width: 40.625rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #meet-team-1332 .cs-topper {
+        font-size: 1rem;
+        line-height: 1.2em;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+        color: #0eafd7;
+        margin-bottom: 0.25rem;
+        display: block;
+
+    }
+    #meet-team-1332 .cs-title {
+        font-size: 2.25rem;
+        font-weight: 900;
+        line-height: 1.2em;
+        max-width: 43.75rem;
+        margin: 0 0 1rem 0;
+        color: #1a1a1a;
+        position: relative;
+        padding: 10px;
+    }
+    #meet-team-1332 .cs-text {
+        font-size: 1rem;
+        line-height: 1.5em;
+        max-width: 40.625rem;
+        color: #333;
+    }
+    #meet-team-1332 .cs-card-group {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: clamp(1rem, 2.3vw, 1.25rem);
+    }
+    #meet-team-1332 .cs-item {
+        list-style: none;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #meet-team-1332 .cs-item:hover {
+        cursor: pointer;
+    }
+    #meet-team-1332 .cs-item:hover .cs-picture:before {
+        opacity: 1;
+    }
+    #meet-team-1332 .cs-item:hover .cs-picture img {
+        transform: scale(1.1);
+    }
+    #meet-team-1332 .cs-item:hover .cs-name {
+        color: #eda708;
+    }
+    #meet-team-1332 .cs-picture {
+        width: 100%;
+        height: clamp(20rem, 90vw, 25.75rem);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+    #meet-team-1332 .cs-picture:before {
+        content: "";
+        width: 100%;
+        height: 50%;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(17, 17, 17, 0.94) 65%,
+            rgba(26, 26, 26, 0.94) 100%
+        );
+        opacity: 1;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transition: opacity 0.3s;
+    }
+    #meet-team-1332 .cs-picture img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: transform 0.7s;
+    }
+    #meet-team-1332 .cs-info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        bottom: 1.5rem;
+        left: 0;
+        z-index: 10;
+    }
+    #meet-team-1332 .cs-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f6e5db;
+        transition: color 0.3s;
+    }
+    #meet-team-1332 .cs-job {
+        font-size: clamp(0.875rem, 1.5vw, 1rem);
+        color: #f7f7f7;
+    }
+}
+@media only screen and (min-width: 34.375rem) {
+    #meet-team-1332 .cs-card-group {
+        align-items: stretch;
+    }
+    #meet-team-1332 .cs-item {
+        width: 48.3%;
+    }
+}
+@media only screen and (min-width: 48rem) {
+    #meet-team-1332 .cs-item {
+        width: 31.7%;
+    }
+}
+@media only screen and (min-width: 75rem) {
+    #meet-team-1332 .cs-card-group {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+    }
+    #meet-team-1332 .cs-item {
+        width: 100%;
+    }
+    #meet-team-1332 .cs-picture:before {
+        opacity: 0;
+    }
+    #meet-team-1332 .cs-info {
+        opacity: 0;
+        bottom: -3.125rem;
+        transition: opacity 0.3s, bottom 0.6s;
+    }
+    #meet-team-1332 .cs-item:hover .cs-info {
+        opacity: 1;
+        bottom: 1.5rem;
+    }
+    #meet-team-1332 .cs-name,
+    #meet-team-1332 .cs-job {
+        transform: translateY(1rem);
+        transition: color 0.3s, transform 0.3s;
+    }
+    #meet-team-1332 .cs-item:hover .cs-name,
+    #meet-team-1332 .cs-item:hover .cs-job {
+        transform: translateY(0);
+    }
+    #meet-team-1332 .cs-job {
+        transition: transform 0.9s;
+    }
+}
+
+/* Sticky Navigation Bar */
+#cs-navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white; /* or your desired color */
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* optional shadow */
+}
