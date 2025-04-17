@@ -202,16 +202,19 @@
     font-weight: 700;
     color: #f6e5db;
     transition: color 0.3s;
+    position: relative;
   }
   
   #meet-team-1332 .cs-item:hover .cs-name {
+    font-size: 0rem; 
     background: linear-gradient(45deg, #ff7300, #1487e5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
-  }
   
+    transform: translateY(50px); /* subtle downward shift */
+  }
   #meet-team-1332 .cs-job {
     font-size: 0.95rem;
     color: #f7f7f7;
@@ -266,3 +269,50 @@
     max-width: 700px;
     color: white;
   }
+
+  #meet-team-1332 .cs-item {
+    list-style: none;
+    width: 200px;
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* required for positioning child */
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: white;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  #meet-team-1332 .cs-hover-bio {
+    display: none;
+    position: relative;
+    bottom: -24px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+    color: #000000;
+    font-size: 1rem;
+    font-weight:500;
+    opacity: 1;
+    padding: 0.8rem;
+    padding-top: 5rem;;
+    text-align: center;
+    border-radius: 0 0 10px 10px;
+    box-sizing: border-box;
+    z-index: 10;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+  
+  #meet-team-1332 .cs-item {
+    position:relative;
+  }
+
+  /* Show only when hovered */
+  #meet-team-1332 .cs-item:hover .cs-hover-bio {
+    display: block;
+    /* text-shadow: 0 0 6px rgba(255, 255, 255, 0.8); Glow effect behind dark text */
+  }
+  
+  
