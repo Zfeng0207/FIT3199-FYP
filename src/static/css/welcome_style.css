@@ -2,7 +2,7 @@
    Global Styles (Core)
    ======================= */
    :root {
-    --primary: #ff6a3e;
+    --primary: #ff6a3e !important;
     --primaryLight: #ffba43;
     --secondary: #ffba43;
     --secondaryLight: #ffba43;
