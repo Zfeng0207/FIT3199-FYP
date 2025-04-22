@@ -1,367 +1,191 @@
-<!-- ============================================ -->
-<!--                 Navigation                   -->
-<!-- ============================================ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
+  <title>Cardiovascular Risk Assessment</title>
+
+  <!-- 1) Tailwind CSS (load first to scope Reset here) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- 2) Page/site-wide overrides & form styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
+
+  <!-- 3) Navigation Bar styles (load last so they override resets) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
 </head>
-<header id="cs-navigation">
-  <div class="cs-container">
-    <a href="" class="cs-logo" aria-label="back to home">
-      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
-    </a>
-    <nav class="cs-nav" role="navigation">
-      <button class="cs-toggle" aria-label="mobile menu toggle">
-        <div class="cs-box">
-          <span class="cs-line cs-line1"></span>
-          <span class="cs-line cs-line2"></span>
-          <span class="cs-line cs-line3"></span>
-        </div>
-      </button>
-      <div class="cs-ul-wrapper">
-        <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
-          <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
-          <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
-          <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
-          {% if user %}
-          <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
-          {% endif %}
-          <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-        </ul>
-      </div>
-    </nav>
 
-    <!-- Show Login or Logout Button based on User Authentication -->
+<body class="bg-gray-50 p-0">
+
+  <!-- ============================================ -->
+  <!--                 Navigation                   -->
+  <!-- ============================================ -->
+  <header id="cs-navigation" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <div class="cs-container">
+      <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
+        <!-- larger logo via utility classes -->
+        <img
+      src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}"
+      alt="Stroke Hero Logo"
+      width="350"
+      height="65"
+      style="object-fit:contain;"
+    />
+      </a>
+      <nav class="cs-nav" role="navigation">
+        <button class="cs-toggle" aria-label="mobile menu toggle">
+          <div class="cs-box">
+            <span class="cs-line cs-line1"></span>
+            <span class="cs-line cs-line2"></span>
+            <span class="cs-line cs-line3"></span>
+          </div>
+        </button>
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+            <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
+            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            {% endif %}
+            <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
+          </ul>
+        </div>
+      </nav>
       {% if user %}
-      <!-- If the user is logged in, show the Logout button -->
       <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-      <!-- If the user is not logged in, show the Login button -->
       <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
-    {% endif %}
-  </div>
-</header>
-
-
-<!-- ============================================ -->
-<!--              Self-Assessment Page           -->
-<!-- ============================================ -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Self Assessment</title>
-  <!-- Navigation CSS (if applicable) can be loaded elsewhere -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/self_assesment_style.css') }}" />
-  <style>
-    /* Inline style for result box */
-    .result-box {
-      padding: 20px;
-      text-align: center;
-      font-weight: bold;
-      margin-top: 20px;
-      border-radius: 4px;
-    }
-    .low-risk {
-      background-color: green;
-      color: white;
-    }
-    .medium-risk {
-      background-color: yellow;
-      color: black;
-    }
-    .high-risk {
-      background-color: red;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-  <!-- ============================================ -->
-  <!--              Self-Assessment Page          -->
-  <!-- ============================================ -->
-  <div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
-      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" alt="Stroke Hero Logo">
-      
-      <form id="assessmentForm" onsubmit="event.preventDefault(); calculateScore();">
-        <!-- Basic Info -->
-        <div class="formbold-input-group">
-          <label for="name" class="formbold-form-label">Name</label>
-          <input type="text" name="name" id="name" placeholder="Enter your name" class="formbold-form-input" />
-        </div>
-
-        <div class="formbold-input-group">
-          <label for="email" class="formbold-form-label">Email</label>
-          <input type="email" name="email" id="email" placeholder="Enter your email" class="formbold-form-input" />
-        </div>
-
-        <div class="formbold-input-group">
-          <label for="age" class="formbold-form-label">Age</label>
-          <input type="number" name="age" id="age" placeholder="Enter your age" class="formbold-form-input" />
-        </div>
-
-        <!-- 1. Blood Pressure -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            1. Is your blood pressure greater than 120/80 mmHg?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q1_yes">
-                <input class="formbold-input-radio" type="radio" name="q1" id="q1_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q1_no">
-                <input class="formbold-input-radio" type="radio" name="q1" id="q1_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/blood_pressure_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 2. Atrial Fibrillation -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            2. Have you been diagnosed with atrial fibrillation?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q2_yes">
-                <input class="formbold-input-radio" type="radio" name="q2" id="q2_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q2_no">
-                <input class="formbold-input-radio" type="radio" name="q2" id="q2_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/atrial_fibrillation_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 3. Body Mass Index -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            3. Is your body mass index greater than 25 kg/m²?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q3_yes">
-                <input class="formbold-input-radio" type="radio" name="q3" id="q3_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q3_no">
-                <input class="formbold-input-radio" type="radio" name="q3" id="q3_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/bmi_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 4. Unhealthy Diet -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            4. Is your diet high in unhealthy fats or excess calories?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q4_yes">
-                <input class="formbold-input-radio" type="radio" name="q4" id="q4_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q4_no">
-                <input class="formbold-input-radio" type="radio" name="q4" id="q4_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/unhealthy_diet_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 5. Total Blood Cholesterol -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            5. Is your total blood cholesterol greater than 160 mg/dL?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q5_yes">
-                <input class="formbold-input-radio" type="radio" name="q5" id="q5_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q5_no">
-                <input class="formbold-input-radio" type="radio" name="q5" id="q5_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/cholesterol_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 6. Diabetes Mellitus -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            6. Have you been diagnosed with diabetes mellitus?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q6_yes">
-                <input class="formbold-input-radio" type="radio" name="q6" id="q6_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q6_no">
-                <input class="formbold-input-radio" type="radio" name="q6" id="q6_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/diabetes_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 7. Physical Activity -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            7. Do you get less than 150 minutes of exercise per week?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q7_yes">
-                <input class="formbold-input-radio" type="radio" name="q7" id="q7_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q7_no">
-                <input class="formbold-input-radio" type="radio" name="q7" id="q7_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/exercise_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 8. Family History -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            8. Do you have a family history of stroke or heart attack?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q8_yes">
-                <input class="formbold-input-radio" type="radio" name="q8" id="q8_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q8_no">
-                <input class="formbold-input-radio" type="radio" name="q8" id="q8_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/family_history_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- 9. Tobacco or Vape -->
-        <div class="formbold-input-radio-wrapper">
-          <label class="formbold-form-label">
-            9. Do you use tobacco or vape?
-          </label>
-          <div class="formbold-radio-flex">
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q9_yes">
-                <input class="formbold-input-radio" type="radio" name="q9" id="q9_yes" value="1" />
-                Yes or Unknown
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-            <div class="formbold-radio-group">
-              <label class="formbold-radio-label" for="q9_no">
-                <input class="formbold-input-radio" type="radio" name="q9" id="q9_no" value="0" />
-                No
-                <span class="formbold-radio-checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <a href="pdf/tobacco_info.pdf" target="_blank">Learn More (PDF)</a>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="button" class="formbold-btn" onclick="calculateScore()">Submit</button>
-      </form>
-      <!-- Result Box -->
-      <div id="resultBox" class="result-box"></div>
+      {% endif %}
     </div>
-  </div>
+  </header>
 
+  <!-- spacer to offset fixed header height -->
+  <div class="h-16"></div>
+
+  <!-- ============================================ -->
+  <!--             Risk Estimator Form             -->
+  <!-- ============================================ -->
+  <main class="px-6 py-6">
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-6">Cardiovascular Risk Assessment</h2>
+      <form class="space-y-6">
+
+        <!-- Row 1: Age, Sex, Race -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Current Age *</label>
+            <input type="number" min="20" max="79" placeholder="20-79" class="w-full border border-gray-300 p-2 rounded" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Sex *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/2 p-2 border rounded">Male</button>
+              <button type="button" class="w-1/2 p-2 border rounded">Female</button>
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Race *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/3 p-2 border rounded">White</button>
+              <button type="button" class="w-1/3 p-2 border rounded bg-blue-600 text-white">African American</button>
+              <button type="button" class="w-1/3 p-2 border rounded">Other</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Blood Pressure & Cholesterol -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Systolic Blood Pressure (mm Hg) *</label>
+            <input type="number" min="90" max="200" class="w-full border border-gray-300 p-2 rounded" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Diastolic Blood Pressure (mm Hg) *</label>
+            <input type="number" min="60" max="130" class="w-full border border-gray-300 p-2 rounded" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Total Cholesterol (mmol/L) *</label>
+            <input type="number" step="0.01" min="3.367" max="8.288" class="w-full border border-gray-300 p-2 rounded" required />
+          </div>
+        </div>
+
+        <!-- Row 3: HDL, LDL, Diabetes -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-medium mb-1">HDL Cholesterol (mmol/L) *</label>
+            <input type="number" step="0.01" min="0.518" max="2.59" class="w-full border border-gray-300 p-2 rounded" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">LDL Cholesterol (mmol/L)</label>
+            <input type="number" step="0.01" min="0.777" max="7.770" class="w-full border border-gray-300 p-2 rounded" />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">History of Diabetes? *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
+              <button type="button" class="w-1/2 p-2 border rounded">No</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Smoker & Treatments -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Smoker? *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="flex-1 p-2 border rounded bg-blue-600 text-white">Current</button>
+              <button type="button" class="flex-1 p-2 border rounded">Former</button>
+              <button type="button" class="flex-1 p-2 border rounded">Never</button>
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">On Hypertension Treatment? *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
+              <button type="button" class="w-1/2 p-2 border rounded">No</button>
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">On a Statin? *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
+              <button type="button" class="w-1/2 p-2 border rounded">No</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Aspirin -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-medium mb-1">On Aspirin Therapy? *</label>
+            <div class="flex space-x-2">
+              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
+              <button type="button" class="w-1/2 p-2 border rounded">No</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="mt-6">
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded shadow">Submit</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- Form-toggle script -->
   <script>
-    function calculateScore() {
-      let score = 0;
-      // Array of question names to evaluate
-      const questions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'];
-      questions.forEach(function(question) {
-        const selected = document.querySelector(`input[name="${question}"]:checked`);
-        if (selected) {
-          score += parseInt(selected.value);
-        }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('button[type="button"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sibs = btn.parentElement.querySelectorAll('button');
+          sibs.forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+          btn.classList.add('bg-blue-600', 'text-white');
+        });
       });
-
-      let resultMessage = '';
-      let resultClass = '';
-
-      // Define risk categories: 0-3 Low, 4-6 Medium, 7-9 High
-      if (score <= 3) {
-        resultMessage = 'Low Risk';
-        resultClass = 'low-risk';
-      } else if (score <= 6) {
-        resultMessage = 'Medium Risk';
-        resultClass = 'medium-risk';
-      } else {
-        resultMessage = 'High Risk';
-        resultClass = 'high-risk';
-      }
-
-      const resultBox = document.getElementById('resultBox');
-      resultBox.style.display = 'block';
-      resultBox.className = `result-box ${resultClass}`;
-      resultBox.innerHTML = `${resultMessage}<br>Total Score: ${score}`;
-    }
+    });
   </script>
+
 </body>
 </html>
