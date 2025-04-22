@@ -19,6 +19,10 @@
       overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
       transform: translateX(-65px) !important;
     }
+      /* override the -100 so your dropdown sits on top */
+    #cs-navigation .cs-dropdown .cs-drop-ul {
+      z-index: 10001 !important;
+    }
   </style>  
 </head>
 
@@ -49,7 +53,37 @@
             {% if user %}
             <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
             {% endif %}
-            <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
+            <li class="cs-li cs-dropdown">
+              <!-- top‐level link stays as your Self Assessment page -->
+              <a href="{{ url_for('self_assesment_routing') }}"
+                 class="cs-li-link cs-drop-link">
+                Self Assessment
+                <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                </svg>
+              </a>
+            
+              <ul class="cs-drop-ul">
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ASCVD Risk Estimator
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ABCD² Score for TIA
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    Self Assessment Info
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
       </nav>
@@ -276,6 +310,7 @@
     document.getElementById('info-pearls').classList.remove('hidden');
     updateTabs();
   </script>
+
 
 </body>
 </html>
