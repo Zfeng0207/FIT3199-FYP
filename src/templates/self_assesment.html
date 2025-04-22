@@ -12,12 +12,13 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
 
   <style>
-    /* 1) let the container size itself around the hero-text img */
-    .cs-logo {
-      width: auto !important;
-      height: auto !important;
+    /* 1) container only shrinks in width, but stays the same height as the nav */
+    #cs-navigation .cs-logo {
+      width: auto     !important;
+      height: 4.0625rem !important; /* back to the default desktop height */
+      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
     }
-  </style>
+  </style>  
 </head>
 
 <body class="bg-gray-50 p-0">
