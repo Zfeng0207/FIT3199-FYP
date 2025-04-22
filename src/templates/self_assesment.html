@@ -8,8 +8,8 @@
   <!-- 1) Tailwind CSS (load first to scope Reset here) -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-  <!-- 3) Navigation Bar styles (load last so they override resets) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
 </head>
 
 <body class="bg-gray-50 p-0">
@@ -21,13 +21,7 @@
     <div class="cs-container">
       <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
         <!-- larger logo via utility classes -->
-        <img
-      src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}"
-      alt="Stroke Hero Logo"
-      width="350"
-      height="65"
-      style="object-fit:contain;"
-    />
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
       </a>
       <nav class="cs-nav" role="navigation">
         <button class="cs-toggle" aria-label="mobile menu toggle">
