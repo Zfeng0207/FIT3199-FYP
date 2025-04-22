@@ -1,116 +1,196 @@
-<!-- templates/welcome.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Welcome</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: sans-serif;
-    }
-
-    .login-btn {
-      padding: 1.5rem 3rem;
-      font-size: 1.8rem;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .login-btn:hover {
-      background-color: #4338ca;
-    }
-  </style>
-</head>
-<body>
-  <form action="/login">
-    <button type="submit" class="login-btn">Log In</button>
-  </form>
-</body>
-</html> -->
-<!-- ============================================ -->
-<!--                 Navigation                   -->
-<!-- ============================================ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
-</head>
-<header id="cs-navigation">
-  <div class="cs-container">
-    <a href="" class="cs-logo" aria-label="back to home">
-      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
-    </a>
-    <nav class="cs-nav" role="navigation">
-      <button class="cs-toggle" aria-label="mobile menu toggle">
-        <div class="cs-box">
-          <span class="cs-line cs-line1"></span>
-          <span class="cs-line cs-line2"></span>
-          <span class="cs-line cs-line3"></span>
-        </div>
-      </button>
-      <div class="cs-ul-wrapper">
-        <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
-          <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
-          <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
-          <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
-          {% if user %}
-          <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
-          {% endif %}
-          <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-        </ul>
-      </div>
-    </nav>
+  <title>Cardiovascular Risk Assessment</title>
 
-    <!-- Show Login or Logout Button based on User Authentication -->
+  <!-- 1) Tailwind CSS (load first to scope Reset here) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_style.css') }}" />
+
+  <style>
+    /* 1) container only shrinks in width, but stays the same height as the nav */
+    #cs-navigation .cs-logo {
+      width: auto     !important;
+      height: 4.0625rem !important; /* back to the default desktop height */
+      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
+      transform: translateX(-65px) !important;
+    }
+    
+    /* 1) Allow the dropdown to overflow the nav without resizing it */
+    #cs-navigation,
+    #cs-navigation .cs-container,
+    #cs-navigation .cs-ul-wrapper {
+      overflow: visible !important;
+    }
+
+    /* 2) Desktop: make the submenu absolute, vertical, and add gap */
+    @media only screen and (min-width: 64rem) {
+      #cs-navigation .cs-dropdown {
+        position: relative; /* ensure absolute child is positioned off the li */
+      }
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important; /* take it out of the document flow */
+        top: 100% !important;          /* sit directly below the menu item */
+        left: 0 !important;
+        display: flex !important;       /* flex‑column gives us true gaps */
+        flex-direction: column !important;
+        gap: 1rem !important;           /* increase vertical space between links */
+        padding: 0.2rem 0 !important;   /* optional breathing room above/below */
+        margin: 0 !important;           /* reset any built‑in margins */
+      }
+    }
+
+    /* 3) Mobile: same absolute behavior so it won’t push content down */
+    @media only screen and (max-width: 63.9375rem) {
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin: 0 !important;
+        padding: 0.5rem 0 !important;
+      }
+    }
+  </style>  
+</head>
+
+<body class="bg-gray-50 p-0">
+  <!-- ============================================ -->
+  <!--                 Navigation                   -->
+  <!-- ============================================ -->
+  <header id="cs-navigation" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <div class="cs-container">
+      <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
+        <!-- larger logo via utility classes -->
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
+      </a>
+      <nav class="cs-nav" role="navigation">
+        <button class="cs-toggle" aria-label="mobile menu toggle">
+          <div class="cs-box">
+            <span class="cs-line cs-line1"></span>
+            <span class="cs-line cs-line2"></span>
+            <span class="cs-line cs-line3"></span>
+          </div>
+        </button>
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+            <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
+            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            {% endif %}
+            <li class="cs-li cs-dropdown">
+              <!-- top‐level link stays as your Self Assessment page -->
+              <a href="{{ url_for('self_assesment_routing') }}"
+                 class="cs-li-link cs-drop-link">
+                Self Assessment
+                <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                </svg>
+              </a>
+            
+              <ul class="cs-drop-ul">
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ASCVD Risk Estimator
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ABCD² Score for TIA
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    Self Assessment Info
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
       {% if user %}
-      <!-- If the user is logged in, show the Logout button -->
       <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-      <!-- If the user is not logged in, show the Login button -->
       <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
-    {% endif %}
-  </div>
-</header>
+      {% endif %}
+    </div>
+  </header>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hero Section</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_style.css') }}" />
-  </head>
-  <body>
-    <!-- ============================================ -->
-    <!--                    Hero                      -->
-    <!-- ============================================ -->
-    <section id="hero-82">
-      <div class="cs-container">
-        <h1 class="cs-title">Welcome to Stroke Hero</h1>
-        <p class="cs-text">
-          Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.
-        </p>
-        <form action="/login">
-          <button type="submit" class="cs-login-btn">Proceed</button>
-        </form>
-      </div>
-    
-      <!-- Background Video -->
-      <video autoplay muted loop playsinline class="cs-background-video">
-        <source src="{{ url_for('static', filename='videos/neural_network_background.mp4') }}" type="video/mp4" />        
-      </video>
-    </section>    
-  </body>
-</html>
+  <!-- ============================================ -->
+  <!--                    Hero                      -->
+  <!-- ============================================ -->
+  <section id="hero-82">
+    <div class="cs-container">
+      <h1 class="cs-title">Welcome to Stroke Hero</h1>
+      <p class="cs-text">
+        Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.
+      </p>
+      <form action="/login">
+        <button type="submit" class="cs-login-btn">Proceed</button>
+      </form>
+    </div>
+  
+    <!-- Background Video -->
+    <video autoplay muted loop playsinline class="cs-background-video">
+      <source src="{{ url_for('static', filename='videos/neural_network_background.mp4') }}" type="video/mp4" />        
+    </video>
+  </section>
+  
+  <script>
+    let currentTab = 'pearls';
+    let expanded = true;
+
+    const tabs = ['when', 'pearls', 'why'];
+
+    function updateTabs() {
+      tabs.forEach(id => {
+        const tabBtn = document.getElementById(`tab-${id}`);
+        const arrow = document.getElementById(`arrow-${id}`);
+        const isActive = id === currentTab;
+
+        tabBtn.classList.remove('text-green-700', 'border-green-500');
+        arrow.textContent = '▼';
+
+        if (isActive) {
+          if (expanded) {
+            arrow.textContent = '▲';
+            tabBtn.classList.add('text-green-700', 'border-green-500');
+          }
+        }
+      });
+    }
+
+    function selectTab(tab) {
+      const newInfo = document.getElementById(`info-${tab}`);
+      const oldInfo = document.getElementById(`info-${currentTab}`);
+
+      if (tab === currentTab) {
+        expanded = !expanded;
+        newInfo.classList.toggle('hidden');
+      } else {
+        oldInfo.classList.add('hidden');
+        newInfo.classList.remove('hidden');
+        currentTab = tab;
+        expanded = true;
+      }
+
+      updateTabs();
+    }
+
+    // Init
+    document.getElementById('info-pearls').classList.remove('hidden');
+    updateTabs();
+  </script>
+</body>
