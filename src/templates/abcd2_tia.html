@@ -105,7 +105,7 @@
                   </a>
                 </li>
                 <li class="cs-drop-li">
-                  <a href="{{ url_for('abcd2_tia_routing') }}"
+                  <a href="{{ url_for('self_assesment_routing') }}"
                      class="cs-li-link">
                     ABCD² Score for TIA
                   </a>
@@ -178,126 +178,7 @@
   <!-- ============================================ -->
   <!--             Risk Estimator Form             -->
   <!-- ============================================ -->
-  <main class="px-6 py-6">
-    <div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-bold mb-6">Cardiovascular Risk Assessment</h2>
-      <form class="space-y-6">
-
-        <!-- Row 1: Age, Sex, Race -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Current Age *</label>
-            <input type="number" min="20" max="79" placeholder="20-79" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Sex *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Male</button>
-              <button type="button" class="w-1/2 p-2 border rounded">Female</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Race *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/3 p-2 border rounded">White</button>
-              <button type="button" class="w-1/3 p-2 border rounded bg-blue-600 text-white">African American</button>
-              <button type="button" class="w-1/3 p-2 border rounded">Other</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 2: Blood Pressure & Cholesterol -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Systolic Blood Pressure (mm Hg) *</label>
-            <input type="number" min="90" max="200" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Diastolic Blood Pressure (mm Hg) *</label>
-            <input type="number" min="60" max="130" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Total Cholesterol (mmol/L) *</label>
-            <input type="number" step="0.01" min="3.367" max="8.288" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-        </div>
-
-        <!-- Row 3: HDL, LDL, Diabetes -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">HDL Cholesterol (mmol/L) *</label>
-            <input type="number" step="0.01" min="0.518" max="2.59" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">LDL Cholesterol (mmol/L)</label>
-            <input type="number" step="0.01" min="0.777" max="7.770" class="w-full border border-gray-300 p-2 rounded" />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">History of Diabetes? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 4: Smoker & Treatments -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Smoker? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="flex-1 p-2 border rounded bg-blue-600 text-white">Current</button>
-              <button type="button" class="flex-1 p-2 border rounded">Former</button>
-              <button type="button" class="flex-1 p-2 border rounded">Never</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">On Hypertension Treatment? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">On a Statin? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 5: Aspirin -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">On Aspirin Therapy? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit -->
-        <div class="mt-6">
-          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded shadow">Submit</button>
-        </div>
-      </form>
-    </div>
-  </main>
-
-  <!-- Form-toggle script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('button[type="button"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const sibs = btn.parentElement.querySelectorAll('button');
-          sibs.forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
-          btn.classList.add('bg-blue-600', 'text-white');
-        });
-      });
-    });
-  </script>
+  
 
   <script>
     let currentTab = 'pearls';

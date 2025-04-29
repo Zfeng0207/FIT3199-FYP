@@ -112,6 +112,11 @@ def self_assesment_routing():
     user = session.get('user')
     return render_template('self_assesment.html', user=user, pretty=json.dumps(user, indent=4))
 
+@app.route('/abcd2_tia')
+def abcd2_tia_routing():
+    user = session.get('user')
+    return render_template('abcd2_tia.html', user=user, pretty=json.dumps(user, indent=4))
+
 @app.route('/about_us')
 def about_us_routing():
     user = session.get('user')
