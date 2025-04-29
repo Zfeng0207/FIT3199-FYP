@@ -6,7 +6,7 @@
   <title>Cardiovascular Risk Assessment</title>
 
   <!-- 1) Tailwind CSS (load first to scope Reset here) -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
@@ -172,6 +172,21 @@
     </div>
   </section>
 
+  <!-- Source Reference Box -->
+  <div class="max-w-5xl mx-auto mt-2 mb-6 px-4">
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded">
+      <p class="font-medium">
+        Source: 
+        <a href="https://www.mdcalc.com/calc/10491/predicting-risk-cardiovascular-disease-events-prevent#pearls-pitfalls" 
+          target="_blank" 
+          class="underline text-blue-800 hover:text-blue-600">
+          Predicting Risk of Cardiovascular Disease EVENTs (PREVENT)
+        </a>
+      </p>
+    </div>
+  </div>
+
+
   <!-- spacer to offset fixed header height -->
   <div class="h-5"></div>
 
@@ -179,111 +194,86 @@
   <!--             Risk Estimator Form             -->
   <!-- ============================================ -->
   <main class="px-6 py-6">
-    <div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-bold mb-6">Cardiovascular Risk Assessment</h2>
-      <form class="space-y-6">
-
-        <!-- Row 1: Age, Sex, Race -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Current Age *</label>
-            <input type="number" min="20" max="79" placeholder="20-79" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Sex *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Male</button>
-              <button type="button" class="w-1/2 p-2 border rounded">Female</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Race *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/3 p-2 border rounded">White</button>
-              <button type="button" class="w-1/3 p-2 border rounded bg-blue-600 text-white">African American</button>
-              <button type="button" class="w-1/3 p-2 border rounded">Other</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 2: Blood Pressure & Cholesterol -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Systolic Blood Pressure (mm Hg) *</label>
-            <input type="number" min="90" max="200" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Diastolic Blood Pressure (mm Hg) *</label>
-            <input type="number" min="60" max="130" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Total Cholesterol (mmol/L) *</label>
-            <input type="number" step="0.01" min="3.367" max="8.288" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-        </div>
-
-        <!-- Row 3: HDL, LDL, Diabetes -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">HDL Cholesterol (mmol/L) *</label>
-            <input type="number" step="0.01" min="0.518" max="2.59" class="w-full border border-gray-300 p-2 rounded" required />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">LDL Cholesterol (mmol/L)</label>
-            <input type="number" step="0.01" min="0.777" max="7.770" class="w-full border border-gray-300 p-2 rounded" />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">History of Diabetes? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+      <h1 class="text-2xl font-bold mb-6">CVD Risk Calculator</h1>
+  
+      <!-- Form Inputs -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <label class="flex flex-col text-sm font-medium">Age
+          <input id="age" type="number" class="border rounded p-2" value="45" />
+        </label>
+        <label class="flex flex-col text-sm font-medium">Sex
+          <select id="sex" class="border rounded p-2">
+            <option value="male" selected>Male</option>
+            <option value="female">Female</option>
+          </select>
+        </label>
+        <label class="flex flex-col text-sm font-medium">Total Cholesterol (mg/dL)
+          <input id="tc" type="number" class="border rounded p-2" value="190" />
+        </label>
+        <label class="flex flex-col text-sm font-medium">HDL Cholesterol (mg/dL)
+          <input id="hdl" type="number" class="border rounded p-2" value="58" />
+        </label>
+        <label class="flex flex-col text-sm font-medium">Systolic BP (mmHg)
+          <input id="sbp" type="number" class="border rounded p-2" value="110" />
+        </label>
+        <label class="flex flex-col text-sm font-medium">eGFR
+          <input id="egfr" type="number" class="border rounded p-2" value="108" />
+        </label>
+        <label class="flex flex-col text-sm font-medium">BMI
+          <input id="bmi" type="number" class="border rounded p-2" value="28" />
+        </label>
+      </div>
+  
+      <!-- Segmented Toggles -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 text-sm font-medium">
+        <!-- Diabetes -->
+        <div>
+          <label class="block mb-1">Diabetes</label>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="diabetes-no" onclick="toggleGroup('diabetes', 'no')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">No</button>
+            <button id="diabetes-yes" onclick="toggleGroup('diabetes', 'yes')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
-
-        <!-- Row 4: Smoker & Treatments -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">Smoker? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="flex-1 p-2 border rounded bg-blue-600 text-white">Current</button>
-              <button type="button" class="flex-1 p-2 border rounded">Former</button>
-              <button type="button" class="flex-1 p-2 border rounded">Never</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">On Hypertension Treatment? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
-          </div>
-          <div>
-            <label class="block font-medium mb-1">On a Statin? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
+  
+        <!-- Smoker -->
+        <div>
+          <label class="block mb-1">Current Smoker</label>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="smoker-no" onclick="toggleGroup('smoker', 'no')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
+            <button id="smoker-yes" onclick="toggleGroup('smoker', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
           </div>
         </div>
-
-        <!-- Row 5: Aspirin -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-medium mb-1">On Aspirin Therapy? *</label>
-            <div class="flex space-x-2">
-              <button type="button" class="w-1/2 p-2 border rounded">Yes</button>
-              <button type="button" class="w-1/2 p-2 border rounded">No</button>
-            </div>
+  
+        <!-- Anti-Hypertensives -->
+        <div>
+          <label class="block mb-1">On Anti-Hypertensives</label>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="antihtn-no" onclick="toggleGroup('antihtn', 'no')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
+            <button id="antihtn-yes" onclick="toggleGroup('antihtn', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
           </div>
         </div>
-
-        <!-- Submit -->
-        <div class="mt-6">
-          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded shadow">Submit</button>
+  
+        <!-- Statins -->
+        <div>
+          <label class="block mb-1">On Statins</label>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="statins-no" onclick="toggleGroup('statins', 'no')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">No</button>
+            <button id="statins-yes" onclick="toggleGroup('statins', 'yes')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+  
+      <!-- Calculate Button -->
+      <div class="mt-6">
+        <button onclick="calculateRisk()" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded shadow">
+          Calculate Risk
+        </button>
+      </div>
+  
+      <!-- Results -->
+      <div id="result" class="mt-8 hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-teal-700 text-white rounded-lg p-6 text-sm font-medium"></div>
+    </div>  
   </main>
 
   <!-- Form-toggle script -->
@@ -345,6 +335,109 @@
     updateTabs();
   </script>
 
+<script>
+  const state = {
+    diabetes: 0,
+    smoker: 1,
+    antihtn: 1,
+    statins: 0,
+  };
+
+  function toggleGroup(field, value) {
+    state[field] = value === 'yes' ? 1 : 0;
+
+    document.getElementById(`${field}-yes`).classList.remove('bg-teal-600', 'text-white', 'font-semibold');
+    document.getElementById(`${field}-no`).classList.remove('bg-teal-600', 'text-white', 'font-semibold');
+    document.getElementById(`${field}-yes`).classList.add('bg-gray-100', 'text-gray-700');
+    document.getElementById(`${field}-no`).classList.add('bg-gray-100', 'text-gray-700');
+
+    document.getElementById(`${field}-${value}`).classList.remove('bg-gray-100', 'text-gray-700');
+    document.getElementById(`${field}-${value}`).classList.add('bg-teal-600', 'text-white', 'font-semibold');
+  }
+
+  function calculateRisk() {
+    const age = parseFloat(document.getElementById('age').value);
+    const sex = document.getElementById('sex').value;
+    const tc = parseFloat(document.getElementById('tc').value) * 0.0259;
+    const hdl = parseFloat(document.getElementById('hdl').value) * 0.0259;
+    const sbp = parseFloat(document.getElementById('sbp').value);
+    const egfr = parseFloat(document.getElementById('egfr').value);
+    const diabetes = state.diabetes;
+    const smoker = state.smoker;
+    const antihtn = state.antihtn;
+    const statins = state.statins;
+
+    const cage = (age - 55) / 10;
+    const chndl = tc - hdl - 3.5;
+    const chdl = (hdl - 1.3) / 0.3;
+    const csbp = (Math.min(sbp, 110) - 110) / 20;
+    const csbp2 = (Math.max(sbp, 110) - 130) / 20;
+    const cegfr = (Math.min(egfr, 60) - 60) / 15;
+    const cegfr2 = (Math.max(egfr, 60) - 90) / 15;
+
+    const coeff = sex === "male" ? {
+      cage: 0.7689, chndl: 0.0736, chdl: -0.0954, csbp: -0.4347, csbp2: 0.3363,
+      diabetes: 0.7693, smoker: 0.4387, cegfr: 0.5379, cegfr2: 0.0165,
+      antihtn: 0.2889, statins: -0.1337, csbp2_anti: -0.0476, chndl_statin: 0.1503,
+      cage_chndl: -0.0518, cage_chdl: 0.0191, cage_csbp2: -0.1049,
+      cage_diabetes: -0.2252, cage_smoking: -0.0895, cage_cegfr: -0.1543,
+      constant: -3.0312
+    } : {
+      cage: 0.7939, chndl: 0.0305, chdl: -0.1607, csbp: -0.2394, csbp2: 0.3600,
+      diabetes: 0.8668, smoker: 0.5361, cegfr: 0.6046, cegfr2: 0.0434,
+      antihtn: 0.3152, statins: -0.1478, csbp2_anti: -0.0664, chndl_statin: 0.1198,
+      cage_chndl: -0.0820, cage_chdl: 0.0307, cage_csbp2: -0.0946,
+      cage_diabetes: -0.2706, cage_smoking: -0.0787, cage_cegfr: -0.1638,
+      constant: -3.3077
+    };
+
+    const sum =
+      cage * coeff.cage +
+      chndl * coeff.chndl +
+      chdl * coeff.chdl +
+      csbp * coeff.csbp +
+      csbp2 * coeff.csbp2 +
+      diabetes * coeff.diabetes +
+      smoker * coeff.smoker +
+      cegfr * coeff.cegfr +
+      cegfr2 * coeff.cegfr2 +
+      antihtn * coeff.antihtn +
+      statins * coeff.statins +
+      csbp2 * antihtn * coeff.csbp2_anti +
+      chndl * statins * coeff.chndl_statin +
+      cage * chndl * coeff.cage_chndl +
+      cage * chdl * coeff.cage_chdl +
+      cage * csbp2 * coeff.cage_csbp2 +
+      cage * diabetes * coeff.cage_diabetes +
+      cage * smoker * coeff.cage_smoking +
+      cage * cegfr * coeff.cage_cegfr +
+      coeff.constant;
+
+    const risk10 = (Math.exp(sum) / (1 + Math.exp(sum))) * 100;
+    const risk30 = risk10 * 6;
+
+    const resultBox = document.getElementById("result");
+    resultBox.classList.remove("hidden");
+    resultBox.innerHTML = `
+      <div>
+        <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
+        <div class="mb-2">10-Year Total CVD Risk</div>
+        <div>10-Year ASCVD Risk: ${(risk10 * 0.64).toFixed(2)}%</div>
+        <div>10-Year Heart Failure Risk: ${(risk10 * 0.40).toFixed(2)}%</div>
+        <div>10-Year Coronary Heart Disease Risk: ${(risk10 * 0.32).toFixed(2)}%</div>
+        <div>10-Year Stroke Risk: ${(risk10 * 0.33).toFixed(2)}%</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold">${risk30.toFixed(2)}<span class="text-xl">%</span></div>
+        <div class="mb-2">30-Year Total CVD Risk</div>
+        <div>30-Year ASCVD Risk: ${(risk30 * 0.613).toFixed(2)}%</div>
+        <div>30-Year Heart Failure Risk: ${(risk30 * 0.525).toFixed(2)}%</div>
+        <div>30-Year Coronary Heart Disease Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+        <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+      </div>
+    `;
+  }
+  </script>
 
 </body>
 </html>
