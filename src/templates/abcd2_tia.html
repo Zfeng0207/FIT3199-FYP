@@ -178,6 +178,66 @@
   <!-- ============================================ -->
   <!--             Risk Estimator Form             -->
   <!-- ============================================ -->
+  <section class="max-w-3xl mx-auto mb-10 space-y-6">
+    <div class="bg-white shadow-md rounded-xl overflow-hidden border">
+      <div class="divide-y divide-gray-200">
+  
+        <!-- Age -->
+        <div class="p-4">
+          <div class="font-semibold mb-2">Age ≥60 years</div>
+          <div class="flex rounded overflow-hidden border">
+            <button onclick="setScore('age', 0)" id="age0" class="flex-1 px-4 py-2 border-r last:border-r-0 bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
+            <button onclick="setScore('age', 1)" id="age1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
+          </div>
+        </div>
+  
+        <!-- BP -->
+        <div class="p-4">
+          <div class="font-semibold mb-2">BP ≥140/90 mmHg</div>
+          <div class="flex rounded overflow-hidden border">
+            <button onclick="setScore('bp', 0)" id="bp0" class="flex-1 px-4 py-2 border-r bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
+            <button onclick="setScore('bp', 1)" id="bp1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
+          </div>
+        </div>
+  
+        <!-- Clinical features -->
+        <div class="p-4">
+          <div class="font-semibold mb-2">Clinical features of the TIA</div>
+          <div class="rounded border divide-y">
+            <button onclick="setScore('features', 2)" id="features2" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Unilateral weakness <span class="float-right text-green-600">+2</span></button>
+            <button onclick="setScore('features', 1)" id="features1" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Speech disturbance without weakness <span class="float-right text-green-600">+1</span></button>
+            <button onclick="setScore('features', 0)" id="features0" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Other symptoms <span class="float-right text-gray-400">0</span></button>
+          </div>
+        </div>
+  
+        <!-- Duration -->
+        <div class="p-4">
+          <div class="font-semibold mb-2">Duration of symptoms</div>
+          <div class="rounded border divide-y">
+            <button onclick="setScore('duration', 0)" id="duration0" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">&lt;10 minutes <span class="float-right text-gray-400">0</span></button>
+            <button onclick="setScore('duration', 1)" id="duration1" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">10–59 minutes <span class="float-right text-green-600">+1</span></button>
+            <button onclick="setScore('duration', 2)" id="duration2" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">≥ 60 minutes <span class="float-right text-green-600">+2</span></button>
+          </div>
+        </div>
+  
+        <!-- Diabetes -->
+        <div class="p-4">
+          <div class="font-semibold mb-2">History of diabetes</div>
+          <div class="flex rounded overflow-hidden border">
+            <button onclick="setScore('diabetes', 0)" id="diabetes0" class="flex-1 px-4 py-2 border-r bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
+            <button onclick="setScore('diabetes', 1)" id="diabetes1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Score Display -->
+    <div class="text-center">
+      <button onclick="calculateScore()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded">Calculate</button>
+    </div>
+  
+    <div id="result" class="hidden bg-green-700 text-white text-lg font-semibold p-4 rounded shadow-md whitespace-pre-line"></div>
+  </section>
   
 
   <script>
@@ -227,5 +287,34 @@
   </script>
 
 
+<script>
+    const state = { age: 0, bp: 0, features: 0, duration: 0, diabetes: 0 };
+  
+    function setScore(category, value) {
+      state[category] = value;
+      const max = category === 'features' || category === 'duration' ? 2 : 1;
+      for (let i = 0; i <= max; i++) {
+        document.getElementById(`${category}${i}`).classList.remove('bg-green-600', 'text-white', 'font-bold');
+      }
+      const selected = document.getElementById(`${category}${value}`);
+      selected.classList.add('bg-green-600', 'text-white', 'font-bold');
+    }
+  
+    function calculateScore() {
+      const score = Object.values(state).reduce((a, b) => a + b, 0);
+      let riskText = '';
+      if (score <= 3) {
+        riskText = `0–3 points: Low Risk\n2-Day Stroke Risk: 1.0%\n7-Day: 1.2%\n90-Day: 3.1%`;
+      } else if (score <= 5) {
+        riskText = `4–5 points: Moderate Risk\n2-Day Stroke Risk: 4.1%\n7-Day: 5.9%\n90-Day: 9.8%`;
+      } else {
+        riskText = `6–7 points: High Risk\n2-Day Stroke Risk: 8.1%\n7-Day: 11.7%\n90-Day: 17.8%`;
+      }
+  
+      const result = document.getElementById('result');
+      result.textContent = `${score} points\n\n${riskText}`;
+      result.classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
