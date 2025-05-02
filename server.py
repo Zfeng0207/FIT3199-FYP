@@ -21,6 +21,12 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
 
+from flask import Flask, request, send_file
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+from flask import Response
 
 # app = Flask(__name__)
 # app = Flask(__name__, template_folder='src/templates')
@@ -39,6 +45,8 @@ os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["OPENROUTER_API_KEY"] = OPENROUTER_API_KEY
 os.environ["FLASKAPP_API_KEY"] = FLASKAPP_API_KEY
+OPENAI_AGENT_API_KEY = os.environ.get('OPENAI_AGENT_API_KEY')
+os.environ["OPENAI_AGENT_API_KEY"] = OPENAI_AGENT_API_KEY
 
 openai.api_base = "https://openrouter.ai//v1"
 app.secret_key = FLASKAPP_API_KEY
@@ -54,14 +62,7 @@ docsearch = PineconeVectorStore.from_existing_index(
 
 retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
-llm = ChatOpenAI(
-    temperature=0.4,
-    max_tokens=500,
-    model="qwen/qwen2.5-vl-3b-instruct:free",
-    openai_api_key=OPENROUTER_API_KEY,
-    openai_api_base="https://openrouter.ai/api/v1",
-    request_timeout=60,
-)
+llm = ChatOpenAI(temperature=0, model="gpt-4.1-mini", openai_api_key=OPENAI_AGENT_API_KEY)
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -87,15 +88,88 @@ def chat_page():
     user = session.get('user')
     return render_template("chat.html", user=user, pretty=json.dumps(user, indent=4))
 
-
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     msg = request.form["msg"]
     input = msg
-    print(input)
+    print("Input:", input)
+
+    # If the user asks for a sales plot (you can change this condition to suit your use case)
+    if "plot sales" in msg.lower():
+        import numpy as np
+        import matplotlib.pyplot as plt
+        memmap_meta_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap_meta.npz"
+        memmap_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap.npy"
+
+        memmap_meta = np.load(memmap_meta_path, allow_pickle=True)
+        memmap_data = np.memmap(memmap_path, dtype=np.float32, mode='r')
+
+        starts = memmap_meta["start"]
+        lengths = memmap_meta["length"]
+        original_shape = tuple(memmap_meta["shape"][0])
+        ecg_data = memmap_data.reshape(original_shape)
+
+        # Function to visualize a 12-lead ECG
+        def visualize_12lead_ecg(ecg_data, patient_index=0):
+            # Get the start and length for this patient
+            start_idx = starts[patient_index]
+            length = lengths[patient_index]
+
+            # Extract the data for this patient - all 12 leads
+            patient_data = ecg_data[start_idx:start_idx+length, :]
+
+            # Standard 12-lead ECG lead names
+            lead_names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+
+            # Create a figure with 12 subplots (3x4 grid)
+            fig, axes = plt.subplots(3, 4, figsize=(15, 10))
+            axes = axes.flatten()
+
+            # Plot each lead
+            for i, ax in enumerate(axes):
+                if i < 12:  # We have 12 leads
+                    ax.plot(patient_data[:, i])
+                    ax.set_title(f'Lead {lead_names[i]}')
+                    ax.grid(True, alpha=0.3)
+
+                    # Add a small vertical scale bar (1 mV)
+                    # This is an approximation - normally would need calibration
+                    y_range = np.max(patient_data[:, i]) - np.min(patient_data[:, i])
+                    scale_bar = y_range * 0.2  # 20% of the range as a scale reference
+                    ax.plot([10, 10], [np.min(patient_data[:, i]), np.min(patient_data[:, i]) + scale_bar],
+                        'k-', linewidth=2)
+
+                    # Remove tick labels to mimic clinical ECG appearance
+                    ax.set_xticks([])
+                    ax.set_yticks([])
+                else:
+                    ax.axis('off')  # Hide unused subplot
+
+            # Add a title for the entire plot
+            plt.suptitle(f'12-Lead ECG - Patient #{patient_index+1}', fontsize=16)
+            plt.tight_layout()
+            plt.subplots_adjust(top=0.92)  # Adjust to make room for suptitle
+
+            return fig
+
+        # Visualize ECGs for first 3 patients
+        for i in range(3):
+            fig = visualize_12lead_ecg(ecg_data, i)
+            plt.figure(fig.number)
+            plt.savefig(f'patient_{i+1}_12lead_ecg.png', dpi=300, bbox_inches='tight')
+            plt.show()
+
+        # Save to BytesIO object
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)
+        plt.close()
+
+        return send_file(img, mimetype='image/png')
+
     response = rag_chain.invoke({"input": msg})
-    print("Response : ", response["answer"])
-    return str(response["answer"])
+    return Response(response["answer"], mimetype='text/plain')
+
 
 
 @app.route('/data-entry')
