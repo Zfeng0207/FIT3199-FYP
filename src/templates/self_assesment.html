@@ -96,7 +96,7 @@
                   <path d="M0 0l5 6 5-6z" fill="currentColor"/>
                 </svg>
               </a>
-            
+              <!-- submenu items are now absolute, vertical, and spaced out -->
               <ul class="cs-drop-ul">
                 <li class="cs-drop-li">
                   <a href="{{ url_for('self_assesment_routing') }}"
@@ -108,12 +108,6 @@
                   <a href="{{ url_for('abcd2_tia_routing') }}"
                      class="cs-li-link">
                     ABCD² Score for TIA
-                  </a>
-                </li>
-                <li class="cs-drop-li">
-                  <a href="{{ url_for('self_assesment_routing') }}"
-                     class="cs-li-link">
-                    Self Assessment Info
                   </a>
                 </li>
               </ul>
@@ -147,26 +141,29 @@
       </div>
 
       <div id="info-when" class="bg-gray-100 p-4 hidden">
-        The ABCD² Score can help physicians risk stratify stroke in patients presenting with a TIA.
+        <ul class="list-disc ml-5 space-y-1"></ul>
+          <li>Use in patients ages 30–79 without known CVD to estimate their 10- and 30-year risk of total CVD, ASCVD, heart failure, CAD, and stroke.</li>
+          <li>Optional variables include urine albumin-creatinine ratio, HbA1c, and social deprivation index (SDI).</li>
+          <li>If you are using only one optional variable, select that model for use.</li>
+          <li>If you have more than one optional variable, select the “Full” model for use.</li>
+          <li>If you do not have any optional variables, select the “Base” model for use.</li>
+        </ul>
       </div>
       <div id="info-pearls" class="bg-gray-100 p-4 hidden">
-        <p>The ABCD² Score was developed to help physicians risk stratify patients presenting with a TIA for how likely they are to suffer a subsequent stroke.</p>
-        <ul class="list-disc ml-5 mt-2 space-y-1">
-          <li>The largest prospective study of using the ABCD² Score in the emergency department found poor performance in sensitivity/specificity.</li>
-          <li>Higher ABCD² Score correlates with higher risk of stroke.</li>
-          <li>Low baseline risk (≤2%) with a low score (0–2) results in low stroke risk (0.4–0.8%) within 7 days.</li>
-        </ul>
-        <p class="font-semibold mt-3">Points to keep in mind:</p>
-        <ul class="list-disc ml-5 mt-1 space-y-1">
-          <li>Developed for outpatient use.</li>
-          <li>Lower accuracy with non-specialists.</li>
-          <li>Less useful in patients with very low stroke risk.</li>
+        <ul class="list-disc ml-5 space-y-1"></ul>
+          <li>Use this score to enhance discussions of patient-level interventions to prevent CVD.</li>
+          <li>Urine albumin-creatinine ratio, HbA1c, and social deprivation index are optional predictors that can be included for further personalized risk assessment.</li>
+          <li>Urine albumin-creatinine ratio is indicated for those patients with chronic kidney disease, diabetes, or hypertension.</li>
+          <li>HbA1c is indicated for those with a history of diabetes, prediabetes, or gestational diabetes and for those who are overweight or obese.</li>
+          <li>Social deprivation index is assigned based on zip code.</li>
         </ul>
       </div>
       <div id="info-why" class="bg-gray-100 p-4 hidden">
         <ul class="list-disc ml-5 space-y-1">
-          <li>There are approximately 250,000 TIAs diagnosed annually in the U.S.</li>
-          <li>The score may guide physicians on outpatient vs. inpatient evaluation depending on risk.</li>
+          <li>This score improves upon past work to better estimate CVD risk in patients given the increased impact of cardiovascular-kidney-metabolic disease.</li>
+          <li>Equations were derived from a sample of over 6 million people.</li>
+          <li>Race has been excluded from this model to enhance equity of score outcomes.</li>
+          <li>Place-based social disadvantage has been added as an optional variable to enhance equity.</li>
         </ul>
       </div>
     </div>
