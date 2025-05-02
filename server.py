@@ -11,6 +11,7 @@ from src.prompt import *
 import os
 import openai
 from werkzeug.utils import secure_filename
+import csv 
 
 #auth0 imports
 import json
@@ -179,7 +180,19 @@ def logout():
 @app.route("/")
 def home():
     user = session.get('user')
-    return render_template("welcome.html", user=user, pretty=json.dumps(user, indent=4))
+    print("User:", user)
+
+    try:
+        with open('data/Country_Stroke_Count_with_ISO3_Standardised.csv', 'r', encoding='utf-8') as f:
+            stroke_csv = f.read()
+    except Exception as e:
+        print("❌ Exception reading CSV:", e)
+        return "Error reading stroke dataset!", 500
+
+    return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=env.get("PORT", 3000))

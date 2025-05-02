@@ -114,7 +114,10 @@ body {
         object-fit: cover;
         z-index: -1; /* Makes it appear behind content */
         opacity: 1;
+        pointer-events: none; /* So it doesn’t interfere with clicks */
       }
+
+
 
     #hero-82 .cs-container {
         width: 100%;
@@ -160,45 +163,6 @@ body {
         font-weight: 500; /* Slightly bolder */
         letter-spacing: 0.3px; /* Optional: slight spacing for elegance */
     }    
-
-    #hero-82 .cs-login-btn {
-        padding: 1.2rem 2.5rem;
-        font-size: 1.5rem;
-        font-weight: 700;
-        /* Initial gradient background */
-        background: linear-gradient(45deg, #14acd2, #0eafd7);
-        color: #fff;
-        border: none;
-        border-radius: 1rem;  /* More elegant, increased radius */
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;  /* Ensure pseudo-element doesn't overflow */
-        transition: transform 0.3s ease;
-        margin-top: 1rem;
-      }
-      
-      #hero-82 .cs-login-btn:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0%;
-        height: 100%;
-        /* Hover gradient background for the pseudo-element */
-        background: linear-gradient(45deg, #ff7300, #1487e5);
-        transition: width 0.3s ease;
-        z-index: -1;  /* Place behind the button text */
-        border-radius: 1rem;
-      }
-      
-      #hero-82 .cs-login-btn:hover:before {
-        width: 100%;
-      }
-      
-      #hero-82 .cs-login-btn:hover {
-        background: linear-gradient(45deg, #a37c21, #1c7d9c);
-        transform: translateY(-3px);
-      }     
 }
 
 .hero-text {
