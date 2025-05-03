@@ -23,9 +23,11 @@ from dotenv import find_dotenv, load_dotenv
 
 # app = Flask(__name__)
 # app = Flask(__name__, template_folder='src/templates')
-app = Flask(__name__, 
-            template_folder='src/templates', 
-            static_folder='src/static')
+app = Flask(
+  __name__,
+  static_folder="../frontend/build/static",    # where CRA puts JS/CSS/images
+  template_folder="../frontend/build"          # where CRA’s index.html lives
+)
 
 load_dotenv()
 
@@ -80,6 +82,15 @@ users = {
     "customer2": {"password": "custpass", "role": "customer"}
 }
 
+# 2️⃣ Serve React's build artifacts
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_react(path):
+    # if the requested file exists, serve it (e.g. /static/js/…)
+    if path and os.path.exists(os.path.join(app.template_folder, path)):
+        return send_from_directory(app.template_folder, path)
+    # otherwise serve index.html (SPA entrypoint)
+    return send_from_directory(app.template_folder, "index.html")
 
 @app.route("/chat")
 def chat_page():
@@ -117,10 +128,16 @@ def abcd2_tia_routing():
     user = session.get('user')
     return render_template('abcd2_tia.html', user=user, pretty=json.dumps(user, indent=4))
 
-@app.route('/about_us')
-def about_us_routing():
-    user = session.get('user')
-    return render_template('about_us.html', user=user, pretty=json.dumps(user, indent=4))
+# 1️⃣ API endpoint for About-Us data
+@app.route("/api/about_us")
+def about_us_api():
+    return jsonify({
+        "mission": "Our mission is to deliver the best healthcare insights.",
+        "team": [
+            {"id": 1, "name": "Alice Smith", "role": "CEO", "bio": "Alice has 10 years in healthcare analytics."},
+            {"id": 2, "name": "Bob Jones",  "role": "CTO", "bio": "Bob builds scalable ML pipelines."}
+        ]
+    })
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
