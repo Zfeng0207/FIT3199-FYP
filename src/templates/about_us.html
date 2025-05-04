@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardiovascular Risk Assessment</title>
+  <title>About Us</title>
 
   <!-- 1) Tailwind CSS (load first to scope Reset here) -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -70,6 +70,8 @@
         <!-- larger logo via utility classes -->
         <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
       </a>
+
+      <!-- Navigation Links -->
       <nav class="cs-nav" role="navigation">
         <button class="cs-toggle" aria-label="mobile menu toggle">
           <div class="cs-box">
@@ -125,8 +127,162 @@
   <!-- ============================================ -->
   <!--                    Hero                      -->
   <!-- ============================================ -->
+  <!-- About Us / Meet the Team Section -->
+  <section id="meet-team-1332">
+    <div class="cs-container">
+      <div class="cs-content">
+        <span class="cs-topper">Meet The Team</span>
+        <h2 class="cs-title">Our Awesome Team Members</h2>
+      </div>
+
+      <ul class="cs-card-group">
+        <!-- Zfeng -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}" alt="Darren Chen" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Zfeng Loo</span>
+            <span class="cs-hover-bio">Hi my name is Zfeng, I am the Data Scientist of this project.</span>
+          </div>
+        </li>
+
+        <!-- Darren -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}" alt="Zfeng Loo" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Darren Chen</span>
+            <span class="cs-hover-bio">Hi my name is Darren, I am the Project Manager of this project.</span>
+          </div>
+        </li>
+
+        <!-- Darin -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}" alt="Darin Park" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Darin Park</span>
+            <span class="cs-hover-bio">Hi my name is Darin, I am the Data Scientist of this project.</span>
+          </div>
+        </li>
+
+        <!-- Ryuji -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}" alt="Ryuji Takamura" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Ryuji Takamura</span>
+            <span class="cs-hover-bio">Hi my name is Ryuji, I am the ML Developer of this project.</span>
+          </div>
+        </li>
+
+        <!-- Edward -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}" alt="Edward Priyatna" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Edward Priyatna</span>
+            <span class="cs-hover-bio">Hi my name is Edward, I am the Frontend Developer of this project.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Supervisor Section -->
+  <section class="about-section" id="supervisor" style="padding-top: 2rem;">
+    <div class="cs-container" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4rem; justify-content: center;">
+      
+      <!-- Supervisor Image (circular) -->
+      <div style="flex: 0 0 auto;">
+        <img 
+          src="{{ url_for('static', filename='images/Dr_Ong_Profile.jpeg') }}" 
+          alt="Dr. Ong Huey Fang" 
+          width="275" 
+          height="275" 
+          style="border-radius: 50%; object-fit: cover; box-shadow: 0 0 10px rgba(0,0,0,0.4);"
+        />
+      </div>
   
-  <script>
-    
-  </script>
+      <!-- Supervisor Intro (wider block) -->
+      <div class="supervisor-text" style="flex: 1 1 700px; max-width: 900px; color: white;">
+        <h2 class="cs-title" style="margin-bottom: 1rem;">Meet Our Supervisor</h2>
+        <p class="cs-text" style="color: #ffffff; font-size: 1.1rem; text-align: justify;">
+          Dr Ong Huey Fang joined as a lecturer in the School of Information Technology at Monash University 
+          Malaysia in 2019. She earned her bachelor’s degree from Universiti Teknologi Malaysia, and both her 
+          master’s and doctoral degrees from Universiti Putra Malaysia specialised in Intelligent Computing. 
+          While pursuing her postgraduate studies, Dr Ong taught computer science courses at undergraduate 
+          levels and actively involved in academic programme coordination at two private universities in 
+          Malaysia for more than nine years. Prior to that, she attached to the software testing group of 
+          Board Design Center Malaysia at Intel Product Malaysia for one year. In terms of professional 
+          development, she is currently a Certified Data Science Specialist and AWS Certified Cloud Practitioner.
+        </p>
+      </div>
+  
+    </div>
+  </section>
+  
+  <!-- New: Our Mission Section -->
+<section class="about-section" id="our-mission">
+  <div class="cs-container">
+    <h2 class="cs-title">Our Mission</h2>
+    <p class="cs-text">
+      Our mission is to empower healthcare decision-making through advanced, interpretable AI.
+      We strive to make stroke prediction more accessible, transparent, and actionable for both
+      medical professionals and the public.
+    </p>
+  </div>
+</section>
+
+<!-- New: The Dataset We Used -->
+<section class="about-section" id="dataset-info">
+  <div class="cs-container">
+    <h2 class="cs-title">The Dataset We Used</h2>
+    <p class="cs-text">
+      We utilized anonymized, clinically verified time-series data focusing on vital signs and symptoms
+      associated with stroke. The dataset includes features such as heart rate, blood pressure, ECG signals,
+      and patient history to support our prediction models.
+    </p>
+  </div>
+</section>
+
+<!-- New: Technologies We Used -->
+<section class="about-section" id="tech-stack">
+  <div class="cs-container">
+    <h2 class="cs-title">Technologies We Used</h2>
+    <p class="cs-text">
+      Our platform is powered by Python, Flask, and machine learning frameworks like PyTorch and Scikit-learn.
+      We also used Google Colab for model training and GitHub for collaboration and version control.
+    </p>
+  </div>
+</section>
+
+<!-- New: What's Next -->
+<section class="about-section" id="whats-next">
+  <div class="cs-container">
+    <h2 class="cs-title">What's Next?</h2>
+    <p class="cs-text">
+      Moving forward, we aim to enhance model accuracy, integrate real-time patient monitoring, and 
+      implement reinforcement learning for continuous improvement. We also plan to collaborate with
+      medical institutions for broader validation and deployment.
+    </p>
+  </div>
+</section>
+
 </body>
+</html>
