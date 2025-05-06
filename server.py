@@ -282,12 +282,15 @@ def process_stroke():
 
     # load data
     try:
-        # .npz might contain metadata (e.g. for memmap starts/lengths)
-        npz_data = np.load(npz_file, allow_pickle=True)
-        # simple .npy array
-        npy_data = np.load(npy_file, allow_pickle=True)
-        # csv into a DataFrame
-        df = pd.read_csv(csv_file)
+        # Load the CSV (df_diag)
+        df_diag = pd.read_csv(csv_file)
+        
+        # Load the pickle data (df_mapped)
+        df_memmap_pkl_path = 'src/data/memmap/df_memmap.pkl'
+        df_mapped = pd.read_pickle(df_memmap_pkl_path)
+
+        # Merge data (merge df_mapped and df_diag on 'study_id')
+        merged_df = pd.merge(df_mapped, df_diag, on="study_id", how="left")
     except Exception as e:
         return jsonify({'error': f'Failed to load input files: {str(e)}'}), 500
 
@@ -297,19 +300,20 @@ def process_stroke():
     except Exception as e:
         return jsonify({'error': f'Could not load model: {str(e)}'}), 500
 
-    # TODO: transform npz_data, npy_data, df into the format your model expects
-    # e.g. concat them or extract features:
-    # X = prepare_features(npz_data, npy_data, df)
-    # prediction = model.predict(X)
+    # Extract the features for prediction (assuming specific columns based on your model)
+    # You may need to adjust this according to your model's feature expectations
+    X = merged_df[['feature1', 'feature2', 'feature3']]  # Adjust these columns
 
-    # for demonstration, we’ll just show a placeholder:
-    prediction = model.predict(df)  # ← adjust this to your actual input
+    # Make prediction
+    try:
+        prediction = model.predict(X)
+    except Exception as e:
+        return jsonify({'error': f'Prediction failed: {str(e)}'}), 500
 
-    # format output
+    # Convert prediction to string for output
     pred_str = np.array2string(prediction, separator=', ')
 
     return jsonify({'prediction': pred_str})
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=env.get("PORT", 3000))
