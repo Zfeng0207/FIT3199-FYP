@@ -164,90 +164,75 @@
     </div>
   </section>
 
-  <!-- File Upload Section -->
+  <!-- File Upload & Prediction Section -->
   <div class="formbold-main-wrapper">
     <div class="formbold-form-wrapper">
-      <form id="uploadForm">
-        <label class="formbold-form-label formbold-form-label-2">
-          Upload File (only CSV files are allowed)
-        </label>
+      <form id="processForm">
+        <label class="formbold-form-label">Upload .npz file</label>
+        <input type="file" id="npzFile" accept=".npz" class="formbold-input" />
 
-        <div class="formbold-mb-5 formbold-file-input">
-          <input type="file" name="file" id="file" accept=".csv" hidden />
-          <label for="file" class="formbold-dropzone">
-            <div>
-              <span class="formbold-drop-file">Drop files here</span>
-              <span class="formbold-or">Or</span>
-              <button type="button" onclick="document.getElementById('file').click()" class="formbold-browse">Browse</button>
-            </div>
-          </label>
-        </div>
+        <label class="formbold-form-label">Upload .npy file</label>
+        <input type="file" id="npyFile" accept=".npy" class="formbold-input" />
 
-        <div class="formbold-file-list formbold-mb-5" id="fileList" style="display: none;">
-          <div class="formbold-file-item">
-            <span class="formbold-file-name" id="fileName">filename.csv</span>
-            <button type="button" onclick="clearFile()">✕</button>
-          </div>
-          <div class="formbold-progress-bar">
-            <div class="formbold-progress" id="progressBar" style="width: 0%"></div>
-          </div>
-        </div>
+        <label class="formbold-form-label">Upload .csv file</label>
+        <input type="file" id="csvFile" accept=".csv" class="formbold-input" />
 
-        <div><br><br>
+        <div><br>
           <button class="formbold-btn w-full" type="submit">Process Data</button>
         </div>
 
+        <!-- loading overlay -->
         <div class="loader-overlay" id="loader" style="display: none;">
           <div class="loader"></div>
+        </div>
+
+        <!-- prediction output -->
+        <div class="formbold-mt-4">
+          <label class="formbold-form-label">Model Output</label>
+          <textarea id="outputBox" class="formbold-textarea" rows="3" readonly placeholder="Your prediction will appear here…"></textarea>
         </div>
       </form>
     </div>
   </div>
 
   <script>
-    const fileInput = document.getElementById("file");
-    const fileList = document.getElementById("fileList");
-    const fileNameSpan = document.getElementById("fileName");
-    const progressBar = document.getElementById("progressBar");
+    const loader    = document.getElementById('loader');
+    const npzInput  = document.getElementById('npzFile');
+    const npyInput  = document.getElementById('npyFile');
+    const csvInput  = document.getElementById('csvFile');
+    const outputBox = document.getElementById('outputBox');
 
-    fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
-      if (file && file.name.endsWith(".csv")) {
-        fileNameSpan.textContent = file.name;
-        fileList.style.display = "block";
-        progressBar.style.width = "0%";
-        let percent = 0;
-        const interval = setInterval(() => {
-          percent += 10;
-          progressBar.style.width = percent + "%";
-          if (percent >= 100) clearInterval(interval);
-        }, 100);
-      } else {
-        alert("Please upload a CSV file.");
-        fileInput.value = "";
-        fileList.style.display = "none";
-      }
-    });
-
-    function clearFile() {
-      fileInput.value = "";
-      fileList.style.display = "none";
-      progressBar.style.width = "0%";
-    }
-
-    document.getElementById("uploadForm").addEventListener("submit", function (e) {
+    document.getElementById('processForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      if (!fileInput.files[0]) {
-        alert("Please upload a file first.");
+
+      // ensure all three files present
+      if (!npzInput.files[0] || !npyInput.files[0] || !csvInput.files[0]) {
+        alert('Please upload all three files before processing.');
         return;
       }
 
-      document.getElementById("loader").style.display = "flex";
-      setTimeout(() => {
-        document.getElementById("loader").style.display = "none";
-        alert("Data processed successfully!");
-        clearFile();
-      }, 2000);
+      // show loader
+      loader.style.display = 'flex';
+
+      // bundle files
+      const formData = new FormData();
+      formData.append('npz_file', npzInput.files[0]);
+      formData.append('npy_file', npyInput.files[0]);
+      formData.append('csv_file', csvInput.files[0]);
+
+      try {
+        const res = await fetch('/process_stroke', {
+          method: 'POST',
+          body: formData
+        });
+        const json = await res.json();
+        outputBox.value = json.prediction;
+      } catch (err) {
+        console.error(err);
+        alert('Error processing data.');
+      } finally {
+        loader.style.display = 'none';
+      }
     });
   </script>
 

@@ -1,4 +1,7 @@
-from flask import Flask, request, render_template, redirect, url_for, session, flash
+from flask import Flask, jsonify, request, render_template, redirect, url_for, session, flash
+import joblib
+import numpy as np
+import pandas as pd
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAI
@@ -266,6 +269,46 @@ def home():
         return "Error reading stroke dataset!", 500
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
+
+@app.route('/process_stroke', methods=['POST'])
+def process_stroke():
+    # fetch uploaded files
+    npz_file = request.files.get('npz_file')
+    npy_file = request.files.get('npy_file')
+    csv_file = request.files.get('csv_file')
+
+    if not (npz_file and npy_file and csv_file):
+        return jsonify({'error': 'Missing one or more files.'}), 400
+
+    # load data
+    try:
+        # .npz might contain metadata (e.g. for memmap starts/lengths)
+        npz_data = np.load(npz_file, allow_pickle=True)
+        # simple .npy array
+        npy_data = np.load(npy_file, allow_pickle=True)
+        # csv into a DataFrame
+        df = pd.read_csv(csv_file)
+    except Exception as e:
+        return jsonify({'error': f'Failed to load input files: {str(e)}'}), 500
+
+    # load your pre-trained model
+    try:
+        model = joblib.load('full_model.pkl')
+    except Exception as e:
+        return jsonify({'error': f'Could not load model: {str(e)}'}), 500
+
+    # TODO: transform npz_data, npy_data, df into the format your model expects
+    # e.g. concat them or extract features:
+    # X = prepare_features(npz_data, npy_data, df)
+    # prediction = model.predict(X)
+
+    # for demonstration, we’ll just show a placeholder:
+    prediction = model.predict(df)  # ← adjust this to your actual input
+
+    # format output
+    pred_str = np.array2string(prediction, separator=', ')
+
+    return jsonify({'prediction': pred_str})
 
 
 if __name__ == '__main__':
