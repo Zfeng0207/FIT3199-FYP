@@ -161,6 +161,9 @@
   <div style="height: 120px;"></div>
 
   <!-- ✅ Chatbot UI -->
+  <!-- ============================================ -->
+  <!--                 Chatbot UI                   -->
+  <!-- ============================================ -->
   <div class="container-fluid h-100">
     <div class="row justify-content-center h-100">
       <div class="col-md-8 col-xl-6 chat">
@@ -193,7 +196,7 @@
     </div>
   </div>
 
-  <!-- ✅ Scripts -->
+  <!-- JS Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>	
   <script>
     $(document).ready(function () {
@@ -214,87 +217,28 @@
               <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">
             </div>
           </div>`;
+
         $("#text").val("");
         $("#messageFormeight").append(userHtml);
- 
+
         $.ajax({
-          data: { msg: rawText },
+          data: {
+            msg: rawText,
+          },
           type: "POST",
           url: "/get",
-<<<<<<< HEAD
-          xhrFields: { responseType: 'blob' },
-          success: function (data, status, xhr) {
-            const contentType = xhr.getResponseHeader("Content-Type");
-
-            if (contentType.includes("image/png")) {
-=======
-          xhrFields: {
-            responseType: 'blob' // handle both image and text as blob
-          },
-          success: function (data, status, xhr) {
-            const contentType = xhr.getResponseHeader("Content-Type");
-
-            if (contentType && contentType.includes("image/png")) {
-              // ✅ Handle image blob
->>>>>>> 69a6b5c7e2da4fc78d00066847ba9e31eae7d0a2
-              const imageUrl = URL.createObjectURL(data);
-              const botHtml = `
-                <div class="d-flex justify-content-start mb-4">
-                  <div class="img_cont_msg">
-                    <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-                  </div>
-                  <div class="msg_cotainer">
-<<<<<<< HEAD
-                    <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px;" />
-=======
-                    <img src="${imageUrl}" alt="chart" style="max-width: 100%; border-radius: 10px;" />
->>>>>>> 69a6b5c7e2da4fc78d00066847ba9e31eae7d0a2
-                    <span class="msg_time">${str_time}</span>
-                  </div>
-                </div>`;
-              $("#messageFormeight").append($.parseHTML(botHtml));
-<<<<<<< HEAD
-            } else if (contentType.includes("text/plain")) {
-              const reader = new FileReader();
-              reader.onload = function () {
-=======
-            } 
-            
-            else if (contentType && contentType.includes("text/plain")) {
-              const reader = new FileReader();
-              reader.onload = function () {
-                const textResponse = reader.result;
->>>>>>> 69a6b5c7e2da4fc78d00066847ba9e31eae7d0a2
-                const botHtml = `
-                  <div class="d-flex justify-content-start mb-4">
-                    <div class="img_cont_msg">
-                      <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-                    </div>
-                    <div class="msg_cotainer">
-<<<<<<< HEAD
-                      ${reader.result}
-=======
-                      ${textResponse}
->>>>>>> 69a6b5c7e2da4fc78d00066847ba9e31eae7d0a2
-                      <span class="msg_time">${str_time}</span>
-                    </div>
-                  </div>`;
-                $("#messageFormeight").append($.parseHTML(botHtml));
-              };
-<<<<<<< HEAD
-              reader.readAsText(data);
-=======
-              reader.readAsText(data); // interpret blob as UTF-8 string
-            }
-
-            else {
-              console.error("Unhandled content type:", contentType);
->>>>>>> 69a6b5c7e2da4fc78d00066847ba9e31eae7d0a2
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("AJAX error:", error);
-          }
+        }).done(function (data) {
+          var botHtml = `
+            <div class="d-flex justify-content-start mb-4">
+              <div class="img_cont_msg">
+                <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+              </div>
+              <div class="msg_cotainer">
+                ${data}
+                <span class="msg_time">${str_time}</span>
+              </div>
+            </div>`;
+          $("#messageFormeight").append($.parseHTML(botHtml));
         });
 
         event.preventDefault();
