@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, s
 import joblib
 import numpy as np
 import pandas as pd
-from model_handler import process_and_predict
+from process_and_predict import process_and_predict
+
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAI
@@ -271,32 +272,36 @@ def home():
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
-UPLOAD_DIR = os.path.join(os.getcwd(), 'uploads')
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 @app.route('/process_stroke', methods=['POST'])
 def process_stroke():
-    npz_f = request.files.get('npz_file')
-    npy_f = request.files.get('npy_file')
-    csv_f = request.files.get('csv_file')
-    if not (npz_f and npy_f and csv_f):
-        return jsonify({'error':'Missing files'}), 400
+    npz_f  = request.files.get('npz_file')
+    npy_f  = request.files.get('npy_file')
+    pkl_f  = request.files.get('pkl_file')
+    csv_f  = request.files.get('csv_file')
 
-    # ← Replace /tmp with your uploads folder:
-    tmp_meta = os.path.join(UPLOAD_DIR, 'meta.npz')
-    tmp_npy  = os.path.join(UPLOAD_DIR, 'ecg.npy')
-    tmp_csv  = os.path.join(UPLOAD_DIR, 'records.csv')
+    if not all([npz_f, npy_f, pkl_f, csv_f]):
+        return jsonify({'error': 'Please upload .npz, .npy, .pkl and .csv files'}), 400
 
-    # save uploaded files
-    npz_f.save(tmp_meta)
-    npy_f.save(tmp_npy)
-    csv_f.save(tmp_csv)
+    # save them
+    base = '/tmp/uploads'
+    os.makedirs(base, exist_ok=True)
+    FP = lambda name: os.path.join(base, name)
+    npz_f.save(FP('memmap_meta.npz'))
+    npy_f.save(FP('memmap.npy'))
+    pkl_f.save(FP('df_memmap.pkl'))
+    csv_f.save(FP('records_w_diag_icd10.csv'))
 
     try:
-        results = process_and_predict(tmp_meta, tmp_npy, tmp_csv)
+        results = process_and_predict(
+            meta_path   = FP('memmap_meta.npz'),
+            npy_path    = FP('memmap.npy'),
+            mapping_pkl = FP('df_memmap.pkl'),
+            records_csv = FP('records_w_diag_icd10.csv')
+        )
         return jsonify(results)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=env.get("PORT", 3000))

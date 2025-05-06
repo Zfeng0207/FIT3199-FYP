@@ -174,6 +174,9 @@
         <label class="formbold-form-label">Upload .npy file</label>
         <input type="file" id="npyFile" accept=".npy" class="formbold-input" />
 
+        <label class="formbold-form-label">Upload .pkl file</label>
+        <input type="file" id="pklFile" accept=".pkl" class="formbold-input" />
+
         <label class="formbold-form-label">Upload .csv file</label>
         <input type="file" id="csvFile" accept=".csv" class="formbold-input" />
 
@@ -189,7 +192,8 @@
         <!-- prediction output -->
         <div class="formbold-mt-4">
           <label class="formbold-form-label">Model Output</label>
-          <textarea id="outputBox" class="formbold-textarea" rows="3" readonly placeholder="Your prediction will appear here…"></textarea>
+          <textarea id="outputBox" class="formbold-textarea" rows="5" readonly
+            placeholder="Your prediction will appear here…"></textarea>
         </div>
       </form>
     </div>
@@ -199,15 +203,16 @@
     const loader    = document.getElementById('loader');
     const npzInput  = document.getElementById('npzFile');
     const npyInput  = document.getElementById('npyFile');
+    const pklInput  = document.getElementById('pklFile');
     const csvInput  = document.getElementById('csvFile');
     const outputBox = document.getElementById('outputBox');
 
     document.getElementById('processForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // ensure all three files present
-      if (!npzInput.files[0] || !npyInput.files[0] || !csvInput.files[0]) {
-        alert('Please upload all three files before processing.');
+      // ensure all four files present
+      if (!npzInput.files[0] || !npyInput.files[0] || !pklInput.files[0] || !csvInput.files[0]) {
+        alert('Please upload all four files (.npz, .npy, .pkl and .csv).');
         return;
       }
 
@@ -218,18 +223,27 @@
       const formData = new FormData();
       formData.append('npz_file', npzInput.files[0]);
       formData.append('npy_file', npyInput.files[0]);
+      formData.append('pkl_file', pklInput.files[0]);
       formData.append('csv_file', csvInput.files[0]);
 
       try {
-        const res = await fetch('/process_stroke', {
+        const res  = await fetch('/process_stroke', {
           method: 'POST',
           body: formData
         });
         const json = await res.json();
-        outputBox.value = json.prediction;
+
+        if (json.error) {
+          outputBox.value = `Error: ${json.error}`;
+        } else if (Array.isArray(json.predictions)) {
+          // display predictions as comma-separated
+          outputBox.value = json.predictions.join(', ');
+        } else {
+          outputBox.value = JSON.stringify(json);
+        }
       } catch (err) {
         console.error(err);
-        alert('Error processing data.');
+        outputBox.value = `Request failed: ${err.message}`;
       } finally {
         loader.style.display = 'none';
       }
