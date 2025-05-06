@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, s
 import joblib
 import numpy as np
 import pandas as pd
+from model_handler import process_and_predict
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAI
@@ -270,50 +271,32 @@ def home():
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
+UPLOAD_DIR = os.path.join(os.getcwd(), 'uploads')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 @app.route('/process_stroke', methods=['POST'])
 def process_stroke():
-    # fetch uploaded files
-    npz_file = request.files.get('npz_file')
-    npy_file = request.files.get('npy_file')
-    csv_file = request.files.get('csv_file')
+    npz_f = request.files.get('npz_file')
+    npy_f = request.files.get('npy_file')
+    csv_f = request.files.get('csv_file')
+    if not (npz_f and npy_f and csv_f):
+        return jsonify({'error':'Missing files'}), 400
 
-    if not (npz_file and npy_file and csv_file):
-        return jsonify({'error': 'Missing one or more files.'}), 400
+    # ← Replace /tmp with your uploads folder:
+    tmp_meta = os.path.join(UPLOAD_DIR, 'meta.npz')
+    tmp_npy  = os.path.join(UPLOAD_DIR, 'ecg.npy')
+    tmp_csv  = os.path.join(UPLOAD_DIR, 'records.csv')
 
-    # load data
+    # save uploaded files
+    npz_f.save(tmp_meta)
+    npy_f.save(tmp_npy)
+    csv_f.save(tmp_csv)
+
     try:
-        # Load the CSV (df_diag)
-        df_diag = pd.read_csv(csv_file)
-        
-        # Load the pickle data (df_mapped)
-        df_memmap_pkl_path = 'src/data/memmap/df_memmap.pkl'
-        df_mapped = pd.read_pickle(df_memmap_pkl_path)
-
-        # Merge data (merge df_mapped and df_diag on 'study_id')
-        merged_df = pd.merge(df_mapped, df_diag, on="study_id", how="left")
+        results = process_and_predict(tmp_meta, tmp_npy, tmp_csv)
+        return jsonify(results)
     except Exception as e:
-        return jsonify({'error': f'Failed to load input files: {str(e)}'}), 500
-
-    # load your pre-trained model
-    try:
-        model = joblib.load('full_model.pkl')
-    except Exception as e:
-        return jsonify({'error': f'Could not load model: {str(e)}'}), 500
-
-    # Extract the features for prediction (assuming specific columns based on your model)
-    # You may need to adjust this according to your model's feature expectations
-    X = merged_df[['feature1', 'feature2', 'feature3']]  # Adjust these columns
-
-    # Make prediction
-    try:
-        prediction = model.predict(X)
-    except Exception as e:
-        return jsonify({'error': f'Prediction failed: {str(e)}'}), 500
-
-    # Convert prediction to string for output
-    pred_str = np.array2string(prediction, separator=', ')
-
-    return jsonify({'prediction': pred_str})
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=env.get("PORT", 3000))
