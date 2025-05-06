@@ -169,8 +169,6 @@ def chat():
     response = rag_chain.invoke({"input": msg})
     return Response(response["answer"], mimetype='text/plain')
 
-
-
 @app.route('/data-entry')
 def stroke_prediction_routing():
     user = session.get('user')
