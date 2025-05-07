@@ -1,16 +1,16 @@
-# console_predict.py
+# calling_model.py
 
 import sys
 import numpy as np
 import torch
+import multiprocessing as mp
 import rnn_attention_model
 
-# ─── 1) Monkey-patch the model classes into __main__ so unpickling can find them ───
-_main = sys.modules['__main__']
-for name in ('RNNAttentionModel', 'ConvNormPool', 'Swish', 'RNN', 'CNN'):
-    setattr(_main, name, getattr(rnn_attention_model, name))
+# ─── 1) Monkey-patch the classes into this module's globals ────────────────────
+for cls_name in ("RNNAttentionModel", "ConvNormPool", "Swish", "RNN", "CNN"):
+    globals()[cls_name] = getattr(rnn_attention_model, cls_name)
 
-# ─── 2) Allow those classes for unsafe unpickling ────────────────────────────────
+# ─── 2) Allow these classes for unsafe unpickling with weights_only=False ─────
 torch.serialization.add_safe_globals([
     rnn_attention_model.RNNAttentionModel,
     rnn_attention_model.ConvNormPool,
@@ -19,36 +19,55 @@ torch.serialization.add_safe_globals([
     rnn_attention_model.CNN,
 ])
 
-# ─── 3) Hard-code your memmap shape here ────────────────────────────────────────
-ECG_SHAPE = (21649000, 12)  # (number_of_samples, number_of_leads)
+# ─── 3) Hard-code your ECG shape + checkpoint path ─────────────────────────────
+ECG_SHAPE = (21649000, 12)      # (num_timesteps, num_leads)
+MODEL_PATH = "full_model.pkl"
 
-def main():
-    # ─── 4) Load your full checkpoint with weights_only=False ────────────────────
-    model = torch.load("full_model.pkl", map_location="cpu", weights_only=False)
+def init_worker():
+    """Initializer for each pool worker: load & eval the model once."""
+    global model
+    model = torch.load(MODEL_PATH, map_location="cpu", weights_only=False)
     model.eval()
 
-    # ─── 5) Prompt for the raw memmap file ───────────────────────────────────────
+def infer_chunk(chunk: np.ndarray, mean: float, std: float) -> float:
+    """Normalize a chunk, run a forward pass, return sigmoid probability."""
+    x = (chunk - mean) / std
+    t = torch.tensor(x, dtype=torch.float32).unsqueeze(0)
+    with torch.no_grad():
+        logits = model(t)
+        return torch.sigmoid(logits).item()
+
+def main():
+    # 1) Ask for your raw memmap file
     path = input("Enter path to your raw memmap .npy file: ").strip()
 
-    # ─── 6) Memory-map & reshape ─────────────────────────────────────────────────
+    # 2) Memory-map & reshape
     raw = np.memmap(path, dtype=np.float32, mode="r")
-    ecg_signal = raw.reshape(ECG_SHAPE)
+    ecg = raw.reshape(ECG_SHAPE)
 
-    # ─── 7) Normalize ────────────────────────────────────────────────────────────
-    ecg_signal = (ecg_signal - ecg_signal.mean()) / (ecg_signal.std() + 1e-6)
+    # 3) Compute global mean/std once
+    mean = float(ecg.mean())
+    std  = float(ecg.std() + 1e-6)
 
-    # ─── 8) To tensor [1, N, 12] ─────────────────────────────────────────────────
-    tensor = torch.tensor(ecg_signal, dtype=torch.float32).unsqueeze(0)
+    # 4) Split into as many parts as you have CPU cores
+    n_workers = mp.cpu_count()
+    chunks    = np.array_split(ecg, n_workers, axis=0)
 
-    # ─── 9) Inference ────────────────────────────────────────────────────────────
-    with torch.no_grad():
-        logits = model(tensor)
-        prob   = torch.sigmoid(logits).item()
-        pred   = "Stroke" if prob > 0.5 else "No Stroke"
+    # 5) Launch pool, each worker runs init_worker() exactly once
+    with mp.Pool(processes=n_workers, initializer=init_worker) as pool:
+        # 6) Dispatch inference for each chunk in parallel
+        args = [(chunk, mean, std) for chunk in chunks]
+        probs = pool.starmap(infer_chunk, args)
 
-    # ─── 10) Print ───────────────────────────────────────────────────────────────
-    print(f"\nPrediction : {pred}")
-    print(f"Probability: {prob:.4f}")
+    # 7) Average the chunk-level probabilities & decide
+    avg_prob = sum(probs) / len(probs)
+    pred     = "Stroke" if avg_prob > 0.5 else "No Stroke"
+
+    # 8) Print your result
+    print("\n=== Result ===")
+    print(f"Prediction : {pred}")
+    print(f"Probability: {avg_prob:.4f}")
 
 if __name__ == "__main__":
+    mp.freeze_support()
     main()
