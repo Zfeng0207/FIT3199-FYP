@@ -196,7 +196,7 @@
     </div>
   </div>
 
-  <!-- JS Scripts -->
+  <!-- ✅ Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>	
   <script>
     $(document).ready(function () {
@@ -217,28 +217,51 @@
               <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">
             </div>
           </div>`;
-
         $("#text").val("");
         $("#messageFormeight").append(userHtml);
-
+ 
         $.ajax({
-          data: {
-            msg: rawText,
-          },
+          data: { msg: rawText },
           type: "POST",
           url: "/get",
-        }).done(function (data) {
-          var botHtml = `
-            <div class="d-flex justify-content-start mb-4">
-              <div class="img_cont_msg">
-                <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-              </div>
-              <div class="msg_cotainer">
-                ${data}
-                <span class="msg_time">${str_time}</span>
-              </div>
-            </div>`;
-          $("#messageFormeight").append($.parseHTML(botHtml));
+          xhrFields: { responseType: 'blob' },
+          success: function (data, status, xhr) {
+            const contentType = xhr.getResponseHeader("Content-Type");
+
+            if (contentType.includes("image/png")) {
+              const imageUrl = URL.createObjectURL(data);
+              const botHtml = `
+                <div class="d-flex justify-content-start mb-4">
+                  <div class="img_cont_msg">
+                    <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+                  </div>
+                  <div class="msg_cotainer">
+                    <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px;" />
+                    <span class="msg_time">${str_time}</span>
+                  </div>
+                </div>`;
+              $("#messageFormeight").append($.parseHTML(botHtml));
+            } else if (contentType.includes("text/plain")) {
+              const reader = new FileReader();
+              reader.onload = function () {
+                const botHtml = `
+                  <div class="d-flex justify-content-start mb-4">
+                    <div class="img_cont_msg">
+                      <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+                    </div>
+                    <div class="msg_cotainer">
+                      ${reader.result}
+                      <span class="msg_time">${str_time}</span>
+                    </div>
+                  </div>`;
+                $("#messageFormeight").append($.parseHTML(botHtml));
+              };
+              reader.readAsText(data);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("AJAX error:", error);
+          }
         });
 
         event.preventDefault();
