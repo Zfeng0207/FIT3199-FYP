@@ -1,49 +1,53 @@
 # console_predict.py
+
+import sys
 import numpy as np
 import torch
-from rnn_attention_model import RNNAttentionModel, ConvNormPool, Swish, RNN, CNN
+import rnn_attention_model
+
+# ─── 1) Monkey-patch the model classes into __main__ so unpickling can find them ───
+_main = sys.modules['__main__']
+for name in ('RNNAttentionModel', 'ConvNormPool', 'Swish', 'RNN', 'CNN'):
+    setattr(_main, name, getattr(rnn_attention_model, name))
+
+# ─── 2) Allow those classes for unsafe unpickling ────────────────────────────────
+torch.serialization.add_safe_globals([
+    rnn_attention_model.RNNAttentionModel,
+    rnn_attention_model.ConvNormPool,
+    rnn_attention_model.Swish,
+    rnn_attention_model.RNN,
+    rnn_attention_model.CNN,
+])
+
+# ─── 3) Hard-code your memmap shape here ────────────────────────────────────────
+ECG_SHAPE = (21649000, 12)  # (number_of_samples, number_of_leads)
 
 def main():
-    # allow your custom model class for unpickling
-    torch.serialization.add_safe_globals({RNNAttentionModel})
-
-    # load the trained model (adjust path if needed)
-    model = torch.load(
-        "full_model.pkl",
-        map_location="cpu",
-        weights_only=False
-    )
+    # ─── 4) Load your full checkpoint with weights_only=False ────────────────────
+    model = torch.load("full_model.pkl", map_location="cpu", weights_only=False)
     model.eval()
 
-    # ask user for ECG file
-    path = input("Enter path to your ECG .npy file: ").strip()
+    # ─── 5) Prompt for the raw memmap file ───────────────────────────────────────
+    path = input("Enter path to your raw memmap .npy file: ").strip()
 
-    # try memory‐mapping first (no pickle)
-    try:
-        ecg_signal = np.load(path, mmap_mode='r')
-    except Exception as e_memmap:
-        print(f"  • memmap failed ({e_memmap}), falling back to allow_pickle…")
-        try:
-            ecg_signal = np.load(path, allow_pickle=True)
-        except Exception as e_pickle:
-            print(f"ERROR: could not load '{path}': {e_pickle}")
-            return
+    # ─── 6) Memory-map & reshape ─────────────────────────────────────────────────
+    raw = np.memmap(path, dtype=np.float32, mode="r")
+    ecg_signal = raw.reshape(ECG_SHAPE)
 
-    # normalize
+    # ─── 7) Normalize ────────────────────────────────────────────────────────────
     ecg_signal = (ecg_signal - ecg_signal.mean()) / (ecg_signal.std() + 1e-6)
 
-    # convert to tensor [1, length, 12]
-    tensor_input = torch.tensor(ecg_signal, dtype=torch.float32).unsqueeze(0)
+    # ─── 8) To tensor [1, N, 12] ─────────────────────────────────────────────────
+    tensor = torch.tensor(ecg_signal, dtype=torch.float32).unsqueeze(0)
 
-    # inference
+    # ─── 9) Inference ────────────────────────────────────────────────────────────
     with torch.no_grad():
-        logits = model(tensor_input)
-        prob = torch.sigmoid(logits).item()
-        pred = "Stroke" if prob > 0.5 else "No Stroke"
+        logits = model(tensor)
+        prob   = torch.sigmoid(logits).item()
+        pred   = "Stroke" if prob > 0.5 else "No Stroke"
 
-    # output
-    print("\n=== Result ===")
-    print(f"Prediction : {pred}")
+    # ─── 10) Print ───────────────────────────────────────────────────────────────
+    print(f"\nPrediction : {pred}")
     print(f"Probability: {prob:.4f}")
 
 if __name__ == "__main__":
