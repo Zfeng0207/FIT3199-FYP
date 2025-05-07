@@ -129,6 +129,7 @@ class CNN(pl.LightningModule):
         x = x.view(-1, x.size(1) * x.size(2))
         x = F.softmax(self.fc(x), dim=1)
         return x
+    
 class RNN(pl.LightningModule):
     """RNN module(cell type lstm or gru)"""
     def __init__(
@@ -164,6 +165,7 @@ class RNN(pl.LightningModule):
     def forward(self, input):
         outputs, hidden_states = self.rnn_layer(input)
         return outputs, hidden_states
+    
 class RNNModel(pl.LightningModule):
     def __init__(
         self,

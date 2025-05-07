@@ -1,40 +1,61 @@
-import numpy as np
 import torch
-import streamlit as st
-from rnn_attention_model import RNNAttentionModel, ConvNormPool, Swish, RNN, CNN
+import numpy as np
+import pandas as pd
+from rnn_attention_model import RNNAttentionModel,ConvNormPool,Swish,RNN
 
-# Paths
-memmap_meta_path = "memmap_meta.npz"
-memmap_path = "memmap.npy"
-df_diag_path = "records_w_diag_icd10.csv"
-df_memmap_pkl_path = "memmap/df_memmap.pkl"
+# 1. Register your classes so torch.load can unpickle them
+torch.serialization.add_safe_globals([
+    RNNAttentionModel,
+    ConvNormPool,
+    Swish,
+    RNN
+])
 
-# Load model (allow unsafe unpickling)
-torch.serialization.add_safe_globals({RNNAttentionModel})
-model = torch.load("full_model.pkl", map_location='cpu', weights_only=False)
+# 2. Load the full model object
+
+# load full object (not just weights)
+model = torch.load(
+    "full_model.pkl",
+    map_location="cpu",
+    weights_only=False           # ← explicitly disable the new default
+)
 model.eval()
 
-st.title("Stroke Prediction from ECG")
-st.write("Upload a .npy ECG file (shape: [length, 12])")
+# 3. Load your metadata
+df = pd.read_csv("label_df.csv")
 
-# File uploader
-uploaded_file = st.file_uploader("Upload ECG File", type="npy")
+# 4. Open the memmap of raw ECG values
+memmap = np.memmap("memmap_head.npy", dtype=np.float32, mode="r")
 
-if uploaded_file is not None:
-    ecg_signal = np.load(uploaded_file)
+results = []
+for idx in range(len(df)):
+    row = df.loc[idx]
+    start, length = int(row["start"]), int(row["length"])
 
-    # Normalize the signal
-    ecg_signal = (ecg_signal - ecg_signal.mean()) / (ecg_signal.std() + 1e-6)
+    if length <= 0:
+        continue
 
-    # Convert to tensor and reshape: [1, length, 12]
-    tensor_input = torch.tensor(ecg_signal, dtype=torch.float32).unsqueeze(0)
+    # pull out length×12 floats and reshape into (time_steps, 12 leads)
+    raw = memmap[start : start + length * 12]
+    if raw.size != length * 12:
+        continue
 
-    # Predict
+    ecg = raw.reshape(length, 12)
+    # normalize to zero mean, unit variance
+    ecg = (ecg - ecg.mean()) / (ecg.std() + 1e-6)
+
+    # The model expects a FloatTensor of shape (batch, seq_len, num_leads)
+    # Here batch=1, seq_len=length, num_leads=12
+    x = torch.from_numpy(ecg).float().unsqueeze(0)  
+
     with torch.no_grad():
-        logits = model(tensor_input)
-        prob = torch.sigmoid(logits).item()
-        pred = int(prob > 0.5)
+        logits = model(x)             # → shape (1,) or (1,1)
+        prob   = torch.sigmoid(logits).item()
+        pred   = "Y" if prob > 0.5 else "N"
 
-    # Display results
-    st.write(f"**Prediction:** {'Stroke' if pred == 1 else 'No Stroke'}")
-    st.write(f"**Probability:** {prob:.4f}")
+    results.append((row["study_id"], pred))
+
+# collect into a DataFrame
+preds_df = pd.DataFrame(results, columns=["study_id","stroke"])
+print(preds_df.head())
+preds_df.to_csv("stroke_predictions.csv", index=False)
