@@ -1,22 +1,26 @@
+import sys
 import numpy as np
 import pandas as pd
-import sys
 
-# Re-load numpy for compatibility with the current environment
+# allow numpy pickles
 sys.modules['numpy._core'] = np.core
 
-# Load the .npz file
-npz_file_path = 'memmap_meta.npz'  # Update with the path to your .npz file
-memmap_meta = np.load(npz_file_path, allow_pickle=True)
+# load
+meta      = np.load("memmap_meta.npz", allow_pickle=True)
+starts    = meta["start"].astype(int)
+lengths   = meta["length"].astype(int)
 
-# Create a DataFrame with the relevant data (start, length, etc.)
+# pull out the tuple you’re using
+shape_vec = tuple(meta["shape"][0])
+dtype_str = str(meta["dtype"].item() if isinstance(meta["dtype"], np.ndarray) else meta["dtype"])
+
+# build DataFrame
 df = pd.DataFrame({
-    "start": memmap_meta['start'],
-    "length": memmap_meta['length']
+    "start":  starts,
+    "length": lengths,
+    "shape":  [str(shape_vec)] * len(starts),
+    "dtype":  [dtype_str] * len(starts),
 })
 
-# Save the DataFrame as a CSV
-csv_file_path = 'memmap_meta.csv'  # Update with where you want to save the CSV file
-df.to_csv(csv_file_path, index=False)
-
-print(f"CSV file saved at: {csv_file_path}")
+# save
+df.to_csv("memmap_meta.csv", index=False)

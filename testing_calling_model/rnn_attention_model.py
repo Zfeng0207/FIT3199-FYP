@@ -11,18 +11,18 @@ Original file is located at
 ## Loading Dependencies
 """
 
-from google.colab import drive
-drive.mount('/content/drive')
+""" from google.colab import drive
+drive.mount('/content/drive') """
 
 import os
-os.chdir('/content/drive/MyDrive/Colab Notebooks/ECG-MIMIC-main')
+# os.chdir('/content/drive/MyDrive/Colab Notebooks/ECG-MIMIC-main')
 
 import mlflow
 
-memmap_meta_path = "src/data/memmap/memmap_meta.npz"
-memmap_path = "src/data/memmap/memmap.npy"
-df_diag_path = "src/data/records_w_diag_icd10.csv"
-df_memmap_pkl_path = "src/data/memmap/df_memmap.pkl"
+memmap_meta_path = "memmap_meta.npz"
+memmap_path = "memmap.npy"
+df_diag_path = "records_w_diag_icd10.csv"
+df_memmap_pkl_path = "df_memmap.pkl"
 
 """## Merge dataset with labels and ecg paths"""
 
@@ -33,9 +33,9 @@ df_mapped = pd.read_pickle(df_memmap_pkl_path)
 
 # merged_df = pd.merge(df_pkl, df_mapped, on=["study_id"], how="left")
 
-df_labels = pd.read_csv("src/data/label_df.csv")
+df_labels = pd.read_csv("label_df.csv")
 
-df_memmap_pkl_path = "src/data/memmap/df_memmap.pkl"
+df_memmap_pkl_path = "df_memmap.pkl"
 df_memmap = pd.read_pickle(df_memmap_pkl_path)
 
 """## Visualizing target class distribution"""
@@ -60,7 +60,7 @@ plt.show()
 
 """## Visualizing ECG Data"""
 
-df = pd.read_csv("src/data/df_memmap.csv")
+df = pd.read_csv("df_memmap.csv")
 df.head()
 
 import numpy as np
@@ -672,10 +672,10 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 # Define paths
-df_path = "src/data/df_memmap.csv"
-train_df_path = "src/data/train_df.csv"
-val_df_path = "src/data/val_df.csv"
-test_df_path = "src/data/test_df.csv"
+df_path = "df_memmap.csv"
+train_df_path = "train_df.csv"
+val_df_path = "val_df.csv"
+test_df_path = "test_df.csv"
 
 # Load labels CSV
 df = df_labels.copy()
@@ -705,10 +705,10 @@ df.shape
 # import numpy as np
 
 # # Define paths
-# df_path = "src/data/df_memmap.csv"
-# train_df_path = "src/data/train_df.csv"
-# val_df_path = "src/data/val_df.csv"
-# test_df_path = "src/data/test_df.csv"
+# df_path = "df_memmap.csv"
+# train_df_path = "train_df.csv"
+# val_df_path = "val_df.csv"
+# test_df_path = "test_df.csv"
 
 #   # Load labels CSV
 # df = df_labels.copy()
@@ -735,10 +735,10 @@ df.shape
 # val_df = pd.concat([val_stroke, val_nonstroke]).reset_index(drop=True)
 # test_df = test_df.reset_index(drop=True)
 
-# # df.to_csv("src/data/df_memmap.csv", index=False)
-# # train_df.to_csv("src/data/train_df.csv", index=False)
-# # val_df.to_csv("src/data/val_df.csv", index=False)
-# # test_df.to_csv("src/data/test_df.csv", index=False)
+# # df.to_csv("df_memmap.csv", index=False)
+# # train_df.to_csv("train_df.csv", index=False)
+# # val_df.to_csv("val_df.csv", index=False)
+# # test_df.to_csv("test_df.csv", index=False)
 
 from sklearn.utils.class_weight import compute_class_weight
 
