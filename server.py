@@ -16,32 +16,6 @@ from src.prompt import *
 import os
 import openai
 from werkzeug.utils import secure_filename
-from testing_calling_model.calling_model import predict_from_memmap
-# either absolute:
-from testing_calling_model.rnn_attention_model import RNNAttentionModel, ConvNormPool, Swish, RNN
-
-# 1. Register all custom classes for safe unpickling
-torch.serialization.add_safe_globals([
-    RNNAttentionModel,
-    ConvNormPool,
-    Swish,
-    RNN,
-])
-
-# 2. Load the full model once (disable weights_only default)
-MODEL_PATH = "testing_calling_model/full_model.pkl"
-model = torch.load(
-    MODEL_PATH,
-    map_location="cpu",
-    weights_only=False
-)
-model.eval()
-
-# 3. Load label metadata once
-LABEL_CSV = "testing_calling_model/label_df.csv"
-df = pd.read_csv(LABEL_CSV)
-
-
 
 #auth0 imports
 import json
@@ -58,11 +32,24 @@ import matplotlib.pyplot as plt
 import io
 from flask import Response
 
+import sys
+# 1. Make sure Python can find your calling_model.py
+basedir = os.path.dirname(__file__)
+sys.path.append(os.path.join(basedir, "testing_calling_model"))
+
+# 2. Import the function
+from testing_calling_model.calling_model import predict_stroke
+
 # app = Flask(__name__)
 # app = Flask(__name__, template_folder='src/templates')
 app = Flask(__name__, 
             template_folder='src/templates', 
             static_folder='src/static')
+
+# 3. Configure an upload folder
+UPLOAD_FOLDER = os.path.join(basedir, "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 load_dotenv()
 
@@ -299,24 +286,34 @@ def home():
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
 @app.route('/predict_memmap', methods=['POST'])
-def predict_memmap_route():
+def predict_memmap():
+    """
+    1. Accept the uploaded .npy file (field name 'npy_file').
+    2. Save it to uploads/ and pass its path into predict_stroke().
+    3. Use the default label_df.csv and full_model.pkl.
+    4. Return JSON: { predictions: [ {study_id, stroke}, … ] }.
+    """
+    # Get the uploaded .npy
     npy = request.files.get('npy_file')
-    if not npy or not npy.filename.endswith('.npy'):
-        return jsonify({'error': 'Please upload a valid .npy file.'}), 400
+    if not npy:
+        return jsonify(error="No .npy file uploaded"), 400
 
-    # save to a temp path
-    tmp_dir = '/tmp/uploads'
-    os.makedirs(tmp_dir, exist_ok=True)
-    path = os.path.join(tmp_dir, 'memmap.npy')
-    npy.save(path)
+    # Save it
+    filename = secure_filename(npy.filename)
+    npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    npy.save(npy_path)
 
+    # Call your function (defaults for label_df & full_model)
     try:
-        df_preds = predict_from_memmap(path)
-        # turn into list of dicts
-        records = df_preds.to_dict(orient='records')
-        return jsonify({'predictions': records})
+        preds_df = predict_stroke(
+            memmap_data=npy_path,
+            # by omitting label_df & full_model, your function will use its defaults
+        )
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify(error=str(e)), 500
+
+    # Format and return
+    return jsonify(predictions=preds_df.to_dict(orient="records"))
 
 
 if __name__ == '__main__':
