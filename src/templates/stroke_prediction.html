@@ -186,6 +186,13 @@
           <textarea id="outputBox" class="formbold-textarea" rows="8" readonly
             placeholder="Your prediction will appear here…"></textarea>
         </div>
+
+        <a id="download-link"
+          style="display:none; margin-top:1rem; display:block;"
+          target="_blank">
+          📥 Download full CSV
+        </a>
+
       </form>
     </div>
   </div>
@@ -194,6 +201,7 @@
     const loader    = document.getElementById('loader');
     const npyInput  = document.getElementById('npyFile');
     const outputBox = document.getElementById('outputBox');
+    const downloadLink = document.getElementById('download-link');
 
     document.getElementById('processForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -209,18 +217,23 @@
 
       try {
         const res   = await fetch('/predict_memmap', {
-        method: 'POST',
-        body: formData
-      });
+          method: 'POST',
+          body: formData
+        });
 
-      // pull down the plain‐text DataFrame repr
-      const text  = await res.text();
+        // Pull down the plain-text DataFrame repr
+        const data  = await res.json();
 
-      if (!res.ok) {
-        outputBox.value = `Error: ${text}`;
-      } else {
-        outputBox.value = text;
-      }
+        if (!res.ok) {
+          outputBox.value = `Error: ${data.error || data}`;
+        } else {
+          // 1. Output the predictions into the output box
+          outputBox.value = data.text;
+
+          // 2. Show the download link and set its URL
+          downloadLink.href = data.download_url;
+          downloadLink.style.display = 'block';  // Make the link visible
+        }
       } catch (err) {
         outputBox.value = `Request failed: ${err.message}`;
       } finally {

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, redirect, url_for, session, flash
+from flask import Flask, jsonify, request, render_template, redirect, send_from_directory, url_for, session, flash
 import joblib
 import numpy as np
 import pandas as pd
@@ -300,21 +300,38 @@ def home():
 def predict_memmap():
     npy = request.files.get('npy_file')
     if not npy:
-        return "Error: No .npy file uploaded", 400
+        return jsonify(error="No .npy file uploaded"), 400
 
+    # save the .npy
     filename = secure_filename(npy.filename)
     npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     npy.save(npy_path)
 
+    # run predictions
     try:
         preds_df = predict_stroke(memmap_data=npy_path)
     except Exception as e:
-        return f"Error: {e}", 500
+        return jsonify(error=str(e)), 500
 
-    # Format just like `df.head()` in a terminal
-    output_str = preds_df.head().to_string()
+    # 1) pretty‐print head
+    text = preds_df.head().to_string()
 
-    return output_str, 200, {'Content-Type': 'text/plain'}
+    # 2) write full CSV to disk
+    csv_name = filename.replace('.npy', '_predictions.csv')
+    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], csv_name)
+    preds_df.to_csv(csv_path, index=False)
+
+    # 3) build a download URL
+    download_url = url_for('download_predictions', filename=csv_name)
+
+    return jsonify(text=text, download_url=download_url)
+
+@app.route('/download_predictions/<filename>')
+def download_predictions(filename):
+    # serves the CSV with an attachment header
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename,
+                               as_attachment=True)
 
 
 if __name__ == '__main__':
