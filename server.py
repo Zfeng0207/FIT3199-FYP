@@ -33,23 +33,34 @@ import io
 from flask import Response
 
 import sys
-# 1. Make sure Python can find your calling_model.py
+
+# 1) Make sure we can import your modules
 basedir = os.path.dirname(__file__)
 sys.path.append(os.path.join(basedir, "testing_calling_model"))
 
-# 2. Import the function
+# 2) Monkey-patch __main__ for torch.load unpickling
+import testing_calling_model.rnn_attention_model as rnn_attention_model
+import __main__
+__main__.RNNAttentionModel = rnn_attention_model.RNNAttentionModel
+__main__.ConvNormPool    = rnn_attention_model.ConvNormPool
+__main__.Swish           = rnn_attention_model.Swish
+__main__.RNN             = rnn_attention_model.RNN
+
+# 3) Now import predict_stroke exactly once from the module that defines it
 from testing_calling_model.calling_model import predict_stroke
 
-# app = Flask(__name__)
-# app = Flask(__name__, template_folder='src/templates')
-app = Flask(__name__, 
-            template_folder='src/templates', 
+# 4) Configure Flask and uploads…
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__,
+            template_folder='src/templates',
             static_folder='src/static')
 
-# 3. Configure an upload folder
 UPLOAD_FOLDER = os.path.join(basedir, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 load_dotenv()
 

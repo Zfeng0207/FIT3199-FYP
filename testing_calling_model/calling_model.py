@@ -2,6 +2,13 @@ import torch
 import numpy as np
 import pandas as pd
 from rnn_attention_model import RNNAttentionModel, ConvNormPool, Swish, RNN
+import rnn_attention_model
+import __main__
+
+__main__.RNNAttentionModel = rnn_attention_model.RNNAttentionModel
+__main__.ConvNormPool      = rnn_attention_model.ConvNormPool
+__main__.Swish             = rnn_attention_model.Swish
+__main__.RNN               = rnn_attention_model.RNN
 
 def predict_stroke(memmap_data="C:/Monash/FIT3164/FIT3199-FYP/testing_calling_model/memmap_head.npy",
                    label_df="C:/Monash/FIT3164/FIT3199-FYP/testing_calling_model/label_df.csv",
