@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, s
 import joblib
 import numpy as np
 import pandas as pd
-from process_and_predict import process_and_predict
+import torch
 
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
@@ -16,6 +16,32 @@ from src.prompt import *
 import os
 import openai
 from werkzeug.utils import secure_filename
+from testing_calling_model.calling_model import predict_from_memmap
+# either absolute:
+from testing_calling_model.rnn_attention_model import RNNAttentionModel, ConvNormPool, Swish, RNN
+
+# 1. Register all custom classes for safe unpickling
+torch.serialization.add_safe_globals([
+    RNNAttentionModel,
+    ConvNormPool,
+    Swish,
+    RNN,
+])
+
+# 2. Load the full model once (disable weights_only default)
+MODEL_PATH = "testing_calling_model/full_model.pkl"
+model = torch.load(
+    MODEL_PATH,
+    map_location="cpu",
+    weights_only=False
+)
+model.eval()
+
+# 3. Load label metadata once
+LABEL_CSV = "testing_calling_model/label_df.csv"
+df = pd.read_csv(LABEL_CSV)
+
+
 
 #auth0 imports
 import json
@@ -272,33 +298,23 @@ def home():
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
-@app.route('/process_stroke', methods=['POST'])
-def process_stroke():
-    npz_f  = request.files.get('npz_file')
-    npy_f  = request.files.get('npy_file')
-    pkl_f  = request.files.get('pkl_file')
-    csv_f  = request.files.get('csv_file')
+@app.route('/predict_memmap', methods=['POST'])
+def predict_memmap_route():
+    npy = request.files.get('npy_file')
+    if not npy or not npy.filename.endswith('.npy'):
+        return jsonify({'error': 'Please upload a valid .npy file.'}), 400
 
-    if not all([npz_f, npy_f, pkl_f, csv_f]):
-        return jsonify({'error': 'Please upload .npz, .npy, .pkl and .csv files'}), 400
-
-    # save them
-    base = '/tmp/uploads'
-    os.makedirs(base, exist_ok=True)
-    FP = lambda name: os.path.join(base, name)
-    npz_f.save(FP('memmap_meta.npz'))
-    npy_f.save(FP('memmap.npy'))
-    pkl_f.save(FP('df_memmap.pkl'))
-    csv_f.save(FP('records_w_diag_icd10.csv'))
+    # save to a temp path
+    tmp_dir = '/tmp/uploads'
+    os.makedirs(tmp_dir, exist_ok=True)
+    path = os.path.join(tmp_dir, 'memmap.npy')
+    npy.save(path)
 
     try:
-        results = process_and_predict(
-            meta_path   = FP('memmap_meta.npz'),
-            npy_path    = FP('memmap.npy'),
-            mapping_pkl = FP('df_memmap.pkl'),
-            records_csv = FP('records_w_diag_icd10.csv')
-        )
-        return jsonify(results)
+        df_preds = predict_from_memmap(path)
+        # turn into list of dicts
+        records = df_preds.to_dict(orient='records')
+        return jsonify({'predictions': records})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
