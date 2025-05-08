@@ -298,33 +298,23 @@ def home():
 
 @app.route('/predict_memmap', methods=['POST'])
 def predict_memmap():
-    """
-    1. Accept the uploaded .npy file (field name 'npy_file').
-    2. Save it to uploads/ and pass its path into predict_stroke().
-    3. Use the default label_df.csv and full_model.pkl.
-    4. Return JSON: { predictions: [ {study_id, stroke}, … ] }.
-    """
-    # Get the uploaded .npy
     npy = request.files.get('npy_file')
     if not npy:
-        return jsonify(error="No .npy file uploaded"), 400
+        return "Error: No .npy file uploaded", 400
 
-    # Save it
     filename = secure_filename(npy.filename)
     npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     npy.save(npy_path)
 
-    # Call your function (defaults for label_df & full_model)
     try:
-        preds_df = predict_stroke(
-            memmap_data=npy_path,
-            # by omitting label_df & full_model, your function will use its defaults
-        )
+        preds_df = predict_stroke(memmap_data=npy_path)
     except Exception as e:
-        return jsonify(error=str(e)), 500
+        return f"Error: {e}", 500
 
-    # Format and return
-    return jsonify(predictions=preds_df.to_dict(orient="records"))
+    # Format just like `df.head()` in a terminal
+    output_str = preds_df.head().to_string()
+
+    return output_str, 200, {'Content-Type': 'text/plain'}
 
 
 if __name__ == '__main__':

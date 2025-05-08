@@ -208,20 +208,19 @@
       formData.append('npy_file', npyInput.files[0]);
 
       try {
-        const res  = await fetch('/predict_memmap', {
-          method: 'POST',
-          body: formData
-        });
-        const json = await res.json();
+        const res   = await fetch('/predict_memmap', {
+        method: 'POST',
+        body: formData
+      });
 
-        if (json.error) {
-          outputBox.value = `Error: ${json.error}`;
-        } else {
-          // json.predictions is an array of {study_id, stroke}
-          outputBox.value = json.predictions
-            .map(p => `${p.study_id}: ${p.stroke}`)
-            .join('\\n');
-        }
+      // pull down the plain‐text DataFrame repr
+      const text  = await res.text();
+
+      if (!res.ok) {
+        outputBox.value = `Error: ${text}`;
+      } else {
+        outputBox.value = text;
+      }
       } catch (err) {
         outputBox.value = `Request failed: ${err.message}`;
       } finally {
