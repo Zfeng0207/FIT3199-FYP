@@ -166,7 +166,7 @@
 
   <!-- File upload -->
   <div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
+    <div class="formbold-form-wrapper w-full max-w-none mx-auto h-auto">
       <form id="processForm">
         <label class="formbold-form-label">Upload .npy memmap file</label>
         <input type="file" id="npyFile" accept=".npy" class="formbold-input" />
@@ -184,8 +184,8 @@
         <div class="formbold-mt-4">
           <label class="formbold-form-label">Model Output</label>
           <!-- hidden until populated -->
-          <div id="predictionOutput" class="overflow-x-auto mt-2 hidden">
-            <table class="min-w-full border-collapse">
+          <div id="predictionOutput" class="mt-2 hidden w-full h-auto">
+            <table class="w-full table-auto border-collapse">
               <thead class="bg-green-600">
                 <tr>
                   <th class="px-4 py-2 text-white text-left">Index</th>
