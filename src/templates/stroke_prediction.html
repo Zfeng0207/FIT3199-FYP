@@ -181,10 +181,13 @@
         </div>
 
         <!-- ↓ in your form, right after the file input / loader … -->
+        <!-- Model Output -->
         <div class="formbold-mt-4">
           <label class="formbold-form-label">Model Output</label>
-          <!-- hidden until populated -->
-          <div id="predictionOutput" class="mt-2 hidden w-full h-auto">
+          <div
+            id="predictionOutput"
+            class="mt-2 hidden w-full max-h-[60vh] overflow-y-auto border border-gray-200 rounded-lg"
+          >
             <table class="w-full table-auto border-collapse">
               <thead class="bg-green-600">
                 <tr>
@@ -203,13 +206,11 @@
           </div>
         </div>
 
+
         <!-- your existing download link -->
         <a id="download-link" class="mt-2 inline-block text-sm text-blue-600 hover:underline hidden">
           ⬇️ Download full CSV
         </a>
-
-        <!-- output box for text data -->
-        <textarea id="outputBox" class="formbold-textarea mt-4" rows="10" readonly></textarea>  
 
       </form>
     </div>
