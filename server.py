@@ -302,29 +302,31 @@ def predict_memmap():
     if not npy:
         return jsonify(error="No .npy file uploaded"), 400
 
-    # save the .npy
     filename = secure_filename(npy.filename)
     npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     npy.save(npy_path)
 
-    # run predictions
     try:
         preds_df = predict_stroke(memmap_data=npy_path)
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-    # 1) pretty‐print head
-    text = preds_df.head().to_string()
+    # 1) reset index → makes an 'index' column
+    preds_df = preds_df.reset_index()
 
-    # 2) write full CSV to disk
+    # 2) serialize entire table to a list of dicts
+    rows = preds_df.to_dict(orient='records')
+
+    # 3) write CSV (without the index column)
     csv_name = filename.replace('.npy', '_predictions.csv')
     csv_path = os.path.join(app.config['UPLOAD_FOLDER'], csv_name)
-    preds_df.to_csv(csv_path, index=False)
+    preds_df.drop(columns=['index']).to_csv(csv_path, index=False)
 
-    # 3) build a download URL
     download_url = url_for('download_predictions', filename=csv_name)
 
-    return jsonify(text=text, download_url=download_url)
+    return jsonify(rows=rows, download_url=download_url)
+
+
 
 @app.route('/download_predictions/<filename>')
 def download_predictions(filename):

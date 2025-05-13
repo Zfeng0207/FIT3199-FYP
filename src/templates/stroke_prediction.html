@@ -180,28 +180,47 @@
           <div class="loader"></div>
         </div>
 
-        <!-- prediction output -->
+        <!-- ↓ in your form, right after the file input / loader … -->
         <div class="formbold-mt-4">
           <label class="formbold-form-label">Model Output</label>
-          <textarea id="outputBox" class="formbold-textarea" rows="8" readonly
-            placeholder="Your prediction will appear here…"></textarea>
+          <!-- hidden until populated -->
+          <div id="predictionOutput" class="overflow-x-auto mt-2 hidden">
+            <table class="min-w-full border-collapse">
+              <thead class="bg-green-600">
+                <tr>
+                  <th class="px-4 py-2 text-white text-left">Index</th>
+                  <th class="px-4 py-2 text-white text-left">Study ID</th>
+                  <th class="px-4 py-2 text-white text-left">Patient ID</th>
+                  <th class="px-4 py-2 text-white text-left">Gender</th>
+                  <th class="px-4 py-2 text-white text-left">ECG Time</th>
+                  <th class="px-4 py-2 text-white text-left">Stroke</th>
+                </tr>
+              </thead>
+              <tbody id="predictionTbody" class="bg-white divide-y divide-gray-200">
+                <!-- injected rows go here -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <a id="download-link"
-          style="display:none; margin-top:1rem; display:block;"
-          target="_blank">
-          📥 Download full CSV
+        <!-- your existing download link -->
+        <a id="download-link" class="mt-2 inline-block text-sm text-blue-600 hover:underline hidden">
+          ⬇️ Download full CSV
         </a>
+
+        <!-- output box for text data -->
+        <textarea id="outputBox" class="formbold-textarea mt-4" rows="10" readonly></textarea>  
 
       </form>
     </div>
   </div>
 
   <script>
-    const loader    = document.getElementById('loader');
-    const npyInput  = document.getElementById('npyFile');
-    const outputBox = document.getElementById('outputBox');
-    const downloadLink = document.getElementById('download-link');
+    const loader         = document.getElementById('loader');
+    const npyInput       = document.getElementById('npyFile');
+    const predictionDiv  = document.getElementById('predictionOutput');
+    const predictionBody = document.getElementById('predictionTbody');
+    const downloadLink   = document.getElementById('download-link');
 
     document.getElementById('processForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -211,31 +230,46 @@
       }
 
       loader.style.display = 'flex';
+      predictionDiv.classList.add('hidden');
+      predictionBody.innerHTML = '';
+      downloadLink.classList.add('hidden');
 
       const formData = new FormData();
       formData.append('npy_file', npyInput.files[0]);
 
       try {
-        const res   = await fetch('/predict_memmap', {
+        const res  = await fetch('/predict_memmap', {
           method: 'POST',
           body: formData
         });
-
-        // Pull down the plain-text DataFrame repr
-        const data  = await res.json();
+        const data = await res.json();
 
         if (!res.ok) {
-          outputBox.value = `Error: ${data.error || data}`;
-        } else {
-          // 1. Output the predictions into the output box
-          outputBox.value = data.text;
-
-          // 2. Show the download link and set its URL
-          downloadLink.href = data.download_url;
-          downloadLink.style.display = 'block';  // Make the link visible
+          alert('Error: ' + (data.error || JSON.stringify(data)));
+          return;
         }
+
+        // build table
+        data.rows.forEach((row, idx) => {
+          const tr = document.createElement('tr');
+          if (idx % 2 === 1) tr.classList.add('bg-gray-100');
+          tr.innerHTML = `
+            <td class="px-4 py-2 whitespace-nowrap">${row.index}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.study_id}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.patient_id}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.gender}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.ecg_time}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.stroke}</td>
+          `;
+          predictionBody.appendChild(tr);
+        });
+
+        predictionDiv.classList.remove('hidden');
+        downloadLink.href       = data.download_url;
+        downloadLink.classList.remove('hidden');
+
       } catch (err) {
-        outputBox.value = `Request failed: ${err.message}`;
+        alert('Request failed: ' + err.message);
       } finally {
         loader.style.display = 'none';
       }
