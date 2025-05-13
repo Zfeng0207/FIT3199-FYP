@@ -168,8 +168,16 @@
   <div class="formbold-main-wrapper">
     <div class="formbold-form-wrapper w-full max-w-none mx-auto h-auto">
       <form id="processForm">
-        <label class="formbold-form-label">Upload .npy memmap file</label>
-        <input type="file" id="npyFile" accept=".npy" class="formbold-input" />
+        <br><br>
+        <!-- ↓ NEW drag-and-drop zone ↓ -->
+        <div
+          id="drop-area"
+          class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer transition-colors"
+        >
+          <p>Click or drag & drop your <span class="font-semibold">.npy</span> file to upload.</p>
+          <input type="file" id="npyFile" accept=".npy" class="hidden" />
+          <p id="file-name" class="mt-2 text-gray-700"></p>
+        </div>
 
         <div><br>
           <button class="formbold-btn w-full" type="submit">Process Data</button>
@@ -275,6 +283,46 @@
         loader.style.display = 'none';
       }
     });
+
+    // drag-and-drop functionality
+    const dropArea   = document.getElementById('drop-area');
+    const fileNameEl = document.getElementById('file-name');
+
+    // click on zone → open file picker
+    dropArea.addEventListener('click', () => npyInput.click());
+
+    // when a file is selected via dialog
+    npyInput.addEventListener('change', handleFiles);
+
+    // highlight on drag
+    ['dragenter','dragover'].forEach(evt =>
+      dropArea.addEventListener(evt, e => {
+        e.preventDefault();
+        dropArea.classList.add('bg-gray-100');
+      })
+    );
+    ['dragleave','drop'].forEach(evt =>
+      dropArea.addEventListener(evt, e => {
+        e.preventDefault();
+        dropArea.classList.remove('bg-gray-100');
+      })
+    );
+
+    // handle drop
+    dropArea.addEventListener('drop', e => {
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        npyInput.files = files;
+        handleFiles();
+      }
+    });
+
+    function handleFiles() {
+      const file = npyInput.files[0];
+      if (file) {
+        fileNameEl.textContent = file.name;
+      }
+  }
   </script>
 
 
