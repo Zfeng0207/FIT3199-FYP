@@ -1,0 +1,274 @@
+import os
+import io
+import base64
+import ast
+from typing import List
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+
+from langchain.tools import tool
+
+# from stroke_agent.stroke_data.icd_mapping_dict import icd_code_dict
+import stroke_agent.agent as agent
+
+icd_code_dict = {
+    "I481": "Persistent atrial fibrillation",
+    "I4891": "Atrial fibrillation, unspecified",
+    "I110": "Hypertensive heart disease with heart failure",
+    "I120": "Hypertensive chronic kidney disease with stage 5 chronic kidney disease or end stage renal disease",
+    "I132": "Hypertensive heart and chronic kidney disease with heart failure and with stage 5 CKD or ESRD",
+    "I210": "ST elevation (STEMI) myocardial infarction of anterior wall",
+    "I200": "Unstable angina",
+    "I255": "Ischemic cardiomyopathy",
+    "I7025": "Atherosclerosis of native arteries of other extremities with ulceration",
+    "I447": "Left bundle-branch block, unspecified",
+    "I451": "Other and unspecified right bundle-branch block",
+    "I440": "First degree atrioventricular block",
+    "R000": "Tachycardia, unspecified",
+    "R001": "Bradycardia, unspecified",
+    "I5043": "Acute on chronic combined systolic and diastolic heart failure",
+    "I081": "Rheumatic disorders of both mitral and tricuspid valves",
+    "I340": "Nonrheumatic mitral (valve) insufficiency",
+    "I359": "Nonrheumatic aortic valve disorder, unspecified",
+    "I078": "Other rheumatic tricuspid valve diseases",
+    "I428": "Other cardiomyopathies",
+    "E1129": "Type 2 diabetes mellitus with other diabetic kidney complication",
+    "E103": "Type 1 diabetes mellitus with ophthalmic complications",
+    "E660": "Obesity due to excess calories",
+    "N186": "End stage renal disease",
+    "D631": "Anemia in chronic kidney disease",
+    "D65": "Disseminated intravascular coagulation [defibrination syndrome]",
+    "C925": "Acute myelomonocytic leukemia",
+    "A40": "Streptococcal sepsis",
+    "A419": "Sepsis, unspecified organism",
+    "R570": "Cardiogenic shock"
+}
+
+class RagToolSchema(BaseModel):
+    question: str
+
+@tool(args_schema=RagToolSchema)
+def retriever_tool(question):
+    """Tool to Retrieve Semantically Similar documents to answer User Questions related to Stroke"""
+
+    print("INSIDE RETRIEVER NODE")
+    response = agent.rag_chain.invoke({"input": question})
+    answer = response.get("answer") 
+    return answer
+
+vitals_data = pd.read_csv("/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv")
+vitals_data["prediction_score"] = vitals_data["prediction_score"].apply(ast.literal_eval)
+vitals_data["res"] = vitals_data["res"].apply(ast.literal_eval)
+
+class AnalyzerToolSchema(BaseModel):
+    subject_id: int = Field(..., description="The subject ID from the hospital records")
+    admission_id: int = Field(..., description="The admission ID corresponding to the hospital stay")
+
+@tool(args_schema=AnalyzerToolSchema)
+def ecg_analyzer(subject_id: int, admission_id: int):
+    """Tool to give retrieve the top 5 diseases predicted by the ECG data of a patient"""
+    print("INSIDE ANALYZER NODE")
+    
+    # Filter vitals_data to get the row
+    row = vitals_data[
+        (vitals_data['subject_id'] == subject_id) &
+        (vitals_data['admission_id'] == admission_id)
+    ]
+    
+    if row.empty:
+        return f"No data found for subject_id: {subject_id} and admission_id: {admission_id}."
+
+    pred_scores = row.iloc[0]['prediction_score']
+    icd_codes = list(icd_code_dict.keys())
+
+    score_pairs = list(zip(icd_codes, pred_scores))
+    score_pairs.sort(key=lambda x: x[1], reverse=True)
+
+    top5 = score_pairs[:5]
+    top5_str = "\n".join([f"- {code}: {icd_code_dict[code]} (Score: {float(score):.2f})" for code, score in top5])
+
+    full_ranking = "\n".join([f"{code}: {float(score):.2f}" for code, score in score_pairs])
+
+    prevention_tips = (
+        "\n\n**Stroke Prevention Tips:**\n"
+        "- Manage blood pressure and cholesterol levels\n"
+        "- Control diabetes and heart-related issues\n"
+        "- Avoid smoking and reduce alcohol intake\n"
+        "- Maintain a healthy weight and exercise regularly\n"
+        "- Follow up with cardiac and renal health screening"
+    )
+
+    return (
+        f"🔍 The ECG data of subject ID `{subject_id}` and admission ID `{admission_id}` "
+        f"shows most relevance to the following diseases:\n\n{top5_str}\n\n"
+        f"📊 This is the ranked prediction result of our model:\n\n{full_ranking}"
+        f"{prevention_tips}"
+    )
+
+import re
+import io
+import base64
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from flask import Response
+from markupsafe import Markup
+
+def generate_patient_ecg_plot_html(msg: str) -> Response:
+    # Extract subject_id and admission_id using regex
+    subject_match = re.search(r"subject.*?(1\d{7})", msg, re.IGNORECASE)
+    admission_match = re.search(r"admission.*?(5\d{7})", msg, re.IGNORECASE)
+
+    if subject_match and admission_match:
+        subject_id = int(subject_match.group(1))
+        admission_id = int(admission_match.group(1))
+    else:
+        return Response("❌ Please provide a valid subject ID (starts with 1) and admission ID (starts with 5).", mimetype="text/plain")
+
+    # Load vital data
+    vital_data_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv"
+    vital_data = pd.read_csv(vital_data_path)
+
+    # Find patient row
+    patient_row = vital_data[(vital_data['subject_id'] == subject_id) & 
+                             (vital_data['admission_id'] == admission_id)]
+
+    if patient_row.empty:
+        return Response("❌ Patient not found in vitals_data.csv.", mimetype="text/plain")
+
+    # Extract index and ECG data slice
+    patient_index = patient_row.index[0]
+    start_idx = patient_row['start'].values[0]
+    length = patient_row['length'].values[0]
+
+    ecg_data_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/ecg_data.npy"
+    ecg_data = np.load(ecg_data_path).reshape((100000, 12))
+    patient_data = ecg_data[start_idx:start_idx + length, :]
+
+    # ECG leads
+    lead_names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+
+    # Create 3x4 plot
+    fig, axes = plt.subplots(3, 4, figsize=(15, 10))
+    axes = axes.flatten()
+
+    for i, ax in enumerate(axes):
+        if i < 12:
+            ax.plot(patient_data[:, i])
+            ax.set_title(f'Lead {lead_names[i]}')
+            ax.grid(True, alpha=0.3)
+
+            y_range = np.max(patient_data[:, i]) - np.min(patient_data[:, i])
+            scale_bar = y_range * 0.2
+            ax.plot([10, 10], [np.min(patient_data[:, i]), np.min(patient_data[:, i]) + scale_bar], 'k-', linewidth=2)
+
+            ax.set_xticks([])
+            ax.set_yticks([])
+        else:
+            ax.axis('off')
+
+    plt.suptitle(f'12-Lead ECG - Subject {subject_id}, Admission {admission_id}', fontsize=16)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.92)
+
+    # Convert plot to base64 image
+    img = io.BytesIO()
+    plt.savefig(img, format='png', dpi=300, bbox_inches='tight')
+    img.seek(0)
+    plt.close()
+
+    base64_image = base64.b64encode(img.read()).decode('utf-8')
+    image_uri = f"data:image/png;base64,{base64_image}"
+
+    # Compose HTML
+    html = f'''
+        <div style="width: 600px; margin: auto; text-align: left;">
+            <p style="font-size: 18px; font-weight: bold;">
+                12-Lead ECG Visualization
+            </p>
+            <img src="{image_uri}" style="width: 100%; border-radius: 8px;" />
+            <p style="font-size: 16px; line-height: 1.5; margin-top: 0.5em;">
+                This ECG plot shows the 12-lead ECG for the patient. Leads I through V6 are labeled, and the vertical scale bar represents ~1 mV. 
+            </p>
+        </div>
+    '''
+    return Response(Markup(html), mimetype="text/html")
+
+# class ECGToolSchema(BaseModel):
+#     question: str
+
+# @tool(args_schema=ECGToolSchema)
+# def visualize_ecg(question):
+#     """Tool to load ecg memmap numpy file and visualize the 12-lead ECG for a specific patient"""
+#     print("✅ visualize_ecg invoked!")
+
+#     # Load ECG data
+#     memmap_meta_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap_meta.npz"
+#     memmap_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap.npy"
+
+#     memmap_meta = np.load(memmap_meta_path, allow_pickle=True)
+#     memmap_data = np.memmap(memmap_path, dtype=np.float32, mode='r')
+#     starts = memmap_meta["start"]
+#     lengths = memmap_meta["length"]
+#     original_shape = tuple(memmap_meta["shape"][0])
+#     ecg_data = memmap_data.reshape(original_shape)
+
+#     # Plot ECG
+#     def visualize_12lead_ecg(ecg_data, patient_index=0):
+#         start_idx = starts[patient_index]
+#         length = lengths[patient_index]
+#         patient_data = ecg_data[start_idx:start_idx+length, :]
+
+#         lead_names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+#         fig, axes = plt.subplots(3, 4, figsize=(15, 10))
+#         axes = axes.flatten()
+
+#         for i, ax in enumerate(axes):
+#             if i < 12:
+#                 ax.plot(patient_data[:, i])
+#                 ax.set_title(f'Lead {lead_names[i]}')
+#                 ax.grid(True, alpha=0.3)
+#                 y_range = np.max(patient_data[:, i]) - np.min(patient_data[:, i])
+#                 scale_bar = y_range * 0.2
+#                 ax.plot([10, 10], [np.min(patient_data[:, i]), np.min(patient_data[:, i]) + scale_bar], 'k-', linewidth=2)
+#                 ax.set_xticks([])
+#                 ax.set_yticks([])
+#             else:
+#                 ax.axis('off')
+
+#         plt.suptitle(f'12-Lead ECG - Patient #{patient_index+1}', fontsize=16)
+#         plt.tight_layout()
+#         plt.subplots_adjust(top=0.92)
+#         return fig
+
+#     # Generate for first patient
+#     patient_index = 0
+#     fig = visualize_12lead_ecg(ecg_data, patient_index)
+
+#     # Save to BytesIO
+#     img_bytes = io.BytesIO()
+#     fig.savefig(img_bytes, format='png', dpi=300, bbox_inches='tight')
+#     plt.close(fig)
+#     img_bytes.seek(0)
+
+#     # Convert to base64
+#     img_base64 = base64.b64encode(img_bytes.read()).decode('utf-8')
+#     img_data_uri = f"data:image/png;base64,{img_base64}"
+
+#     explanation = (
+#         f"This ECG plot shows the 12-lead ECG for patient #{patient_index+1}. "
+#         "The leads are labeled from I to V6. The vertical scale bar represents approximately 1 mV. "
+#         "The ECG data is visualized in a standard clinical format."
+#     )
+
+#     # Return both image and explanation in structured format
+#     return [
+#         {"type": "image_url", "image_url": {"url": img_data_uri}},
+#         {"type": "text", "text": explanation}
+#     ]
+
+

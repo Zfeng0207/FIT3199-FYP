@@ -4,28 +4,33 @@ body, html {
 	margin: 0;
 	font-family: "Poppins", sans-serif;
 	background: transparent !important;
+	display: flex;
+	flex-direction: column;
   }
   
   .chat {
-	margin-top: auto;
-	margin-bottom: auto;
+	margin-top: auto;  /* Pushes to bottom */
 	padding: 1rem;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-end; /* Aligns vertically to bottom */
+	flex-grow: 1;
   }
   
   /* Chat Card Styling */
   .card {
-	height: 600px;
-	width: 2500px;
+	height: 800px;
+	width: 70vw; /* use viewport width instead of fixed px */
+	max-width: 1400px; /* Optional: Limit max width for better readability */
+	margin: 0 auto; /* Center horizontally */
 	border-radius: 15px !important;
 	background: linear-gradient(135deg, rgb(0, 93, 143), rgb(0, 39, 61));
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-	overflow: hidden; /* Avoid content overflow */
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
   }
+
   
   /* Card Header and Footer Adjustments */
   .card-header {
