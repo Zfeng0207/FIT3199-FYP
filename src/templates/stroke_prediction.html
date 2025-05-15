@@ -129,7 +129,6 @@
     <div class="cs-container">
       <div class="cs-content">
         <br><br><br><br><br><br>
-        <h2 class="cs-title">Data Entry & Prediction</h2>
       </div>
       <ul class="cs-card-group">
         <li class="cs-item">
@@ -166,8 +165,9 @@
 
   <!-- File upload -->
   <div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper w-full max-w-none mx-auto h-auto">
-      <form id="processForm">
+    <div class="cs-container">                    <!-- ← add this -->
+      <div class="formbold-form-wrapper w-full">  <!-- you can drop the max-w-none here -->
+        <form id="processForm">
         <br><br>
         <!-- ↓ NEW drag-and-drop zone ↓ -->
         <div
@@ -191,7 +191,6 @@
         <!-- ↓ in your form, right after the file input / loader … -->
         <!-- Model Output -->
         <div class="formbold-mt-4">
-          <label class="formbold-form-label">Model Output</label>
           <div
             id="predictionOutput"
             class="mt-2 hidden w-full max-h-[60vh] overflow-y-auto border border-gray-200 rounded-lg"
@@ -219,10 +218,11 @@
         <a id="download-link" class="mt-2 inline-block text-sm text-blue-600 hover:underline hidden">
           ⬇️ Download full CSV
         </a>
+        </form>
+      </div>  <!-- /.formbold-form-wrapper -->
+    </div>    <!-- /.cs-container -->
+  </div>      <!-- /.formbold-main-wrapper -->
 
-      </form>
-    </div>
-  </div>
 
   <script>
     const loader         = document.getElementById('loader');

@@ -207,7 +207,7 @@
 
   .formbold-form-wrapper {
     margin: 0 auto;
-    max-width: 550px;
+    max-width: none !important;
     width: 100%;
     background: white;
   }
@@ -431,3 +431,21 @@
     margin-left: 0; /* start from here */
     transform: translateX(-50px); /* moves 50px to the left */
   }
+
+  /*—————————————————————————————*/
+/* Make the file‐upload area span the same 80 rem container */
+/*—————————————————————————————*/
+.formbold-main-wrapper {
+  /* stop centering shrink‐to‐fit items */
+  display: block !important;
+}
+
+.formbold-main-wrapper > .cs-container {
+  /* match the services section container */
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+/* the form wrapper already has width:100%; max-width:none,
+   so your #drop-area (a block element) will now fill that container */
