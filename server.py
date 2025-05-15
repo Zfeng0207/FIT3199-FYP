@@ -105,7 +105,8 @@ def chat():
     thread_id = session["thread_id"]
     import re
     import pandas as pd
-    if "visualize" in msg.lower():
+    if any(word in msg.lower() for word in ["visualize", "plot", "graph", "chart", "diagram", "draw", "display", "render", "illustrate", "show"]):
+        print("ECG VISUALIZER INVOKED")
         return agent_tools.generate_patient_ecg_plot_html(msg)
          
     # Default: standard text query handled by LangGraph
@@ -113,6 +114,8 @@ def chat():
         {"messages": [("user", msg)]},
         {"configurable": {"thread_id": thread_id}}
     )
+
+    print("Response:", response["messages"][-1].content)
     return Response(response["messages"][-1].content, mimetype="text/html")
 
 @app.route('/data-entry')

@@ -55,6 +55,7 @@ llm_with_tools = llm.bind_tools(tools)
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
+
 system_prompt = "You are a helpful assistant specialized in medical data analysis and ECG interpretation."
 
 prompt = ChatPromptTemplate.from_messages(
@@ -64,8 +65,20 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
+stroke_prompt = ("system",
+"Do not summarize, shorten, or exclude any part of the Tool's output. "
+"Your role is only to enhance readability by adding appropriate HTML tags for structure and emphasis. "
+"Preserve all original bullet points, numbering, scores, and notes exactly as they appear. "
+"Apply formatting such as <b>, <i>, <u>to improve clarity. Don't use any other html tags! "
+"Try to use bullets and numbering to make the text more readable. "
+"Never delete or alter any diagnostic information or prediction scores."
+"Make sure to use a lot of emojis to make the text more engaging and fun."
+"After the ecg_analyzer tool is invoked, ask the user if they want further explanation of Top 5 Predicted Conditions"
+"After the top 5 conditions are displayed, ask the user if they want a personalized prevention plan."
+)
+
 def chatbot(state: State):
-    system_prompt = ("system", "You are a helpful assistant specialized in medical data analysis and ECG interpretation. If the Tool returns a string, do not reword or paraphrase. Make sure your responses are in bullet points and easy to read. If the Tool returns an image, do not reword or paraphrase. Make sure your responses are in bullet points and easy to read. Use emojis to make the response more engaging. If the Tool returns a string, do not reword or paraphrase. Make sure your responses are in bullet points and easy to read. If the Tool returns an image, do not reword or paraphrase. Make sure your responses are in bullet points and easy to read. Use emojis to make the response more engaging.")
+    system_prompt = stroke_prompt
     # Prepend the system prompt to the messages
     messages = [system_prompt] + state["messages"]
     print("State Messages with System Prompt:", messages)

@@ -172,6 +172,9 @@ body, html {
   
   /* Message Container and Styling */
   .msg_cotainer {
+	max-width: 70%;
+	word-wrap: break-word;
+	white-space: normal;
 	margin: auto 0;
 	margin-left: 10px;
 	border-radius: 25px;
