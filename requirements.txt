@@ -12,6 +12,7 @@ langchain-experimental
 # pinecone-client[grpc]
 pinecone
 langchain-pinecone
+langchain_huggingface
 
 # Optional: Hugging Face support
 huggingface-hub
@@ -20,6 +21,20 @@ transformers
 # For acceleration (typo fix)
 accelerate
 
-#auth0
+# Auth0
 authlib
 requests
+
+# Additional libraries
+flask-cors  # For handling CORS in Flask
+gunicorn    # For deploying Flask apps
+openai      # For OpenAI API integration
+numpy       # For numerical computations
+pandas      # For data manipulation
+scikit-learn  # For machine learning tasks
+matplotlib  # For data visualization
+seaborn     # For statistical data visualization
+tqdm        # For progress bars
+joblib
+pytorch_lightning
+#python3 -m pip install -r requirements.txt
