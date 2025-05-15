@@ -193,38 +193,42 @@
   <main class="px-6 py-6">
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
       <h1 class="text-2xl font-bold mb-6">CVD Risk Calculator</h1>
-  
-      <!-- Form Inputs -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <label class="flex flex-col text-sm font-medium">Age
-          <input id="age" type="number" class="border rounded p-2" value="45" />
+  <!-- Form Inputs (One per row) -->
+      <div class="space-y-4">
+        <label class="block text-sm font-medium">Age
+          <input id="age" type="number" class="w-full border rounded p-2" value="45" />
         </label>
-        <label class="flex flex-col text-sm font-medium">Sex
-          <select id="sex" class="border rounded p-2">
+
+        <label class="block text-sm font-medium">Sex
+          <select id="sex" class="w-full border rounded p-2">
             <option value="male" selected>Male</option>
             <option value="female">Female</option>
           </select>
         </label>
-        <label class="flex flex-col text-sm font-medium">Total Cholesterol (mg/dL)
-          <input id="tc" type="number" class="border rounded p-2" value="190" />
+
+        <label class="block text-sm font-medium">Total Cholesterol (mg/dL)
+          <input id="tc" type="number" class="w-full border rounded p-2" value="190" />
         </label>
-        <label class="flex flex-col text-sm font-medium">HDL Cholesterol (mg/dL)
-          <input id="hdl" type="number" class="border rounded p-2" value="58" />
+
+        <label class="block text-sm font-medium">HDL Cholesterol (mg/dL)
+          <input id="hdl" type="number" class="w-full border rounded p-2" value="58" />
         </label>
-        <label class="flex flex-col text-sm font-medium">Systolic BP (mmHg)
-          <input id="sbp" type="number" class="border rounded p-2" value="110" />
+
+        <label class="block text-sm font-medium">Systolic BP (mmHg)
+          <input id="sbp" type="number" class="w-full border rounded p-2" value="110" />
         </label>
-        <label class="flex flex-col text-sm font-medium">eGFR
-          <input id="egfr" type="number" class="border rounded p-2" value="108" />
+
+        <label class="block text-sm font-medium">eGFR
+          <input id="egfr" type="number" class="w-full border rounded p-2" value="108" />
         </label>
-        <label class="flex flex-col text-sm font-medium">BMI
-          <input id="bmi" type="number" class="border rounded p-2" value="28" />
+
+        <label class="block text-sm font-medium">BMI
+          <input id="bmi" type="number" class="w-full border rounded p-2" value="28" />
         </label>
       </div>
-  
-      <!-- Segmented Toggles -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 text-sm font-medium">
-        <!-- Diabetes -->
+
+      <!-- Segmented Toggles (One per row) -->
+      <div class="space-y-4 mt-6 text-sm font-medium">
         <div>
           <label class="block mb-1">Diabetes</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
@@ -232,8 +236,7 @@
             <button id="diabetes-yes" onclick="toggleGroup('diabetes', 'yes')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
-  
-        <!-- Smoker -->
+
         <div>
           <label class="block mb-1">Current Smoker</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
@@ -241,8 +244,7 @@
             <button id="smoker-yes" onclick="toggleGroup('smoker', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
           </div>
         </div>
-  
-        <!-- Anti-Hypertensives -->
+
         <div>
           <label class="block mb-1">On Anti-Hypertensives</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
@@ -250,8 +252,7 @@
             <button id="antihtn-yes" onclick="toggleGroup('antihtn', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
           </div>
         </div>
-  
-        <!-- Statins -->
+
         <div>
           <label class="block mb-1">On Statins</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
