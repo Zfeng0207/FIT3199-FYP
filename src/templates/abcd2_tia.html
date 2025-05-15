@@ -361,33 +361,57 @@
 
 
 <script>
-    const state = { age: 0, bp: 0, features: 0, duration: 0, diabetes: 0 };
-  
-    function setScore(category, value) {
-      state[category] = value;
-      const max = category === 'features' || category === 'duration' ? 2 : 1;
-      for (let i = 0; i <= max; i++) {
-        document.getElementById(`${category}${i}`).classList.remove('bg-green-600', 'text-white', 'font-bold');
-      }
-      const selected = document.getElementById(`${category}${value}`);
-      selected.classList.add('bg-green-600', 'text-white', 'font-bold');
+  const state = { age: 0, bp: 0, features: 0, duration: 0, diabetes: 0 };
+
+  function setScore(category, value) {
+    state[category] = value;
+    // how many options in this category?
+    const max = (category === 'features' || category === 'duration') ? 2 : 1;
+
+    // 1) reset all buttons in this category
+    for (let i = 0; i <= max; i++) {
+      const btn = document.getElementById(`${category}${i}`);
+      // remove selected styles
+      btn.classList.remove('bg-green-600', 'text-white', 'font-bold');
+      // re-add default button styles
+      btn.classList.add('bg-gray-100', 'text-gray-700');
+      // reset each span inside back to its original color
+      btn.querySelectorAll('span').forEach(span => {
+        span.classList.remove('text-white', 'text-green-500', 'text-gray-500');
+        const txt = span.textContent.trim();
+        if (txt.startsWith('+')) {
+          span.classList.add('text-green-500');
+        } else {
+          span.classList.add('text-gray-500');
+        }
+      });
     }
+
+    // 2) apply “selected” styles to the one the user clicked
+    const sel = document.getElementById(`${category}${value}`);
+    sel.classList.remove('bg-gray-100', 'text-gray-700');
+    sel.classList.add('bg-green-600', 'text-white', 'font-bold');
+    sel.querySelectorAll('span').forEach(span => {
+      span.classList.remove('text-green-500', 'text-gray-500');
+      span.classList.add('text-white');
+    });
+  }
   
-    function calculateScore() {
-      const score = Object.values(state).reduce((a, b) => a + b, 0);
-      let riskText = '';
-      if (score <= 3) {
-        riskText = `0–3 points: Low Risk\n2-Day Stroke Risk: 1.0%\n7-Day: 1.2%\n90-Day: 3.1%`;
-      } else if (score <= 5) {
-        riskText = `4–5 points: Moderate Risk\n2-Day Stroke Risk: 4.1%\n7-Day: 5.9%\n90-Day: 9.8%`;
-      } else {
-        riskText = `6–7 points: High Risk\n2-Day Stroke Risk: 8.1%\n7-Day: 11.7%\n90-Day: 17.8%`;
-      }
-  
-      const result = document.getElementById('result');
-      result.textContent = `${score} points\n\n${riskText}`;
-      result.classList.remove('hidden');
+  function calculateScore() {
+    const score = Object.values(state).reduce((a, b) => a + b, 0);
+    let riskText = '';
+    if (score <= 3) {
+      riskText = `0–3 points: Low Risk\n2-Day Stroke Risk: 1.0%\n7-Day: 1.2%\n90-Day: 3.1%`;
+    } else if (score <= 5) {
+      riskText = `4–5 points: Moderate Risk\n2-Day Stroke Risk: 4.1%\n7-Day: 5.9%\n90-Day: 9.8%`;
+    } else {
+      riskText = `6–7 points: High Risk\n2-Day Stroke Risk: 8.1%\n7-Day: 11.7%\n90-Day: 17.8%`;
     }
+
+    const result = document.getElementById('result');
+    result.textContent = `${score} points\n\n${riskText}`;
+    result.classList.remove('hidden');
+  }
   </script>
 </body>
 </html>
