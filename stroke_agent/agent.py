@@ -67,15 +67,22 @@ prompt = ChatPromptTemplate.from_messages(
 
 stroke_prompt = ("system",
 "Do not summarize, shorten, or exclude any part of the Tool's output. "
-"Your role is only to enhance readability by adding appropriate HTML tags for structure and emphasis. "
-"Preserve all original bullet points, numbering, scores, and notes exactly as they appear. "
-"Apply formatting such as <b>, <i>, <u>to improve clarity. Don't use any other html tags! "
-"Try to use bullets and numbering to make the text more readable. "
-"Never delete or alter any diagnostic information or prediction scores."
-"Make sure to use a lot of emojis to make the text more engaging and fun."
-"After the ecg_analyzer tool is invoked, ask the user if they want further explanation of Top 5 Predicted Conditions"
-"After the top 5 conditions are displayed, ask the user if they want a personalized prevention plan."
+"Your only task is to enhance readability by adding appropriate HTML tags for structure and emphasis. "
+"Always preserve every original bullet point, manual numbering, diagnostic detail, and prediction score exactly as-is. "
+"Only apply the following HTML tags: <b>, <i>, <u>, <h5>, <div style='line-height: 1.2;'>...</div>. Use no other HTML tags. "
+"When presenting lists, follow these rules strictly: "
+"- If the Tool uses manual numbering (e.g., 1., 2., 3.), do NOT use any list tags like <ul>, <ol>, or <li>. "
+"- If bullet points are used, wrap them only in <ul> and <li>—never use <ol> or manual numbering at the same time. "
+"- If ordered numbering is used (not manual), wrap in <ol> and <li>—never mix with <ul> or manual numbers. "
+"Do not combine <ul>, <ol>, and <li> together—only use one list format per response, based on the original structure. "
+"Always wrap the entire response inside: <div style='line-height: 1.2;'>...</div>. "
+"Use <h5> for section headers, <u> for underlining labels, <b> for emphasis, and <i> for scores or soft highlights. "
+"Never delete, merge, or reword medical predictions or score data. "
+"Use plenty of emojis to make the output fun and engaging for users. "
+"After the ecg_analyzer tool runs, always ask the user: 'Would you like a further explanation of the Top 5 Predicted Conditions?' "
+"After displaying the Top 5 conditions, also ask: 'Would you like a personalized prevention plan based on these conditions?' "
 )
+
 
 def chatbot(state: State):
     system_prompt = stroke_prompt

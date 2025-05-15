@@ -133,7 +133,7 @@ def generate_patient_ecg_plot_html(msg: str) -> Response:
         subject_id = int(subject_match.group(1))
         admission_id = int(admission_match.group(1))
     else:
-        return Response("❌ Please provide a valid subject ID (starts with 1) and admission ID (starts with 5).", mimetype="text/plain")
+        return Response("❌ Please provide a valid subject ID and admission ID.", mimetype="text/html")
 
     # Load vital data
     vital_data_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv"
@@ -144,7 +144,7 @@ def generate_patient_ecg_plot_html(msg: str) -> Response:
                              (vital_data['admission_id'] == admission_id)]
 
     if patient_row.empty:
-        return Response("❌ Patient not found in vitals_data.csv.", mimetype="text/plain")
+        return Response("❌ Patient not found in vitals_data.csv.", mimetype="text/html")
 
     # Extract index and ECG data slice
     patient_index = patient_row.index[0]
