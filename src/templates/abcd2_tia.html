@@ -187,63 +187,127 @@
   <!--             Risk Estimator Form             -->
   <!-- ============================================ -->
   <section class="max-w-3xl mx-auto mb-10 space-y-6">
-    <div class="bg-white shadow-md rounded-xl overflow-hidden border">
-      <div class="divide-y divide-gray-200">
-  
-        <!-- Age -->
-        <div class="p-4">
-          <div class="font-semibold mb-2">Age ≥60 years</div>
-          <div class="flex rounded overflow-hidden border">
-            <button onclick="setScore('age', 0)" id="age0" class="flex-1 px-4 py-2 border-r last:border-r-0 bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
-            <button onclick="setScore('age', 1)" id="age1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
+    <main class="px-6 py-8">
+      <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-2xl font-bold mb-6">TIA Risk Calculator</h1>
+
+        <div class="space-y-6">
+          <!-- Age ≥60 years -->
+          <div>
+            <div class="font-medium mb-2">Age ≥ 60 years</div>
+            <div class="flex rounded overflow-hidden border border-gray-300">
+              <button id="age0"
+                onclick="setScore('age', 0)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300 outline-none focus:outline-none">
+                No <span class="ml-1 text-gray-500">0</span>
+              </button>
+              <button id="age1"
+                onclick="setScore('age', 1)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 outline-none focus:outline-none">
+                Yes <span class="ml-1 text-green-500">+1</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BP ≥140/90 mmHg -->
+          <div>
+            <div class="font-medium mb-2">BP ≥ 140/90 mmHg</div>
+            <div class="flex rounded overflow-hidden border border-gray-300">
+              <button id="bp0"
+                onclick="setScore('bp', 0)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300 outline-none focus:outline-none">
+                No <span class="ml-1 text-gray-500">0</span>
+              </button>
+              <button id="bp1"
+                onclick="setScore('bp', 1)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 outline-none focus:outline-none">
+                Yes <span class="ml-1 text-green-500">+1</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Clinical features of the TIA -->
+          <div>
+            <div class="font-medium mb-2">Clinical features of the TIA</div>
+            <div class="bg-white rounded border border-gray-300 divide-y divide-gray-200">
+              <button id="features2"
+                onclick="setScore('features', 2)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>Unilateral weakness</span>
+                <span class="text-green-500">+2</span>
+              </button>
+              <button id="features1"
+                onclick="setScore('features', 1)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>Speech disturbance without weakness</span>
+                <span class="text-green-500">+1</span>
+              </button>
+              <button id="features0"
+                onclick="setScore('features', 0)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>Other symptoms</span>
+                <span class="text-gray-500">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Duration of symptoms -->
+          <div>
+            <div class="font-medium mb-2">Duration of symptoms</div>
+            <div class="bg-white rounded border border-gray-300 divide-y divide-gray-200">
+              <button id="duration0"
+                onclick="setScore('duration', 0)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>&lt; 10 minutes</span>
+                <span class="text-gray-500">0</span>
+              </button>
+              <button id="duration1"
+                onclick="setScore('duration', 1)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>10–59 minutes</span>
+                <span class="text-green-500">+1</span>
+              </button>
+              <button id="duration2"
+                onclick="setScore('duration', 2)"
+                class="w-full flex justify-between py-2 px-4 outline-none focus:outline-none">
+                <span>≥ 60 minutes</span>
+                <span class="text-green-500">+2</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- History of diabetes -->
+          <div>
+            <div class="font-medium mb-2">History of diabetes</div>
+            <div class="flex rounded overflow-hidden border border-gray-300">
+              <button id="diabetes0"
+                onclick="setScore('diabetes', 0)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300 outline-none focus:outline-none">
+                No <span class="ml-1 text-gray-500">0</span>
+              </button>
+              <button id="diabetes1"
+                onclick="setScore('diabetes', 1)"
+                class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 outline-none focus:outline-none">
+                Yes <span class="ml-1 text-green-500">+1</span>
+              </button>
+            </div>
           </div>
         </div>
-  
-        <!-- BP -->
-        <div class="p-4">
-          <div class="font-semibold mb-2">BP ≥140/90 mmHg</div>
-          <div class="flex rounded overflow-hidden border">
-            <button onclick="setScore('bp', 0)" id="bp0" class="flex-1 px-4 py-2 border-r bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
-            <button onclick="setScore('bp', 1)" id="bp1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
-          </div>
+
+        <!-- Calculate -->
+        <div class="mt-6 text-center">
+          <button onclick="calculateScore()"
+                  class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded shadow">
+            Calculate
+          </button>
         </div>
-  
-        <!-- Clinical features -->
-        <div class="p-4">
-          <div class="font-semibold mb-2">Clinical features of the TIA</div>
-          <div class="rounded border divide-y">
-            <button onclick="setScore('features', 2)" id="features2" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Unilateral weakness <span class="float-right text-green-600">+2</span></button>
-            <button onclick="setScore('features', 1)" id="features1" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Speech disturbance without weakness <span class="float-right text-green-600">+1</span></button>
-            <button onclick="setScore('features', 0)" id="features0" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">Other symptoms <span class="float-right text-gray-400">0</span></button>
-          </div>
-        </div>
-  
-        <!-- Duration -->
-        <div class="p-4">
-          <div class="font-semibold mb-2">Duration of symptoms</div>
-          <div class="rounded border divide-y">
-            <button onclick="setScore('duration', 0)" id="duration0" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">&lt;10 minutes <span class="float-right text-gray-400">0</span></button>
-            <button onclick="setScore('duration', 1)" id="duration1" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">10–59 minutes <span class="float-right text-green-600">+1</span></button>
-            <button onclick="setScore('duration', 2)" id="duration2" class="w-full px-4 py-2 text-left bg-white hover:bg-gray-100">≥ 60 minutes <span class="float-right text-green-600">+2</span></button>
-          </div>
-        </div>
-  
-        <!-- Diabetes -->
-        <div class="p-4">
-          <div class="font-semibold mb-2">History of diabetes</div>
-          <div class="flex rounded overflow-hidden border">
-            <button onclick="setScore('diabetes', 0)" id="diabetes0" class="flex-1 px-4 py-2 border-r bg-gray-100 text-gray-700">No <span class="text-gray-400 ml-1">0</span></button>
-            <button onclick="setScore('diabetes', 1)" id="diabetes1" class="flex-1 px-4 py-2 bg-white text-gray-700">Yes <span class="text-green-600 ml-1">+1</span></button>
-          </div>
+
+        <!-- Result -->
+        <div id="result"
+            class="hidden mt-6 bg-green-700 text-white rounded-lg p-6 whitespace-pre-line">
         </div>
       </div>
-  
-    <!-- Score Display -->
-    <div class="text-center">
-      <button onclick="calculateScore()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded">Calculate</button>
-    </div>
-  
-    <div id="result" class="hidden bg-green-700 text-white text-lg font-semibold p-4 rounded shadow-md whitespace-pre-line"></div>
+    </main>
   </section>
   
 
