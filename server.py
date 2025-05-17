@@ -31,7 +31,10 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 from flask import Response
-
+from stroke_agent.agent import graph
+from langchain.schema.messages import ToolMessage
+import uuid
+import stroke_agent.tools.agent_tools as agent_tools
 import sys
 
 # 1) Make sure we can import your modules
@@ -64,52 +67,34 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 load_dotenv()
 
-
+# API Keys
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
 FLASKAPP_API_KEY = os.environ.get('FLASKAPP_API_KEY')
+OPENAI_AGENT_API_KEY = os.environ.get('OPENAI_AGENT_API_KEY')
+LANGSMITH_TRACING= os.environ.get('LANGSMITH_TRACING')
+LANGSMITH_ENDPOINT=os.environ.get('LANGSMITH_ENDPOINT')
+LANGSMITH_API_KEY=os.environ.get('LANGSMITH_API_KEY')
+LANGSMITH_PROJECT=os.environ.get('LANGSMITH_PROJECT')
+
+# Set environment
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["OPENROUTER_API_KEY"] = OPENROUTER_API_KEY
 os.environ["FLASKAPP_API_KEY"] = FLASKAPP_API_KEY
-OPENAI_AGENT_API_KEY = os.environ.get('OPENAI_AGENT_API_KEY')
 os.environ["OPENAI_AGENT_API_KEY"] = OPENAI_AGENT_API_KEY
-
 openai.api_base = "https://openrouter.ai//v1"
 app.secret_key = FLASKAPP_API_KEY
-embeddings = download_hugging_face_embeddings()
-index_name = "medicalbot"
-# index_name = "darrenchenhw"
 
-# Embed each chunk and upsert the embeddings into your Pinecone index.
-docsearch = PineconeVectorStore.from_existing_index(
-    index_name=index_name,
-    embedding=embeddings
-)
 
-retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-
-llm = ChatOpenAI(temperature=0, model="gpt-4.1-mini", openai_api_key=OPENAI_AGENT_API_KEY)
-
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", system_prompt),
-        ("human", "{input}"),
-    ]
-)
-
-question_answer_chain = create_stuff_documents_chain(llm, prompt)
-rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-
-# later move this to a config file or database
+# Demo users
 users = {
     "itadmin": {"password": "password", "role": "staff"},
     "staff2": {"password": "pass123", "role": "staff"},
     "customer1": {"password": "password", "role": "customer"},
     "customer2": {"password": "custpass", "role": "customer"}
 }
-
 
 @app.route("/chat")
 def chat_page():
@@ -119,84 +104,23 @@ def chat_page():
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     msg = request.form["msg"]
-    input = msg
-    print("Input:", input)
+    if "thread_id" not in session:
+        session["thread_id"] = str(uuid.uuid4())
+    thread_id = session["thread_id"]
+    import re
+    import pandas as pd
+    if any(word in msg.lower() for word in ["visualize", "plot", "graph", "chart", "diagram", "draw", "display", "render", "illustrate", "show"]):
+        print("ECG VISUALIZER INVOKED")
+        return agent_tools.generate_patient_ecg_plot_html(msg)
+         
+    # Default: standard text query handled by LangGraph
+    response = graph.invoke(
+        {"messages": [("user", msg)]},
+        {"configurable": {"thread_id": thread_id}}
+    )
 
-    # If the user asks for a sales plot (you can change this condition to suit your use case)
-    if "plot sales" in msg.lower():
-        import numpy as np
-        import matplotlib.pyplot as plt
-        memmap_meta_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap_meta.npz"
-        memmap_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap.npy"
-
-        memmap_meta = np.load(memmap_meta_path, allow_pickle=True)
-        memmap_data = np.memmap(memmap_path, dtype=np.float32, mode='r')
-
-        starts = memmap_meta["start"]
-        lengths = memmap_meta["length"]
-        original_shape = tuple(memmap_meta["shape"][0])
-        ecg_data = memmap_data.reshape(original_shape)
-
-        # Function to visualize a 12-lead ECG
-        def visualize_12lead_ecg(ecg_data, patient_index=0):
-            # Get the start and length for this patient
-            start_idx = starts[patient_index]
-            length = lengths[patient_index]
-
-            # Extract the data for this patient - all 12 leads
-            patient_data = ecg_data[start_idx:start_idx+length, :]
-
-            # Standard 12-lead ECG lead names
-            lead_names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
-
-            # Create a figure with 12 subplots (3x4 grid)
-            fig, axes = plt.subplots(3, 4, figsize=(15, 10))
-            axes = axes.flatten()
-
-            # Plot each lead
-            for i, ax in enumerate(axes):
-                if i < 12:  # We have 12 leads
-                    ax.plot(patient_data[:, i])
-                    ax.set_title(f'Lead {lead_names[i]}')
-                    ax.grid(True, alpha=0.3)
-
-                    # Add a small vertical scale bar (1 mV)
-                    # This is an approximation - normally would need calibration
-                    y_range = np.max(patient_data[:, i]) - np.min(patient_data[:, i])
-                    scale_bar = y_range * 0.2  # 20% of the range as a scale reference
-                    ax.plot([10, 10], [np.min(patient_data[:, i]), np.min(patient_data[:, i]) + scale_bar],
-                        'k-', linewidth=2)
-
-                    # Remove tick labels to mimic clinical ECG appearance
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                else:
-                    ax.axis('off')  # Hide unused subplot
-
-            # Add a title for the entire plot
-            plt.suptitle(f'12-Lead ECG - Patient #{patient_index+1}', fontsize=16)
-            plt.tight_layout()
-            plt.subplots_adjust(top=0.92)  # Adjust to make room for suptitle
-
-            return fig
-
-        # Visualize ECGs for first 3 patients
-        for i in range(3):
-            fig = visualize_12lead_ecg(ecg_data, i)
-            plt.figure(fig.number)
-            plt.savefig(f'patient_{i+1}_12lead_ecg.png', dpi=300, bbox_inches='tight')
-            plt.show()
-
-        # Save to BytesIO object
-        img = io.BytesIO()
-        plt.savefig(img, format='png')
-        img.seek(0)
-        plt.close()
-
-        return send_file(img, mimetype='image/png')
-
-    response = rag_chain.invoke({"input": msg})
-    return Response(response["answer"], mimetype='text/plain')
+    print("Response:", response["messages"][-1].content)
+    return Response(response["messages"][-1].content, mimetype="text/html")
 
 @app.route('/data-entry')
 def stroke_prediction_routing():
@@ -296,33 +220,37 @@ def home():
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
-@app.route('/predict_memmap', methods=['POST'])
-def predict_memmap():
-    npy = request.files.get('npy_file')
-    if not npy:
-        return jsonify(error="No .npy file uploaded"), 400
+from flask import Flask, request, jsonify, url_for
+from werkzeug.utils import secure_filename
+import os
 
-    filename = secure_filename(npy.filename)
-    npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    npy.save(npy_path)
+@app.route('/predict_csv', methods=['POST'])
+def predict_csv():
+    csv_file = request.files.get('csv_file')
+    if not csv_file:
+        return jsonify(error="No CSV file uploaded"), 400
+
+    # Save the uploaded file
+    filename = secure_filename(csv_file.filename)
+    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    csv_file.save(csv_path)
 
     try:
-        preds_df = predict_stroke(memmap_data=npy_path)
+        # Run prediction using the simplified one-CSV method
+        preds_df = predict_stroke(csv_with_ecg=csv_path, full_model='/Users/zfeng/Documents/Stroke Hero/FIT3199-FYP/testing_calling_model/full_model.pkl')
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-    # 1) reset index → makes an 'index' column
+    # Prepare output
     preds_df = preds_df.reset_index()
-
-    # 2) serialize entire table to a list of dicts
     rows = preds_df.to_dict(orient='records')
 
-    # 3) write CSV (without the index column)
-    csv_name = filename.replace('.npy', '_predictions.csv')
-    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], csv_name)
-    preds_df.drop(columns=['index']).to_csv(csv_path, index=False)
+    # Save predictions to CSV (drop index column)
+    output_csv_name = filename.replace('.csv', '_predictions.csv')
+    output_csv_path = os.path.join(app.config['UPLOAD_FOLDER'], output_csv_name)
+    preds_df.drop(columns=['index']).to_csv(output_csv_path, index=False)
 
-    download_url = url_for('download_predictions', filename=csv_name)
+    download_url = url_for('download_predictions', filename=output_csv_name)
 
     return jsonify(rows=rows, download_url=download_url)
 
