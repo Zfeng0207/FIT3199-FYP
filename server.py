@@ -73,6 +73,10 @@ OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
 FLASKAPP_API_KEY = os.environ.get('FLASKAPP_API_KEY')
 OPENAI_AGENT_API_KEY = os.environ.get('OPENAI_AGENT_API_KEY')
+# LANGSMITH_TRACING=True
+# LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+# LANGSMITH_API_KEY="<your-api-key>"
+# LANGSMITH_PROJECT="pr-healthy-observation-7"
 
 # Set environment
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
@@ -216,33 +220,37 @@ def home():
 
     return render_template('welcome.html', stroke_csv=stroke_csv, user=user)
 
-@app.route('/predict_memmap', methods=['POST'])
-def predict_memmap():
-    npy = request.files.get('npy_file')
-    if not npy:
-        return jsonify(error="No .npy file uploaded"), 400
+from flask import Flask, request, jsonify, url_for
+from werkzeug.utils import secure_filename
+import os
 
-    filename = secure_filename(npy.filename)
-    npy_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    npy.save(npy_path)
+@app.route('/predict_csv', methods=['POST'])
+def predict_csv():
+    csv_file = request.files.get('csv_file')
+    if not csv_file:
+        return jsonify(error="No CSV file uploaded"), 400
+
+    # Save the uploaded file
+    filename = secure_filename(csv_file.filename)
+    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    csv_file.save(csv_path)
 
     try:
-        preds_df = predict_stroke(memmap_data=npy_path)
+        # Run prediction using the simplified one-CSV method
+        preds_df = predict_stroke(csv_with_ecg=csv_path, full_model='/Users/zfeng/Documents/Stroke Hero/FIT3199-FYP/testing_calling_model/full_model.pkl')
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-    # 1) reset index → makes an 'index' column
+    # Prepare output
     preds_df = preds_df.reset_index()
-
-    # 2) serialize entire table to a list of dicts
     rows = preds_df.to_dict(orient='records')
 
-    # 3) write CSV (without the index column)
-    csv_name = filename.replace('.npy', '_predictions.csv')
-    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], csv_name)
-    preds_df.drop(columns=['index']).to_csv(csv_path, index=False)
+    # Save predictions to CSV (drop index column)
+    output_csv_name = filename.replace('.csv', '_predictions.csv')
+    output_csv_path = os.path.join(app.config['UPLOAD_FOLDER'], output_csv_name)
+    preds_df.drop(columns=['index']).to_csv(output_csv_path, index=False)
 
-    download_url = url_for('download_predictions', filename=csv_name)
+    download_url = url_for('download_predictions', filename=output_csv_name)
 
     return jsonify(rows=rows, download_url=download_url)
 

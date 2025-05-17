@@ -25,6 +25,12 @@ accelerate
 # Auth0
 authlib
 requests
+google
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-cloud-storage
+
 
 # Additional libraries
 flask-cors  # For handling CORS in Flask
@@ -38,4 +44,6 @@ seaborn     # For statistical data visualization
 tqdm        # For progress bars
 joblib
 pytorch_lightning
+
+grpcio
 #python3 -m pip install -r requirements.txt

@@ -3,6 +3,7 @@ import io
 import base64
 import ast
 from typing import List
+import time
 
 import numpy as np
 import pandas as pd
@@ -49,17 +50,28 @@ icd_code_dict = {
     "R570": "Cardiogenic shock"
 }
 
+from pydantic import BaseModel
+from langchain.tools import tool
+
+# Schema for the input question
 class RagToolSchema(BaseModel):
     question: str
 
+# Stroke RAG Tool
 @tool(args_schema=RagToolSchema)
-def retriever_tool(question):
-    """Tool to Retrieve Semantically Similar documents to answer User Questions related to Stroke"""
+def stroke_retriever_tool(question: str) -> str:
+    """Retrieve semantically similar documents to answer user questions related to Stroke"""
+    print("INSIDE STROKE RETRIEVER NODE")
+    response = agent.stroke_rag_chain.invoke({"input": question})
+    return response.get("answer")
 
-    print("INSIDE RETRIEVER NODE")
-    response = agent.rag_chain.invoke({"input": question})
-    answer = response.get("answer") 
-    return answer
+# Prevention RAG Tool
+@tool(args_schema=RagToolSchema)
+def prevention_retriever_tool(question: str) -> str:
+    """Retrieve semantically similar documents to answer user questions related to Stroke Prevention"""
+    print("INSIDE PREVENTION RETRIEVER NODE")
+    response = agent.prevention_rag_chain.invoke({"input": question})
+    return response.get("answer")
 
 vitals_data = pd.read_csv("/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv")
 vitals_data["prediction_score"] = vitals_data["prediction_score"].apply(ast.literal_eval)
@@ -72,9 +84,8 @@ class AnalyzerToolSchema(BaseModel):
 @tool(args_schema=AnalyzerToolSchema)
 def ecg_analyzer(subject_id: int, admission_id: int):
     """Tool to retrieve the top 5 diseases predicted by the ECG data of a patient."""
-    import time
     print("INSIDE ANALYZER NODE")
-    time.sleep(6)
+    # time.sleep(6)
 
     row = vitals_data[
         (vitals_data['subject_id'] == subject_id) &

@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 from pydantic import BaseModel
-from stroke_agent.tools.agent_tools import ecg_analyzer, retriever_tool
+from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool
 
 load_dotenv()
 
@@ -37,20 +37,32 @@ prompt = ChatPromptTemplate.from_messages(
         ("human", "{input}"),
     ]
 )
+# Shared embeddings and prompt setup
 embeddings = download_hugging_face_embeddings()
-index_name = "medicalbot"
 
-docsearch = PineconeVectorStore.from_existing_index(
-    index_name=index_name,
+# Stroke RAG chain
+stroke_docsearch = PineconeVectorStore.from_existing_index(
+    index_name="strokeindex",
+    embedding=embeddings
+)
+stroke_retriever = stroke_docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+stroke_qa_chain = create_stuff_documents_chain(llm, prompt)
+stroke_rag_chain = create_retrieval_chain(stroke_retriever, stroke_qa_chain)
+
+# Prevention RAG chain
+prevention_docsearch = PineconeVectorStore.from_existing_index(
+    index_name="preventionindex",
     embedding=embeddings
 )
 
-retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
+prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
 
-question_answer_chain = create_stuff_documents_chain(llm, prompt)
-rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+tools = [stroke_retriever_tool, prevention_retriever_tool, ecg_analyzer]
 
-tools = [retriever_tool, ecg_analyzer]
+tools = [ecg_analyzer]
+
 llm_with_tools = llm.bind_tools(tools)
 
 class State(TypedDict):
@@ -66,22 +78,34 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 stroke_prompt = ("system",
-"Do not summarize, shorten, or exclude any part of the Tool's output. "
-"Your only task is to enhance readability by adding appropriate HTML tags for structure and emphasis. "
-"Always preserve every original bullet point, manual numbering, diagnostic detail, and prediction score exactly as-is. "
-"Only apply the following HTML tags: <b>, <i>, <u>, <h5>, <div style='line-height: 1.2;'>...</div>. Use no other HTML tags. "
-"When presenting lists, follow these rules strictly: "
-"- If the Tool uses manual numbering (e.g., 1., 2., 3.), do NOT use any list tags like <ul>, <ol>, or <li>. "
-"- If bullet points are used, wrap them only in <ul> and <li>—never use <ol> or manual numbering at the same time. "
-"- If ordered numbering is used (not manual), wrap in <ol> and <li>—never mix with <ul> or manual numbers. "
-"Do not combine <ul>, <ol>, and <li> together—only use one list format per response, based on the original structure. "
-"Always wrap the entire response inside: <div style='line-height: 1.2;'>...</div>. "
-"Use <h5> for section headers, <u> for underlining labels, <b> for emphasis, and <i> for scores or soft highlights. "
-"Never delete, merge, or reword medical predictions or score data. "
-"Use plenty of emojis to make the output fun and engaging for users. "
-"After the ecg_analyzer tool runs, always ask the user: 'Would you like a further explanation of the Top 5 Predicted Conditions?' "
-"After displaying the Top 5 conditions, also ask: 'Would you like a personalized prevention plan based on these conditions?' "
+                 
+"Do not answer anything outside of stroke, ecg, or prevention."
+
+"Do not summarize, shorten, or exclude any part of the Tool's output. Your only job is to apply HTML tags to improve readability without changing content. Always preserve all original bullet points, manual numbering, diagnostic details, and prediction scores exactly as-is."
+
+"For any data with two or more columns (list, JSON, or CSV-like), convert it into a clean HTML table using <table>, <thead>, <tbody>, <tr>, <th>, and <td> with inline borders and padding. Bold headers."
+
+"Use <div style='line-height: 1.8;'>...</div> for long text to improve readability."
+
+"Use <br> for line breaks in long text, but do not use <br> for lists or tables."
+
+"Try to show all information in either bullet or table format."
+
+"Only use these tags: <b>, <i>, <u>, <h5>, <br>. No other HTML tags are allowed."
+
+"For lists: use <ul>/<li> only for bullets, <ol>/<li> only for ordered lists, and manual numbering with no list tags. Never mix list formats in one response."
+
+"Use <h5> for section titles, <u> for underlined labels, <b> for emphasis, and <i> for highlights. <br> for line breaks."
+
+"Use emojis in headings and subheadings to improve engagement."
+
+"Do not remove or modify medical prediction content. Use lots of emojis for engagement."
+
+"After ecg_analyzer runs, always ask: 'Would you like a further explanation of the Top 5 Predicted Conditions?' "
+
+"After explanation of the Top 5 Predicted Conditions always ask 'Would you like a personalized prevention plan based on these conditions?'"
 )
+
 
 
 def chatbot(state: State):
@@ -94,7 +118,8 @@ def chatbot(state: State):
 graph_builder = StateGraph(State)
 graph_builder.add_node("chatbot", chatbot)
 
-tool_node = ToolNode(tools=[retriever_tool, ecg_analyzer])
+tool_node = ToolNode(tools=[ecg_analyzer])
+tool_node = ToolNode(tools=[prevention_retriever_tool, stroke_retriever_tool, ecg_analyzer])
 graph_builder.add_node("tools", tool_node)
 graph_builder.add_conditional_edges("chatbot", tools_condition)
 graph_builder.add_edge("tools", "chatbot")

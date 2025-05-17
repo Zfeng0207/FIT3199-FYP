@@ -124,21 +124,6 @@
     </div>
   </header>
 
-  <!-- Intro Video Section -->
-  <section id="intro-video" class="mt-20 mb-8">
-    <div class="formbold-main-wrapper">
-      <div class="cs-container">
-        <!-- match file-upload wrapper width -->
-        <div class="formbold-form-wrapper w-full">
-          <video controls class="w-full h-auto block">
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Services Section -->
   <section id="services-285">
     <div class="cs-container">
@@ -189,8 +174,8 @@
           id="drop-area"
           class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer transition-colors"
         >
-          <p>Click or drag & drop your <span class="font-semibold">.npy</span> file to upload.</p>
-          <input type="file" id="npyFile" accept=".npy" class="hidden" />
+          <p>Click or drag & drop your <span class="font-semibold">.csv</span> file to upload.</p>
+          <input type="file" id="csvFile" accept=".csv" class="hidden" />
           <p id="file-name" class="mt-2 text-gray-700"></p>
         </div>
 
@@ -241,15 +226,16 @@
 
   <script>
     const loader         = document.getElementById('loader');
-    const npyInput       = document.getElementById('npyFile');
+    const csvInput       = document.getElementById('csvFile'); 
     const predictionDiv  = document.getElementById('predictionOutput');
     const predictionBody = document.getElementById('predictionTbody');
     const downloadLink   = document.getElementById('download-link');
 
     document.getElementById('processForm').addEventListener('submit', async e => {
       e.preventDefault();
-      if (!npyInput.files[0]) {
-        alert('Please upload your .npy memmap file.');
+
+      if (!csvInput.files[0]) {
+        alert('Please upload your .csv memmap file.');
         return;
       }
 
@@ -259,10 +245,10 @@
       downloadLink.classList.add('hidden');
 
       const formData = new FormData();
-      formData.append('npy_file', npyInput.files[0]);
+      formData.append('csv_file', csvInput.files[0]);
 
       try {
-        const res  = await fetch('/predict_memmap', {
+        const res  = await fetch('/predict_csv', {
           method: 'POST',
           body: formData
         });
@@ -304,10 +290,10 @@
     const fileNameEl = document.getElementById('file-name');
 
     // click on zone → open file picker
-    dropArea.addEventListener('click', () => npyInput.click());
+    dropArea.addEventListener('click', () => csvInput.click());
 
     // when a file is selected via dialog
-    npyInput.addEventListener('change', handleFiles);
+    csvInput.addEventListener('change', handleFiles);
 
     // highlight on drag
     ['dragenter','dragover'].forEach(evt =>
@@ -327,13 +313,13 @@
     dropArea.addEventListener('drop', e => {
       const files = e.dataTransfer.files;
       if (files.length) {
-        npyInput.files = files;
+        csvInput.files = files;
         handleFiles();
       }
     });
 
     function handleFiles() {
-      const file = npyInput.files[0];
+      const file = csvInput.files[0];
       if (file) {
         fileNameEl.textContent = file.name;
       }
