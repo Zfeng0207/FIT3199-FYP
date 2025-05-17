@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 from pydantic import BaseModel
-from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool
+from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool,explain_risk_tools,interpret_risk_scores
 
 load_dotenv()
 
@@ -59,9 +59,7 @@ prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity
 prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
 prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
 
-tools = [stroke_retriever_tool, prevention_retriever_tool, ecg_analyzer]
-
-tools = [ecg_analyzer]
+tools = [stroke_retriever_tool, prevention_retriever_tool, ecg_analyzer,explain_risk_tools, interpret_risk_scores]
 
 llm_with_tools = llm.bind_tools(tools)
 
@@ -97,16 +95,15 @@ stroke_prompt = ("system",
 
 "Use <h5> for section titles, <u> for underlined labels, <b> for emphasis, and <i> for highlights. <br> for line breaks."
 
-"Use emojis in headings and subheadings to improve engagement."
+"Use emojis to improve engagement."
 
 "Do not remove or modify medical prediction content. Use lots of emojis for engagement."
 
 "After ecg_analyzer runs, always ask: 'Would you like a further explanation of the Top 5 Predicted Conditions?' "
 
-"After explanation of the Top 5 Predicted Conditions always ask 'Would you like a personalized prevention plan based on these conditions?'"
+"After explanation of the explain what the top 5 predicted ICD codes mean and how they might relate to stroke risk, always ask 'Would you like to know more about how you can monitor your health to assess your risk of stroke?' "
+
 )
-
-
 
 def chatbot(state: State):
     system_prompt = stroke_prompt
@@ -118,8 +115,7 @@ def chatbot(state: State):
 graph_builder = StateGraph(State)
 graph_builder.add_node("chatbot", chatbot)
 
-tool_node = ToolNode(tools=[ecg_analyzer])
-tool_node = ToolNode(tools=[prevention_retriever_tool, stroke_retriever_tool, ecg_analyzer])
+tool_node = ToolNode(tools=[prevention_retriever_tool, stroke_retriever_tool, ecg_analyzer,explain_risk_tools, interpret_risk_scores])
 graph_builder.add_node("tools", tool_node)
 graph_builder.add_conditional_edges("chatbot", tools_condition)
 graph_builder.add_edge("tools", "chatbot")

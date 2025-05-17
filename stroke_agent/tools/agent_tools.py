@@ -124,6 +124,7 @@ def ecg_analyzer(subject_id: int, admission_id: int):
         f"🔍 **Top 5 Predicted Conditions:**\n{top5_formatted}\n\n"
         f"📊 **Complete Prediction Ranking:**\n{full_ranking}\n\n"
         f"{notes_section}\n\n"
+        "Would you like to further understand what the top 5 predicted ICD codes are, and how they relate to stroke? "
     )
 
 import re
@@ -209,77 +210,128 @@ def generate_patient_ecg_plot_html(msg: str) -> Response:
 
     return html_content
 
-# class ECGToolSchema(BaseModel):
-#     question: str
+from pydantic import BaseModel, Field
+from typing import Optional
 
-# @tool(args_schema=ECGToolSchema)
-# def visualize_ecg(question):
-#     """Tool to load ecg memmap numpy file and visualize the 12-lead ECG for a specific patient"""
-#     print("✅ visualize_ecg invoked!")
+from pydantic import BaseModel, Field
+from langchain.tools import tool
 
-#     # Load ECG data
-#     memmap_meta_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap_meta.npz"
-#     memmap_path = "/Users/zfeng/Documents/fyp-github/FIT3199-FYP/ecg_dataset/memmap.npy"
+class RiskExplanationSchema(BaseModel):
+    question: str
 
-#     memmap_meta = np.load(memmap_meta_path, allow_pickle=True)
-#     memmap_data = np.memmap(memmap_path, dtype=np.float32, mode='r')
-#     starts = memmap_meta["start"]
-#     lengths = memmap_meta["length"]
-#     original_shape = tuple(memmap_meta["shape"][0])
-#     ecg_data = memmap_data.reshape(original_shape)
+@tool(args_schema=RiskExplanationSchema)
+def explain_risk_tools() -> str:
+    """
+    Explains the ASCVD Risk Estimator and ABCD² Score for stroke prevention planning.
+    Triggered after the user agrees to know how they can monitor their health to assess their risk of stroke.
+    """
 
-#     # Plot ECG
-#     def visualize_12lead_ecg(ecg_data, patient_index=0):
-#         start_idx = starts[patient_index]
-#         length = lengths[patient_index]
-#         patient_data = ecg_data[start_idx:start_idx+length, :]
+    print("INSIDE RISK CALCULATORS EXPLAINATION NODE")
 
-#         lead_names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
-#         fig, axes = plt.subplots(3, 4, figsize=(15, 10))
-#         axes = axes.flatten()
+    return """
+✅ Based on your condition, here’s how we’ll assess your stroke and cardiovascular risk:
 
-#         for i, ax in enumerate(axes):
-#             if i < 12:
-#                 ax.plot(patient_data[:, i])
-#                 ax.set_title(f'Lead {lead_names[i]}')
-#                 ax.grid(True, alpha=0.3)
-#                 y_range = np.max(patient_data[:, i]) - np.min(patient_data[:, i])
-#                 scale_bar = y_range * 0.2
-#                 ax.plot([10, 10], [np.min(patient_data[:, i]), np.min(patient_data[:, i]) + scale_bar], 'k-', linewidth=2)
-#                 ax.set_xticks([])
-#                 ax.set_yticks([])
-#             else:
-#                 ax.axis('off')
+📊 **ASCVD Risk Estimator (Atherosclerotic Cardiovascular Disease)**:
+Estimates your 10-year and 30-year risk of heart attack or stroke based on:
+- Age, sex, race
+- Blood pressure
+- Cholesterol levels
+- Diabetes, smoking, medications
 
-#         plt.suptitle(f'12-Lead ECG - Patient #{patient_index+1}', fontsize=16)
-#         plt.tight_layout()
-#         plt.subplots_adjust(top=0.92)
-#         return fig
+The output guides how aggressively we should manage your lifestyle and medical therapy.
 
-#     # Generate for first patient
-#     patient_index = 0
-#     fig = visualize_12lead_ecg(ecg_data, patient_index)
+🧠 **ABCD² Score for TIA**:
+Predicts short-term stroke risk after a transient ischemic attack (TIA), using:
+- Age ≥60 (1 point)
+- BP ≥140/90 mmHg (1 point)
+- Clinical symptoms: weakness (2), speech disturbance (1)
+- Duration ≥60 min (2), 10–59 min (1)
+- Diabetes (1 point)
 
-#     # Save to BytesIO
-#     img_bytes = io.BytesIO()
-#     fig.savefig(img_bytes, format='png', dpi=300, bbox_inches='tight')
-#     plt.close(fig)
-#     img_bytes.seek(0)
+A high ABCD² score = higher short-term stroke risk. Let’s now interpret your actual scores.
+"""
 
-#     # Convert to base64
-#     img_base64 = base64.b64encode(img_bytes.read()).decode('utf-8')
-#     img_data_uri = f"data:image/png;base64,{img_base64}"
+class RiskInterpretationSchema(BaseModel):
+    ten_year_total_cvd: float
+    ten_year_ascvd: float
+    ten_year_heart_failure: float
+    ten_year_chd: float
+    ten_year_stroke: float
+    thirty_year_total_cvd: float
+    thirty_year_ascvd: float
+    thirty_year_heart_failure: float
+    thirty_year_chd: float
+    thirty_year_stroke: float
+    abcd2_score: int
 
-#     explanation = (
-#         f"This ECG plot shows the 12-lead ECG for patient #{patient_index+1}. "
-#         "The leads are labeled from I to V6. The vertical scale bar represents approximately 1 mV. "
-#         "The ECG data is visualized in a standard clinical format."
-#     )
+import re
+from pydantic import BaseModel
+from typing import Annotated
+from langchain.tools import tool
 
-#     # Return both image and explanation in structured format
-#     return [
-#         {"type": "image_url", "image_url": {"url": img_data_uri}},
-#         {"type": "text", "text": explanation}
-#     ]
+class RiskInterpretationSchema(BaseModel):
+    input_string: str
+    abcd2_score: int
 
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "input_string": "...",
+                "abcd2_score": 3
+            }
+        }
+    }
 
+@tool(args_schema=RiskInterpretationSchema)
+def interpret_risk_scores(data: RiskInterpretationSchema) -> str:
+    """
+    Interprets cardiovascular and stroke risk results from a formatted input string and ABCD² score.
+    """
+    # Extract all percentage values
+    percentages = re.findall(r"(\d+\.\d+)%", data.input_string)
+    
+    if len(percentages) != 10:
+        return "❌ Error: Could not extract exactly 10 percentage values from input string."
+
+    # Convert to float
+    values = [float(p) for p in percentages]
+
+    # Map them to their respective risk categories
+    risk_data = {
+        "ten_year_total_cvd": values[0],
+        "ten_year_ascvd": values[1],
+        "ten_year_heart_failure": values[2],
+        "ten_year_chd": values[3],
+        "ten_year_stroke": values[4],
+        "thirty_year_total_cvd": values[5],
+        "thirty_year_ascvd": values[6],
+        "thirty_year_heart_failure": values[7],
+        "thirty_year_chd": values[8],
+        "thirty_year_stroke": values[9],
+    }
+
+    abcd2 = data.abcd2_score
+    abcd2_risk = "Low" if abcd2 <= 3 else "Moderate" if abcd2 <= 5 else "High"
+
+    return f"""
+🩺 **10-Year Risk:**
+- Total CVD: {risk_data['ten_year_total_cvd']}%
+- ASCVD: {risk_data['ten_year_ascvd']}%
+- Heart Failure: {risk_data['ten_year_heart_failure']}%
+- CHD: {risk_data['ten_year_chd']}%
+- Stroke: {risk_data['ten_year_stroke']}%
+
+🕒 **30-Year Risk:**
+- Total CVD: {risk_data['thirty_year_total_cvd']}%
+- ASCVD: {risk_data['thirty_year_ascvd']}%
+- Heart Failure: {risk_data['thirty_year_heart_failure']}%
+- CHD: {risk_data['thirty_year_chd']}%
+- Stroke: {risk_data['thirty_year_stroke']}%
+
+🧠 **ABCD² Score: {abcd2}** → {abcd2_risk} Risk
+- 2-Day: {'1.0%' if abcd2 <= 3 else '4.1%' if abcd2 <= 5 else '8.1%'}
+- 7-Day: {'1.2%' if abcd2 <= 3 else '5.9%' if abcd2 <= 5 else '11.7%'}
+- 90-Day: {'3.1%' if abcd2 <= 3 else '9.8%' if abcd2 <= 5 else '17.8%'}
+
+✔ Let's now recommend preventive actions tailored to your profile.
+"""

@@ -184,9 +184,21 @@
           <div id="messageFormeight" class="card-body msg_card_body"></div>
           <div class="card-footer">
             <form id="messageArea" class="input-group">
-                              <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
+              <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
+          
               <div class="input-group-append">
-                <button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                <button id="clearChat" type="button" style="
+                background-color: rgba(0, 0, 0, 0.3);
+                border: none;
+                color: #f90606;             
+                padding: 0;
+                font-size: 0.9rem;
+                cursor: pointer;
+              ">                  Clear Chat
+                </button>
+                <button type="submit" id="send" class="input-group-text send_btn">
+                  <i class="fas fa-location-arrow"></i>
+                </button>
               </div>
             </form>
           </div>
@@ -199,39 +211,71 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>	
   <script>
     $(document).ready(function () {
-      const welcomeMessage = `
-  <div class="d-flex justify-content-start mb-4">
-    <div class="img_cont_msg">
-      <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-    </div>
-    <div class="msg_cotainer">
-      <div style="margin-bottom: 10px;">
-        👋 Hi there! I'm Stroke Hero – your personal assistant for understanding <br> stroke risk through ECG data and vital signs. 🫀💡<br><br>
-
-        I'm here to help doctors, nurses, and patients visualize heart activity 🧠❤️, <br> detect early signs of stroke, and explain key medical indicators in <br> simple terms. Just provide your subject ID and admission ID, <br> and I’ll take care of the rest. ⚡📊<br><br>
-      </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <div>
-        <button class="btn btn-primary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="Visualize the 12-lead ECG for subject_id: <subject_id> admission_id: <admission_id> ">Show ECG Data</button>
-        <button class="btn btn-secondary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="i want to analyze the ecg data of subject id: <subject_id> during admission id: <admission_id> ">Analyze Stroke Risk</button>
-        <button class="btn btn-secondary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="what is the definition of stroke?">Learn more about stroke</button>
-      </div>
-  </div>`;
+      const chatContainer = $("#messageFormeight");
+      const inputField = $("#text");
   
-$("#messageFormeight").append(welcomeMessage);
+      // Load saved chat history
+      const savedChat = localStorage.getItem("chatHistory");
+      if (savedChat) {
+        chatContainer.html(savedChat);
+      }
+  
+      // Load saved input field state
+      const savedInput = localStorage.getItem("chatInput");
+      if (savedInput) {
+        inputField.val(savedInput);
+      }
+  
+      // Show welcome message only once
+      const hasSeenWelcome = localStorage.getItem("welcomeDisplayed");
+      if (!hasSeenWelcome) {
+        const welcomeMessage = `
+          <div class="d-flex justify-content-start mb-4">
+            <div class="img_cont_msg">
+              <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+            </div>
+            <div class="msg_cotainer">
+              <div style="margin-bottom: 10px;">
+                👋 Hi there! I'm Stroke Hero – your personal assistant for understanding <br> stroke risk through ECG data and vital signs. 🫀💡<br><br>
+  
+                I'm here to help doctors, nurses, and patients visualize heart activity 🧠❤️, <br> detect early signs of stroke, and explain key medical indicators in <br> simple terms. Just provide your subject ID and admission ID, <br> and I’ll take care of the rest. ⚡📊<br><br>
+              </div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div>
+                  <button class="btn btn-primary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="Visualize the 12-lead ECG for subject_id: 10001112 admission_id: 50001494 ">Show ECG Data</button>
+                  <button class="btn btn-secondary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="I want to analyze the ecg data of subject id: 10001112 during admission id: 50001494">Analyze Stroke Risk</button>
+                  <button class="btn btn-secondary quick-btn" style="border-radius: 20px; padding: 5px 15px;" data-msg="what is the definition of stroke?">Learn more about stroke</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        chatContainer.append(welcomeMessage);
+        localStorage.setItem("welcomeDisplayed", "true");
+        localStorage.setItem("chatHistory", chatContainer.html());
+      }
+  
+      // Handle quick buttons
       $(document).on("click", ".quick-btn", function () {
         const quickMsg = $(this).data("msg");
-        $("#text").val(quickMsg).focus();
+        inputField.val(quickMsg).focus();
+        localStorage.setItem("chatInput", quickMsg);
       });
-
+  
+      // Save input field on change
+      inputField.on("input", function () {
+        localStorage.setItem("chatInput", $(this).val());
+      });
+  
+      // Submit message handler
       $("#messageArea").on("submit", function (event) {
+        event.preventDefault();
         const date = new Date();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-        const str_time = hour + ":" + (minute < 10 ? '0' + minute : minute);
-        var rawText = $("#text").val();
-
-        var userHtml = `
+        const str_time = `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`;
+        const rawText = inputField.val();
+  
+        if (!rawText.trim()) return;
+  
+        const userHtml = `
           <div class="d-flex justify-content-end mb-4">
             <div class="msg_cotainer_send">
               ${rawText}
@@ -241,69 +285,84 @@ $("#messageFormeight").append(welcomeMessage);
               <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">
             </div>
           </div>`;
-        $("#text").val("");
-        $("#messageFormeight").append(userHtml);
- 
+        inputField.val("");
+        localStorage.removeItem("chatInput");
+        chatContainer.append(userHtml);
+        localStorage.setItem("chatHistory", chatContainer.html());
+  
         $.ajax({
           data: { msg: rawText },
           type: "POST",
           url: "/get",
           xhrFields: { responseType: 'html' },
           success: function (data, status, xhr) {
-  const contentType = xhr.getResponseHeader("Content-Type");
-
-  if (contentType.includes("image/png")) {
-    const imageUrl = URL.createObjectURL(data);
-    const botHtml = `
-      <div class="d-flex justify-content-start mb-4">
-        <div class="img_cont_msg">
-          <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-        </div>
-        <div class="msg_cotainer">
-          <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px;" />
-          <span class="msg_time">${str_time}</span>
-        </div>
-      </div>`;
-    $("#messageFormeight").append($.parseHTML(botHtml));
-  } else if (contentType.includes("text/html")) {
-    const botHtml = `
-      <div class="d-flex justify-content-start mb-4">
-        <div class="img_cont_msg">
-          <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-        </div>
-        <div class="msg_cotainer">
-          ${data}
-          <span class="msg_time">${str_time}</span>
-        </div>
-      </div>`;
-    $("#messageFormeight").append($.parseHTML(botHtml));
-  } else if (contentType.includes("text/plain")) {
-    const reader = new FileReader();
-    reader.onload = function () {
-      const formattedText = reader.result.replace(/\n/g, "<br>");
-      const botHtml = `
-        <div class="d-flex justify-content-start mb-4">
-          <div class="img_cont_msg">
-            <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
-          </div>
-          <div class="msg_cotainer">
-          ${formattedText}
-            <span class="msg_time">${str_time}</span>
-          </div>
-        </div>`;
-      $("#messageFormeight").append($.parseHTML(botHtml));
-    };
-    reader.readAsText(data);
-  }
-},
+            const contentType = xhr.getResponseHeader("Content-Type");
+            let botHtml = "";
+  
+            if (contentType.includes("image/png")) {
+              const imageUrl = URL.createObjectURL(data);
+              botHtml = `
+                <div class="d-flex justify-content-start mb-4">
+                  <div class="img_cont_msg">
+                    <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+                  </div>
+                  <div class="msg_cotainer">
+                    <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px;" />
+                    <span class="msg_time">${str_time}</span>
+                  </div>
+                </div>`;
+            } else if (contentType.includes("text/html")) {
+              botHtml = `
+                <div class="d-flex justify-content-start mb-4">
+                  <div class="img_cont_msg">
+                    <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+                  </div>
+                  <div class="msg_cotainer">
+                    ${data}
+                    <span class="msg_time">${str_time}</span>
+                  </div>
+                </div>`;
+            } else if (contentType.includes("text/plain")) {
+              const reader = new FileReader();
+              reader.onload = function () {
+                const formattedText = reader.result.replace(/\n/g, "<br>");
+                const textBotHtml = `
+                  <div class="d-flex justify-content-start mb-4">
+                    <div class="img_cont_msg">
+                      <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg">
+                    </div>
+                    <div class="msg_cotainer">
+                      ${formattedText}
+                      <span class="msg_time">${str_time}</span>
+                    </div>
+                  </div>`;
+                chatContainer.append($.parseHTML(textBotHtml));
+                localStorage.setItem("chatHistory", chatContainer.html());
+              };
+              reader.readAsText(data);
+              return;
+            }
+  
+            chatContainer.append($.parseHTML(botHtml));
+            localStorage.setItem("chatHistory", chatContainer.html());
+          },
           error: function (xhr, status, error) {
             console.error("AJAX error:", error);
           }
         });
-
-        event.preventDefault();
+      });
+  
+      // Clear chat button
+      $("#clearChat").on("click", function () {
+        if (confirm("Are you sure you want to clear the chat?")) {
+          localStorage.removeItem("chatHistory");
+          localStorage.removeItem("chatInput");
+          localStorage.removeItem("welcomeDisplayed");
+          chatContainer.empty();
+          location.reload();
+        }
       });
     });
   </script>
-</body>
+  </body>
 </html>
