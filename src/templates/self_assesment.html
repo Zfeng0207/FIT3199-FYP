@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,11 +13,21 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
 
   <style>
+    body {
+      background-image: url("{{ url_for('static', filename='images/skyblue.jpeg') }}");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
     /* 1) container only shrinks in width, but stays the same height as the nav */
     #cs-navigation .cs-logo {
-      width: auto     !important;
-      height: 4.0625rem !important; /* back to the default desktop height */
-      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
+      width: auto !important;
+      height: 4.0625rem !important;
+      /* back to the default desktop height */
+      overflow: visible;
+      /* let your hero-text spill out if you’re using negative margins */
       transform: translateX(-65px) !important;
     }
 
@@ -30,17 +41,25 @@
     /* 2) Desktop: make the submenu absolute, vertical, and add gap */
     @media only screen and (min-width: 64rem) {
       #cs-navigation .cs-dropdown {
-        position: relative; /* ensure absolute child is positioned off the li */
+        position: relative;
+        /* ensure absolute child is positioned off the li */
       }
+
       #cs-navigation .cs-dropdown .cs-drop-ul {
-        position: absolute !important; /* take it out of the document flow */
-        top: 100% !important;          /* sit directly below the menu item */
+        position: absolute !important;
+        /* take it out of the document flow */
+        top: 100% !important;
+        /* sit directly below the menu item */
         left: 0 !important;
-        display: flex !important;       /* flex‑column gives us true gaps */
+        display: flex !important;
+        /* flex‑column gives us true gaps */
         flex-direction: column !important;
-        gap: 1rem !important;           /* increase vertical space between links */
-        padding: 0.2rem 0 !important;   /* optional breathing room above/below */
-        margin: 0 !important;           /* reset any built‑in margins */
+        gap: 1rem !important;
+        /* increase vertical space between links */
+        padding: 0.2rem 0 !important;
+        /* optional breathing room above/below */
+        margin: 0 !important;
+        /* reset any built‑in margins */
       }
     }
 
@@ -57,10 +76,10 @@
         padding: 0.5rem 0 !important;
       }
     }
-  </style>  
+  </style>
 </head>
 
-<body class="bg-gray-50 p-0">
+<body class="p-0">
 
   <!-- ============================================ -->
   <!--                 Navigation                   -->
@@ -69,7 +88,8 @@
     <div class="cs-container">
       <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
         <!-- larger logo via utility classes -->
-        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text"
+          alt="Stroke Hero Logo" decoding="async" />
       </a>
       <nav class="cs-nav" role="navigation">
         <button class="cs-toggle" aria-label="mobile menu toggle">
@@ -87,28 +107,26 @@
             {% endif %}
             <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
             {% if user %}
-            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke
+                Prediction</a></li>
             {% endif %}
             <li class="cs-li cs-dropdown">
               <!-- top‐level link stays as your Self Assessment page -->
-              <a href="{{ url_for('self_assesment_routing') }}"
-                 class="cs-li-link cs-drop-link">
+              <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link cs-drop-link">
                 Self Assessment
                 <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
-                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                  <path d="M0 0l5 6 5-6z" fill="currentColor" />
                 </svg>
               </a>
               <!-- submenu items are now absolute, vertical, and spaced out -->
               <ul class="cs-drop-ul">
                 <li class="cs-drop-li">
-                  <a href="{{ url_for('self_assesment_routing') }}"
-                     class="cs-li-link">
+                  <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">
                     ASCVD Risk Estimator
                   </a>
                 </li>
                 <li class="cs-drop-li">
-                  <a href="{{ url_for('abcd2_tia_routing') }}"
-                     class="cs-li-link">
+                  <a href="{{ url_for('abcd2_tia_routing') }}" class="cs-li-link">
                     ABCD² Score for TIA
                   </a>
                 </li>
@@ -118,33 +136,39 @@
         </div>
       </nav>
       {% if user %}
-      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
+      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
+      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
       {% endif %}
     </div>
   </header>
 
   <!-- Spacer below fixed navbar -->
-  <div class="h-32"></div>
+  <div class="h-20"></div>
 
-  <section class="max-w-5xl mx-auto mb-6">
-    <div class="bg-white rounded-t-xl shadow-md overflow-hidden">
+  <section class="max-w-5xl mx-auto mt-0 mb-2">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
       <div class="flex border-b">
-        <button onclick="selectTab('when')" id="tab-when" class="flex-1 py-2 px-4 text-center font-semibold text-gray-600 flex items-center justify-center gap-1">
+        <button onclick="selectTab('when')" id="tab-when"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
           When to Use <span id="arrow-when">▼</span>
         </button>
-        <button onclick="selectTab('pearls')" id="tab-pearls" class="flex-1 py-2 px-4 text-center font-semibold text-gray-600 flex items-center justify-center gap-1">
+        <button onclick="selectTab('pearls')" id="tab-pearls"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
           Pearls/Pitfalls <span id="arrow-pearls">▼</span>
         </button>
-        <button onclick="selectTab('why')" id="tab-why" class="flex-1 py-2 px-4 text-center font-semibold text-gray-600 flex items-center justify-center gap-1">
+        <button onclick="selectTab('why')" id="tab-why"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
           Why Use <span id="arrow-why">▼</span>
         </button>
       </div>
 
       <div id="info-when" class="bg-gray-100 p-4 hidden">
-        <ul class="list-disc ml-5 space-y-1"></ul>
-          <li>Use in patients ages 30–79 without known CVD to estimate their 10- and 30-year risk of total CVD, ASCVD, heart failure, CAD, and stroke.</li>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>Use in patients ages 30–79 without known CVD to estimate their 10- and 30-year risk of total CVD, ASCVD,
+            heart failure, CAD, and stroke.</li>
           <li>Optional variables include urine albumin-creatinine ratio, HbA1c, and social deprivation index (SDI).</li>
           <li>If you are using only one optional variable, select that model for use.</li>
           <li>If you have more than one optional variable, select the “Full” model for use.</li>
@@ -152,17 +176,22 @@
         </ul>
       </div>
       <div id="info-pearls" class="bg-gray-100 p-4 hidden">
-        <ul class="list-disc ml-5 space-y-1"></ul>
+        <ul class="list-disc ml-5 space-y-1">
           <li>Use this score to enhance discussions of patient-level interventions to prevent CVD.</li>
-          <li>Urine albumin-creatinine ratio, HbA1c, and social deprivation index are optional predictors that can be included for further personalized risk assessment.</li>
-          <li>Urine albumin-creatinine ratio is indicated for those patients with chronic kidney disease, diabetes, or hypertension.</li>
-          <li>HbA1c is indicated for those with a history of diabetes, prediabetes, or gestational diabetes and for those who are overweight or obese.</li>
+          <li>Urine albumin-creatinine ratio, HbA1c, and social deprivation index are optional predictors that can be
+            included for further personalized risk assessment.</li>
+          <li>Urine albumin-creatinine ratio is indicated for those patients with chronic kidney disease, diabetes, or
+            hypertension.</li>
+          <li>HbA1c is indicated for those with a history of diabetes, prediabetes, or gestational diabetes and for
+            those
+            who are overweight or obese.</li>
           <li>Social deprivation index is assigned based on zip code.</li>
         </ul>
       </div>
       <div id="info-why" class="bg-gray-100 p-4 hidden">
         <ul class="list-disc ml-5 space-y-1">
-          <li>This score improves upon past work to better estimate CVD risk in patients given the increased impact of cardiovascular-kidney-metabolic disease.</li>
+          <li>This score improves upon past work to better estimate CVD risk in patients given the increased impact of
+            cardiovascular-kidney-metabolic disease.</li>
           <li>Equations were derived from a sample of over 6 million people.</li>
           <li>Race has been excluded from this model to enhance equity of score outcomes.</li>
           <li>Place-based social disadvantage has been added as an optional variable to enhance equity.</li>
@@ -172,13 +201,12 @@
   </section>
 
   <!-- Source Reference Box -->
-  <div class="max-w-5xl mx-auto mt-2 mb-6 px-4">
-    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded">
+  <div class="max-w-5xl mx-auto mt-0 mb-2">
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded text-sm">
       <p class="font-medium">
-        Source: 
-        <a href="https://www.mdcalc.com/calc/10491/predicting-risk-cardiovascular-disease-events-prevent#pearls-pitfalls" 
-          target="_blank" 
-          class="underline text-blue-800 hover:text-blue-600">
+        Source:
+        <a href="https://www.mdcalc.com/calc/10491/predicting-risk-cardiovascular-disease-events-prevent#pearls-pitfalls"
+          target="_blank" class="underline text-blue-800 hover:text-blue-600">
           Predicting Risk of Cardiovascular Disease EVENTs (PREVENT)
         </a>
       </p>
@@ -192,10 +220,11 @@
   <!-- ============================================ -->
   <!--             Risk Estimator Form             -->
   <!-- ============================================ -->
-  <main class="px-6 py-6">
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-      <h1 class="text-2xl font-bold mb-6">CVD Risk Calculator</h1>
-  <!-- Form Inputs (One per row) -->
+  <main class="px-6 py-2">
+    <div class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-md">
+      <h1 class="text-2xl font-bold mb-2">CVD Risk Calculator</h1>
+      <hr class="mb-6 border-t-2 border-[#0033cc]" />
+      <!-- Form Inputs (One per row) -->
       <div class="space-y-4">
         <label class="block text-sm font-medium">Age
           <input id="age" type="number" class="w-full border rounded p-2" value="45" />
@@ -234,46 +263,56 @@
         <div>
           <label class="block mb-1">Diabetes</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
-            <button id="diabetes-no" onclick="toggleGroup('diabetes', 'no')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">No</button>
-            <button id="diabetes-yes" onclick="toggleGroup('diabetes', 'yes')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
+            <button id="diabetes-no" onclick="toggleGroup('diabetes', 'no')"
+              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">No</button>
+            <button id="diabetes-yes" onclick="toggleGroup('diabetes', 'yes')"
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
 
         <div>
           <label class="block mb-1">Current Smoker</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
-            <button id="smoker-no" onclick="toggleGroup('smoker', 'no')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
-            <button id="smoker-yes" onclick="toggleGroup('smoker', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
+            <button id="smoker-no" onclick="toggleGroup('smoker', 'no')"
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
+            <button id="smoker-yes" onclick="toggleGroup('smoker', 'yes')"
+              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">Yes</button>
           </div>
         </div>
 
         <div>
           <label class="block mb-1">On Anti-Hypertensives</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
-            <button id="antihtn-no" onclick="toggleGroup('antihtn', 'no')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
-            <button id="antihtn-yes" onclick="toggleGroup('antihtn', 'yes')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">Yes</button>
+            <button id="antihtn-no" onclick="toggleGroup('antihtn', 'no')"
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
+            <button id="antihtn-yes" onclick="toggleGroup('antihtn', 'yes')"
+              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">Yes</button>
           </div>
         </div>
 
         <div>
           <label class="block mb-1">On Statins</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
-            <button id="statins-no" onclick="toggleGroup('statins', 'no')" class="flex-1 py-1 px-4 bg-teal-600 text-white font-semibold">No</button>
-            <button id="statins-yes" onclick="toggleGroup('statins', 'yes')" class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
+            <button id="statins-no" onclick="toggleGroup('statins', 'no')"
+              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">No</button>
+            <button id="statins-yes" onclick="toggleGroup('statins', 'yes')"
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
       </div>
-  
+
       <!-- Calculate Button -->
-      <div class="mt-6">
-        <button onclick="calculateRisk()" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded shadow">
+      <div class="mt-6 text-right">
+        <button onclick="calculateRisk()" class="bg-[#0033cc] hover:bg-[#3399ff] text-white px-6 py-2 rounded shadow">
           Calculate Risk
         </button>
       </div>
-  
+
       <!-- Results -->
-      <div id="result" class="mt-8 hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-teal-700 text-white rounded-lg p-6 text-sm font-medium"></div>
-    </div>  
+      <div id="result"
+        class="mt-8 hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#3399ff] text-white rounded-lg p-6 text-sm font-medium">
+      </div>
+    </div>
   </main>
 
   <!-- Form-toggle script -->
@@ -301,13 +340,13 @@
         const arrow = document.getElementById(`arrow-${id}`);
         const isActive = id === currentTab;
 
-        tabBtn.classList.remove('text-green-700', 'border-green-500');
+        tabBtn.classList.remove('text-[#0033cc]', 'border-b-2', 'border-[#0033cc]');
         arrow.textContent = '▼';
 
         if (isActive) {
           if (expanded) {
             arrow.textContent = '▲';
-            tabBtn.classList.add('text-green-700', 'border-green-500');
+            tabBtn.classList.add('text-[#0033cc]', 'border-b-2', 'border-[#0033cc]');
           }
         }
       });
@@ -335,90 +374,90 @@
     updateTabs();
   </script>
 
-<script>
-  const state = {
-    diabetes: 0,
-    smoker: 1,
-    antihtn: 1,
-    statins: 0,
-  };
-
-  function toggleGroup(field, value) {
-    state[field] = value === 'yes' ? 1 : 0;
-
-    document.getElementById(`${field}-yes`).classList.remove('bg-teal-600', 'text-white', 'font-semibold');
-    document.getElementById(`${field}-no`).classList.remove('bg-teal-600', 'text-white', 'font-semibold');
-    document.getElementById(`${field}-yes`).classList.add('bg-gray-100', 'text-gray-700');
-    document.getElementById(`${field}-no`).classList.add('bg-gray-100', 'text-gray-700');
-
-    document.getElementById(`${field}-${value}`).classList.remove('bg-gray-100', 'text-gray-700');
-    document.getElementById(`${field}-${value}`).classList.add('bg-teal-600', 'text-white', 'font-semibold');
-  }
-
-  function calculateRisk() {
-    const age = parseFloat(document.getElementById('age').value);
-    const sex = document.getElementById('sex').value;
-    const tc = parseFloat(document.getElementById('tc').value) * 0.0259;
-    const hdl = parseFloat(document.getElementById('hdl').value) * 0.0259;
-    const sbp = parseFloat(document.getElementById('sbp').value);
-    const egfr = parseFloat(document.getElementById('egfr').value);
-    const diabetes = state.diabetes;
-    const smoker = state.smoker;
-    const antihtn = state.antihtn;
-    const statins = state.statins;
-
-    const cage = (age - 55) / 10;
-    const chndl = tc - hdl - 3.5;
-    const chdl = (hdl - 1.3) / 0.3;
-    const csbp = (Math.min(sbp, 110) - 110) / 20;
-    const csbp2 = (Math.max(sbp, 110) - 130) / 20;
-    const cegfr = (Math.min(egfr, 60) - 60) / 15;
-    const cegfr2 = (Math.max(egfr, 60) - 90) / 15;
-
-    const coeff = sex === "male" ? {
-      cage: 0.7689, chndl: 0.0736, chdl: -0.0954, csbp: -0.4347, csbp2: 0.3363,
-      diabetes: 0.7693, smoker: 0.4387, cegfr: 0.5379, cegfr2: 0.0165,
-      antihtn: 0.2889, statins: -0.1337, csbp2_anti: -0.0476, chndl_statin: 0.1503,
-      cage_chndl: -0.0518, cage_chdl: 0.0191, cage_csbp2: -0.1049,
-      cage_diabetes: -0.2252, cage_smoking: -0.0895, cage_cegfr: -0.1543,
-      constant: -3.0312
-    } : {
-      cage: 0.7939, chndl: 0.0305, chdl: -0.1607, csbp: -0.2394, csbp2: 0.3600,
-      diabetes: 0.8668, smoker: 0.5361, cegfr: 0.6046, cegfr2: 0.0434,
-      antihtn: 0.3152, statins: -0.1478, csbp2_anti: -0.0664, chndl_statin: 0.1198,
-      cage_chndl: -0.0820, cage_chdl: 0.0307, cage_csbp2: -0.0946,
-      cage_diabetes: -0.2706, cage_smoking: -0.0787, cage_cegfr: -0.1638,
-      constant: -3.3077
+  <script>
+    const state = {
+      diabetes: 0,
+      smoker: 1,
+      antihtn: 1,
+      statins: 0,
     };
 
-    const sum =
-      cage * coeff.cage +
-      chndl * coeff.chndl +
-      chdl * coeff.chdl +
-      csbp * coeff.csbp +
-      csbp2 * coeff.csbp2 +
-      diabetes * coeff.diabetes +
-      smoker * coeff.smoker +
-      cegfr * coeff.cegfr +
-      cegfr2 * coeff.cegfr2 +
-      antihtn * coeff.antihtn +
-      statins * coeff.statins +
-      csbp2 * antihtn * coeff.csbp2_anti +
-      chndl * statins * coeff.chndl_statin +
-      cage * chndl * coeff.cage_chndl +
-      cage * chdl * coeff.cage_chdl +
-      cage * csbp2 * coeff.cage_csbp2 +
-      cage * diabetes * coeff.cage_diabetes +
-      cage * smoker * coeff.cage_smoking +
-      cage * cegfr * coeff.cage_cegfr +
-      coeff.constant;
+    function toggleGroup(field, value) {
+      state[field] = value === 'yes' ? 1 : 0;
 
-    const risk10 = (Math.exp(sum) / (1 + Math.exp(sum))) * 100;
-    const risk30 = risk10 * 6;
+      document.getElementById(`${field}-yes`).classList.remove('bg-[#3399ff]', 'text-white', 'font-semibold');
+      document.getElementById(`${field}-no`).classList.remove('bg-[#3399ff]', 'text-white', 'font-semibold');
+      document.getElementById(`${field}-yes`).classList.add('bg-gray-100', 'text-gray-700');
+      document.getElementById(`${field}-no`).classList.add('bg-gray-100', 'text-gray-700');
 
-    const resultBox = document.getElementById("result");
-    resultBox.classList.remove("hidden");
-    resultBox.innerHTML = `
+      document.getElementById(`${field}-${value}`).classList.remove('bg-gray-100', 'text-gray-700');
+      document.getElementById(`${field}-${value}`).classList.add('bg-[#3399ff]', 'text-white', 'font-semibold');
+    }
+
+    function calculateRisk() {
+      const age = parseFloat(document.getElementById('age').value);
+      const sex = document.getElementById('sex').value;
+      const tc = parseFloat(document.getElementById('tc').value) * 0.0259;
+      const hdl = parseFloat(document.getElementById('hdl').value) * 0.0259;
+      const sbp = parseFloat(document.getElementById('sbp').value);
+      const egfr = parseFloat(document.getElementById('egfr').value);
+      const diabetes = state.diabetes;
+      const smoker = state.smoker;
+      const antihtn = state.antihtn;
+      const statins = state.statins;
+
+      const cage = (age - 55) / 10;
+      const chndl = tc - hdl - 3.5;
+      const chdl = (hdl - 1.3) / 0.3;
+      const csbp = (Math.min(sbp, 110) - 110) / 20;
+      const csbp2 = (Math.max(sbp, 110) - 130) / 20;
+      const cegfr = (Math.min(egfr, 60) - 60) / 15;
+      const cegfr2 = (Math.max(egfr, 60) - 90) / 15;
+
+      const coeff = sex === "male" ? {
+        cage: 0.7689, chndl: 0.0736, chdl: -0.0954, csbp: -0.4347, csbp2: 0.3363,
+        diabetes: 0.7693, smoker: 0.4387, cegfr: 0.5379, cegfr2: 0.0165,
+        antihtn: 0.2889, statins: -0.1337, csbp2_anti: -0.0476, chndl_statin: 0.1503,
+        cage_chndl: -0.0518, cage_chdl: 0.0191, cage_csbp2: -0.1049,
+        cage_diabetes: -0.2252, cage_smoking: -0.0895, cage_cegfr: -0.1543,
+        constant: -3.0312
+      } : {
+        cage: 0.7939, chndl: 0.0305, chdl: -0.1607, csbp: -0.2394, csbp2: 0.3600,
+        diabetes: 0.8668, smoker: 0.5361, cegfr: 0.6046, cegfr2: 0.0434,
+        antihtn: 0.3152, statins: -0.1478, csbp2_anti: -0.0664, chndl_statin: 0.1198,
+        cage_chndl: -0.0820, cage_chdl: 0.0307, cage_csbp2: -0.0946,
+        cage_diabetes: -0.2706, cage_smoking: -0.0787, cage_cegfr: -0.1638,
+        constant: -3.3077
+      };
+
+      const sum =
+        cage * coeff.cage +
+        chndl * coeff.chndl +
+        chdl * coeff.chdl +
+        csbp * coeff.csbp +
+        csbp2 * coeff.csbp2 +
+        diabetes * coeff.diabetes +
+        smoker * coeff.smoker +
+        cegfr * coeff.cegfr +
+        cegfr2 * coeff.cegfr2 +
+        antihtn * coeff.antihtn +
+        statins * coeff.statins +
+        csbp2 * antihtn * coeff.csbp2_anti +
+        chndl * statins * coeff.chndl_statin +
+        cage * chndl * coeff.cage_chndl +
+        cage * chdl * coeff.cage_chdl +
+        cage * csbp2 * coeff.cage_csbp2 +
+        cage * diabetes * coeff.cage_diabetes +
+        cage * smoker * coeff.cage_smoking +
+        cage * cegfr * coeff.cage_cegfr +
+        coeff.constant;
+
+      const risk10 = (Math.exp(sum) / (1 + Math.exp(sum))) * 100;
+      const risk30 = risk10 * 6;
+
+      const resultBox = document.getElementById("result");
+      resultBox.classList.remove("hidden");
+      resultBox.innerHTML = `
       <div>
         <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
         <div class="mb-2">10-Year Total CVD Risk</div>
@@ -436,8 +475,9 @@
         <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
       </div>
     `;
-  }
+    }
   </script>
 
 </body>
+
 </html>
