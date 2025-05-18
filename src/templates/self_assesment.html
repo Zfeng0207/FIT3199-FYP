@@ -301,17 +301,28 @@
         </div>
       </div>
 
-      <!-- Calculate Button -->
-      <div class="mt-6 text-right">
-        <button onclick="calculateRisk()" class="bg-[#0033cc] hover:bg-[#3399ff] text-white px-6 py-2 rounded shadow">
+      <!-- Calculate Risk Button (Centered & Bigger) -->
+      <div class="mt-6 flex justify-center">
+        <button onclick="calculateRisk()" class="bg-[#0033cc] hover:bg-[#3399ff] text-white text-lg px-8 py-4 rounded-xl shadow-lg">
           Calculate Risk
         </button>
       </div>
 
-      <!-- Results -->
+      <!-- Result Container with Copy Button -->
       <div id="result"
-        class="mt-8 hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#3399ff] text-white rounded-lg p-6 text-sm font-medium">
+        class="mt-8 hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#3399ff] text-white rounded-lg p-6 text-sm font-medium relative">
+
+        <!-- Results will be injected by JS -->
+        <div id="result-content" class="col-span-2"></div>
+
+        <!-- Copy Results Button (centered at bottom) -->
+        <div id="copy-button" class="hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
+          <button onclick="copyResult()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-md">
+            Copy Results
+          </button>
+        </div>
       </div>
+
     </div>
   </main>
 
@@ -456,26 +467,38 @@
       const risk30 = risk10 * 6;
 
       const resultBox = document.getElementById("result");
-      resultBox.classList.remove("hidden");
-      resultBox.innerHTML = `
-      <div>
-        <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
-        <div class="mb-2">10-Year Total CVD Risk</div>
-        <div>10-Year ASCVD Risk: ${(risk10 * 0.64).toFixed(2)}%</div>
-        <div>10-Year Heart Failure Risk: ${(risk10 * 0.40).toFixed(2)}%</div>
-        <div>10-Year Coronary Heart Disease Risk: ${(risk10 * 0.32).toFixed(2)}%</div>
-        <div>10-Year Stroke Risk: ${(risk10 * 0.33).toFixed(2)}%</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold">${risk30.toFixed(2)}<span class="text-xl">%</span></div>
-        <div class="mb-2">30-Year Total CVD Risk</div>
-        <div>30-Year ASCVD Risk: ${(risk30 * 0.613).toFixed(2)}%</div>
-        <div>30-Year Heart Failure Risk: ${(risk30 * 0.525).toFixed(2)}%</div>
-        <div>30-Year Coronary Heart Disease Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
-        <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
-      </div>
-    `;
+resultBox.classList.remove("hidden");
+
+document.getElementById("result-content").innerHTML = `
+  <div>
+    <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
+    <div class="mb-2">10-Year Total CVD Risk</div>
+    <div>10-Year ASCVD Risk: ${(risk10 * 0.64).toFixed(2)}%</div>
+    <div>10-Year Heart Failure Risk: ${(risk10 * 0.40).toFixed(2)}%</div>
+    <div>10-Year Coronary Heart Disease Risk: ${(risk10 * 0.32).toFixed(2)}%</div>
+    <div>10-Year Stroke Risk: ${(risk10 * 0.33).toFixed(2)}%</div>
+  </div>
+  <div>
+    <div class="text-3xl font-bold">${risk30.toFixed(2)}<span class="text-xl">%</span></div>
+    <div class="mb-2">30-Year Total CVD Risk</div>
+    <div>30-Year ASCVD Risk: ${(risk30 * 0.613).toFixed(2)}%</div>
+    <div>30-Year Heart Failure Risk: ${(risk30 * 0.525).toFixed(2)}%</div>
+    <div>30-Year Coronary Heart Disease Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+    <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+  </div>
+`;
+
+document.getElementById("copy-button").classList.remove("hidden");
     }
+    function copyResult() {
+  const resultText = document.getElementById("result-content").innerText;
+  navigator.clipboard.writeText(resultText).then(() => {
+    alert('Results copied to clipboard!');
+  }).catch(err => {
+    alert('Failed to copy results: ' + err);
+  });
+}
+
   </script>
 
 </body>
