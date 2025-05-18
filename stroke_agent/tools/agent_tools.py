@@ -73,7 +73,7 @@ def prevention_retriever_tool(question: str) -> str:
     response = agent.prevention_rag_chain.invoke({"input": question})
     return response.get("answer")
 
-vitals_data = pd.read_csv("/Users/zfeng/Documents/fyp-github/FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv")
+vitals_data = pd.read_csv("stroke_agent/stroke_data/vitals_data.csv")
 vitals_data["prediction_score"] = vitals_data["prediction_score"].apply(ast.literal_eval)
 vitals_data["res"] = vitals_data["res"].apply(ast.literal_eval)
 
@@ -146,9 +146,8 @@ def generate_patient_ecg_plot_html(msg: str) -> Response:
         admission_id = int(admission_match.group(1))
     else:
         return Response("❌ Please provide a valid subject ID and admission ID.", mimetype="text/html")
-
     # Load vital data
-    vital_data_path = "./FIT3199-FYP/stroke_agent/stroke_data/vitals_data.csv"
+    vital_data_path = "stroke_agent/stroke_data/vitals_data.csv"
     vital_data = pd.read_csv(vital_data_path)
 
     # Find patient row
@@ -163,7 +162,7 @@ def generate_patient_ecg_plot_html(msg: str) -> Response:
     start_idx = patient_row['start'].values[0]
     length = patient_row['length'].values[0]
 
-    ecg_data_path = "./FIT3199-FYP/stroke_agent/stroke_data/ecg_data.npy"
+    ecg_data_path = "stroke_agent/stroke_data/ecg_data.npy"
     ecg_data = np.load(ecg_data_path).reshape((100000, 12))
     patient_data = ecg_data[start_idx:start_idx + length, :]
 
