@@ -295,31 +295,40 @@
           </div>
         </div>
 
-      <!-- Calculate Button (Centered and Bigger) -->
-      <div class="mt-6 flex justify-center">
-        <button onclick="calculateScore()"
-          class="bg-[#0033cc] hover:bg-[#3399ff] text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg">
-          Calculate
-        </button>
-      </div>
-
-      <!-- Result Container (Responsive Height, Aligned Layout) -->
-      <div id="result" class="hidden mt-6 bg-[#3399ff] text-white rounded-lg p-4 text-left relative flex flex-col justify-between min-h-[160px]">
-        <!-- Score and risk result text -->
-        <div id="result-text" class="mb-4 leading-relaxed text-sm">
-          <!-- Content will be injected here -->
-        </div>
-
-        <!-- Copy Button at bottom right -->
-        <div id="copy-button" class="hidden self-end">
-          <button onclick="copyResult()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-md text-sm">
-            Copy Results
+        <!-- Calculate Button (Centered and Bigger) -->
+        <div class="mt-6 flex justify-center relative">
+          <button id="calculate-button" onclick="handleCalculateClick()"
+            class="bg-[#0033cc] hover:bg-[#3399ff] text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+            disabled>
+            Calculate
           </button>
+
+          <!-- Tooltip (initially hidden and transparent) -->
+          <div id="tooltip"
+            class="absolute top-full mt-2 w-72 text-sm text-center bg-red-500 text-white px-3 py-2 rounded shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+            Please answer all required questions before calculating.
+          </div>
         </div>
+
+        <!-- Result Container (Responsive Height, Aligned Layout) -->
+        <div id="result"
+          class="hidden mt-6 bg-[#3399ff] text-white rounded-lg p-4 text-left relative flex flex-col justify-between min-h-[160px]">
+          <!-- Score and risk result text -->
+          <div id="result-text" class="mb-4 leading-relaxed text-sm">
+            <!-- Content will be injected here -->
+          </div>
+
+          <!-- Copy Button at bottom right -->
+          <div id="copy-button" class="hidden absolute bottom-4 right-4">
+            <button onclick="copyResult()"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-md text-sm">
+              Copy Results
+            </button>
+          </div>
+        </div>
+
+
       </div>
-
-
-    </div>
 
     </div>
   </section>
@@ -372,33 +381,29 @@
 
 
   <script>
-    const state = { age: 0, bp: 0, features: 0, duration: 0, diabetes: 0 };
+    const state = {
+      age: null,
+      bp: null,
+      features: null,
+      duration: null,
+      diabetes: null
+    };
 
     function setScore(category, value) {
       state[category] = value;
-      // how many options in this category?
       const max = (category === 'features' || category === 'duration') ? 2 : 1;
 
-      // 1) reset all buttons in this category
       for (let i = 0; i <= max; i++) {
         const btn = document.getElementById(`${category}${i}`);
-        // remove selected styles
         btn.classList.remove('bg-[#3399ff]', 'text-white', 'font-bold');
-        // re-add default button styles
         btn.classList.add('bg-gray-100', 'text-gray-700');
-        // reset each span inside back to its original color
         btn.querySelectorAll('span').forEach(span => {
           span.classList.remove('text-white', 'text-[#0033cc]', 'text-gray-500');
           const txt = span.textContent.trim();
-          if (txt.startsWith('+')) {
-            span.classList.add('text-[#0033cc]');
-          } else {
-            span.classList.add('text-gray-500');
-          }
+          span.classList.add(txt.startsWith('+') ? 'text-[#0033cc]' : 'text-gray-500');
         });
       }
 
-      // 2) apply “selected” styles to the one the user clicked
       const sel = document.getElementById(`${category}${value}`);
       sel.classList.remove('bg-gray-100', 'text-gray-700');
       sel.classList.add('bg-[#3399ff]', 'text-white', 'font-bold');
@@ -406,32 +411,77 @@
         span.classList.remove('text-[#0033cc]', 'text-gray-500');
         span.classList.add('text-white');
       });
+
+      checkAllAnswered();
     }
 
     function calculateScore() {
       const score = Object.values(state).reduce((a, b) => a + b, 0);
-      let riskText = '';
+      let riskLevel = "";
+      let riskDetails = "";
+
       if (score <= 3) {
-        riskText = `0–3 points: Low Risk\n2-Day Stroke Risk: 1.0%\n7-Day: 1.2%\n90-Day: 3.1%`;
+        riskLevel = "Low Risk";
+        riskDetails = `2-Day Stroke Risk: 1.0%<br>7-Day: 1.2%<br>90-Day: 3.1%`;
       } else if (score <= 5) {
-        riskText = `4–5 points: Moderate Risk\n2-Day Stroke Risk: 4.1%\n7-Day: 5.9%\n90-Day: 9.8%`;
+        riskLevel = "Moderate Risk";
+        riskDetails = `2-Day Stroke Risk: 4.1%<br>7-Day: 5.9%<br>90-Day: 9.8%`;
       } else {
-        riskText = `6–7 points: High Risk\n2-Day Stroke Risk: 8.1%\n7-Day: 11.7%\n90-Day: 17.8%`;
+        riskLevel = "High Risk";
+        riskDetails = `2-Day Stroke Risk: 8.1%<br>7-Day: 11.7%<br>90-Day: 17.8%`;
       }
 
-      // Insert text into result-text div only
-      document.getElementById('result-text').innerText = `${score} points\n\n${riskText}`;
+      document.getElementById('result-text').innerHTML = `
+        <div class="text-lg font-semibold mb-2">${riskLevel} <span class="font-normal text-base">(Total: ${score} points)</span></div>
+        <div class="text-sm leading-relaxed">${riskDetails}</div>
+      `;
+
       document.getElementById('result').classList.remove('hidden');
       document.getElementById('copy-button').classList.remove('hidden');
     }
 
     function copyResult() {
-      const resultText = document.getElementById('result-text').innerText;
-      navigator.clipboard.writeText(resultText).then(() => {
+      const resultText = document.getElementById('result-text');
+      const rawHtml = resultText.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = rawHtml;
+      const lines = tempDiv.textContent.split('\n');
+      const cleanLines = lines.map(line => line.trim());
+      const plainText = cleanLines.join('\n');
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(plainText).then(() => {
         alert('Results copied to clipboard!');
       }).catch(err => {
         alert('Failed to copy results: ' + err);
       });
+    }
+
+    function handleCalculateClick() {
+      const allAnswered = Object.values(state).every(val => val !== null);
+      const button = document.getElementById("calculate-button");
+      const tooltip = document.getElementById("tooltip");
+
+      if (allAnswered) {
+        calculateScore();
+      } else {
+        // Temporarily show tooltip
+        tooltip.classList.remove("opacity-0", "pointer-events-none");
+        tooltip.classList.add("opacity-100");
+
+        // Automatically hide after 2 seconds
+        setTimeout(() => {
+          tooltip.classList.remove("opacity-100");
+          tooltip.classList.add("opacity-0", "pointer-events-none");
+        }, 2000);
+      }
+    }
+
+    function checkAllAnswered() {
+      const allAnswered = Object.values(state).every(val => val !== null);
+      const button = document.getElementById("calculate-button");
+
+      button.disabled = !allAnswered;
     }
 
 

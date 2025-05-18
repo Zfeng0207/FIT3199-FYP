@@ -303,7 +303,8 @@
 
       <!-- Calculate Risk Button (Centered & Bigger) -->
       <div class="mt-6 flex justify-center">
-        <button onclick="calculateRisk()" class="bg-[#0033cc] hover:bg-[#3399ff] text-white text-lg px-8 py-4 rounded-xl shadow-lg">
+        <button onclick="calculateRisk()"
+          class="bg-[#0033cc] hover:bg-[#3399ff] text-white text-lg px-8 py-4 rounded-xl shadow-lg">
           Calculate Risk
         </button>
       </div>
@@ -316,8 +317,9 @@
         <div id="result-content" class="col-span-2"></div>
 
         <!-- Copy Results Button (centered at bottom) -->
-        <div id="copy-button" class="hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
-          <button onclick="copyResult()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-md">
+        <div id="copy-button" class="hidden absolute bottom-4 right-4">
+          <button onclick="copyResult()"
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-md text-sm">
             Copy Results
           </button>
         </div>
@@ -467,9 +469,9 @@
       const risk30 = risk10 * 6;
 
       const resultBox = document.getElementById("result");
-resultBox.classList.remove("hidden");
+      resultBox.classList.remove("hidden");
 
-document.getElementById("result-content").innerHTML = `
+      document.getElementById("result-content").innerHTML = `
   <div>
     <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
     <div class="mb-2">10-Year Total CVD Risk</div>
@@ -488,16 +490,16 @@ document.getElementById("result-content").innerHTML = `
   </div>
 `;
 
-document.getElementById("copy-button").classList.remove("hidden");
+      document.getElementById("copy-button").classList.remove("hidden");
     }
     function copyResult() {
-  const resultText = document.getElementById("result-content").innerText;
-  navigator.clipboard.writeText(resultText).then(() => {
-    alert('Results copied to clipboard!');
-  }).catch(err => {
-    alert('Failed to copy results: ' + err);
-  });
-}
+      const resultText = document.getElementById("result-content").innerText;
+      navigator.clipboard.writeText(resultText).then(() => {
+        alert('Results copied to clipboard!');
+      }).catch(err => {
+        alert('Failed to copy results: ' + err);
+      });
+    }
 
   </script>
 
