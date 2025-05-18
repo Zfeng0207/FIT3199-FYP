@@ -227,34 +227,35 @@
       <!-- Form Inputs (One per row) -->
       <div class="space-y-4">
         <label class="block text-sm font-medium">Age
-          <input id="age" type="number" class="w-full border rounded p-2" value="45" />
+          <input id="age" type="number" class="w-full border rounded p-2" value="" />
         </label>
 
         <label class="block text-sm font-medium">Sex
-          <select id="sex" class="w-full border rounded p-2">
-            <option value="male" selected>Male</option>
+          <select id="sex" class="w-full border rounded p-2" onchange="checkAllAnswered()">
+            <option value="" disabled selected hidden>Select Sex</option>
+            <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
         </label>
 
         <label class="block text-sm font-medium">Total Cholesterol (mg/dL)
-          <input id="tc" type="number" class="w-full border rounded p-2" value="190" />
+          <input id="tc" type="number" class="w-full border rounded p-2" value="" />
         </label>
 
         <label class="block text-sm font-medium">HDL Cholesterol (mg/dL)
-          <input id="hdl" type="number" class="w-full border rounded p-2" value="58" />
+          <input id="hdl" type="number" class="w-full border rounded p-2" value="" />
         </label>
 
         <label class="block text-sm font-medium">Systolic BP (mmHg)
-          <input id="sbp" type="number" class="w-full border rounded p-2" value="110" />
+          <input id="sbp" type="number" class="w-full border rounded p-2" value="" />
         </label>
 
         <label class="block text-sm font-medium">eGFR
-          <input id="egfr" type="number" class="w-full border rounded p-2" value="108" />
+          <input id="egfr" type="number" class="w-full border rounded p-2" value="" />
         </label>
 
         <label class="block text-sm font-medium">BMI
-          <input id="bmi" type="number" class="w-full border rounded p-2" value="28" />
+          <input id="bmi" type="number" class="w-full border rounded p-2" value="" />
         </label>
       </div>
 
@@ -264,7 +265,7 @@
           <label class="block mb-1">Diabetes</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
             <button id="diabetes-no" onclick="toggleGroup('diabetes', 'no')"
-              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">No</button>
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
             <button id="diabetes-yes" onclick="toggleGroup('diabetes', 'yes')"
               class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
@@ -276,7 +277,7 @@
             <button id="smoker-no" onclick="toggleGroup('smoker', 'no')"
               class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
             <button id="smoker-yes" onclick="toggleGroup('smoker', 'yes')"
-              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">Yes</button>
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
 
@@ -286,7 +287,7 @@
             <button id="antihtn-no" onclick="toggleGroup('antihtn', 'no')"
               class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
             <button id="antihtn-yes" onclick="toggleGroup('antihtn', 'yes')"
-              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">Yes</button>
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
         </div>
 
@@ -294,7 +295,7 @@
           <label class="block mb-1">On Statins</label>
           <div class="flex rounded overflow-hidden border border-gray-300">
             <button id="statins-no" onclick="toggleGroup('statins', 'no')"
-              class="flex-1 py-1 px-4 bg-[#3399ff] text-white font-semibold">No</button>
+              class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">No</button>
             <button id="statins-yes" onclick="toggleGroup('statins', 'yes')"
               class="flex-1 py-1 px-4 bg-gray-100 text-gray-700">Yes</button>
           </div>
@@ -303,9 +304,9 @@
 
       <!-- Calculate Risk Button (Centered & Bigger) -->
       <div class="mt-6 flex justify-center">
-        <button onclick="calculateRisk()"
-          class="bg-[#0033cc] hover:bg-[#3399ff] text-white text-lg px-8 py-4 rounded-xl shadow-lg">
-          Calculate Risk
+        <button id="calculate-btn" onclick="calculateRisk()" disabled
+          class="bg-[#0033cc] hover:bg-[#3399ff] text-white text-lg px-8 py-4 rounded-xl shadow-lg opacity-50 cursor-not-allowed">
+          Calculate
         </button>
       </div>
 
@@ -389,25 +390,37 @@
 
   <script>
     const state = {
-      diabetes: 0,
-      smoker: 1,
-      antihtn: 1,
-      statins: 0,
+      diabetes: null,
+      smoker: null,
+      antihtn: null,
+      statins: null,
     };
+
+    // Disable button until all toggles are selected
+    function checkAllAnswered() {
+      const allAnswered = Object.values(state).every(val => val !== null);
+      document.getElementById("calculate-btn").disabled = !allAnswered;
+      document.getElementById("calculate-btn").classList.toggle("opacity-50", !allAnswered);
+      document.getElementById("calculate-btn").classList.toggle("cursor-not-allowed", !allAnswered);
+    }
 
     function toggleGroup(field, value) {
       state[field] = value === 'yes' ? 1 : 0;
 
+      // Button toggle UI update
       document.getElementById(`${field}-yes`).classList.remove('bg-[#3399ff]', 'text-white', 'font-semibold');
       document.getElementById(`${field}-no`).classList.remove('bg-[#3399ff]', 'text-white', 'font-semibold');
       document.getElementById(`${field}-yes`).classList.add('bg-gray-100', 'text-gray-700');
       document.getElementById(`${field}-no`).classList.add('bg-gray-100', 'text-gray-700');
-
       document.getElementById(`${field}-${value}`).classList.remove('bg-gray-100', 'text-gray-700');
       document.getElementById(`${field}-${value}`).classList.add('bg-[#3399ff]', 'text-white', 'font-semibold');
+
+      checkAllAnswered();
     }
 
     function calculateRisk() {
+      if (Object.values(state).some(v => v === null)) return; // Safety
+
       const age = parseFloat(document.getElementById('age').value);
       const sex = document.getElementById('sex').value;
       const tc = parseFloat(document.getElementById('tc').value) * 0.0259;
@@ -468,30 +481,29 @@
       const risk10 = (Math.exp(sum) / (1 + Math.exp(sum))) * 100;
       const risk30 = risk10 * 6;
 
-      const resultBox = document.getElementById("result");
-      resultBox.classList.remove("hidden");
-
+      document.getElementById("result").classList.remove("hidden");
       document.getElementById("result-content").innerHTML = `
-  <div>
-    <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
-    <div class="mb-2">10-Year Total CVD Risk</div>
-    <div>10-Year ASCVD Risk: ${(risk10 * 0.64).toFixed(2)}%</div>
-    <div>10-Year Heart Failure Risk: ${(risk10 * 0.40).toFixed(2)}%</div>
-    <div>10-Year Coronary Heart Disease Risk: ${(risk10 * 0.32).toFixed(2)}%</div>
-    <div>10-Year Stroke Risk: ${(risk10 * 0.33).toFixed(2)}%</div>
-  </div>
-  <div>
-    <div class="text-3xl font-bold">${risk30.toFixed(2)}<span class="text-xl">%</span></div>
-    <div class="mb-2">30-Year Total CVD Risk</div>
-    <div>30-Year ASCVD Risk: ${(risk30 * 0.613).toFixed(2)}%</div>
-    <div>30-Year Heart Failure Risk: ${(risk30 * 0.525).toFixed(2)}%</div>
-    <div>30-Year Coronary Heart Disease Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
-    <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
-  </div>
-`;
+    <div>
+      <div class="text-3xl font-bold">${risk10.toFixed(2)}<span class="text-xl">%</span></div>
+      <div class="mb-2">10-Year Total CVD Risk</div>
+      <div>10-Year ASCVD Risk: ${(risk10 * 0.64).toFixed(2)}%</div>
+      <div>10-Year Heart Failure Risk: ${(risk10 * 0.40).toFixed(2)}%</div>
+      <div>10-Year Coronary Heart Disease Risk: ${(risk10 * 0.32).toFixed(2)}%</div>
+      <div>10-Year Stroke Risk: ${(risk10 * 0.33).toFixed(2)}%</div>
+    </div>
+    <div>
+      <div class="text-3xl font-bold">${risk30.toFixed(2)}<span class="text-xl">%</span></div>
+      <div class="mb-2">30-Year Total CVD Risk</div>
+      <div>30-Year ASCVD Risk: ${(risk30 * 0.613).toFixed(2)}%</div>
+      <div>30-Year Heart Failure Risk: ${(risk30 * 0.525).toFixed(2)}%</div>
+      <div>30-Year Coronary Heart Disease Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+      <div>30-Year Stroke Risk: ${(risk30 * 0.321).toFixed(2)}%</div>
+    </div>
+  `;
 
       document.getElementById("copy-button").classList.remove("hidden");
     }
+
     function copyResult() {
       const resultText = document.getElementById("result-content").innerText;
       navigator.clipboard.writeText(resultText).then(() => {
@@ -501,6 +513,8 @@
       });
     }
 
+    // Disable button on load
+    document.addEventListener('DOMContentLoaded', checkAllAnswered);
   </script>
 
 </body>

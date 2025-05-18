@@ -302,12 +302,6 @@
             disabled>
             Calculate
           </button>
-
-          <!-- Tooltip (initially hidden and transparent) -->
-          <div id="tooltip"
-            class="absolute top-full mt-2 w-72 text-sm text-center bg-red-500 text-white px-3 py-2 rounded shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-            Please answer all required questions before calculating.
-          </div>
         </div>
 
         <!-- Result Container (Responsive Height, Aligned Layout) -->
@@ -459,21 +453,9 @@
 
     function handleCalculateClick() {
       const allAnswered = Object.values(state).every(val => val !== null);
-      const button = document.getElementById("calculate-button");
-      const tooltip = document.getElementById("tooltip");
 
       if (allAnswered) {
         calculateScore();
-      } else {
-        // Temporarily show tooltip
-        tooltip.classList.remove("opacity-0", "pointer-events-none");
-        tooltip.classList.add("opacity-100");
-
-        // Automatically hide after 2 seconds
-        setTimeout(() => {
-          tooltip.classList.remove("opacity-100");
-          tooltip.classList.add("opacity-0", "pointer-events-none");
-        }, 2000);
       }
     }
 
