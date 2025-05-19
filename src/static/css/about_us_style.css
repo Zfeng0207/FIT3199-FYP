@@ -1,49 +1,329 @@
 /*-- -------------------------- -->
 <---          Form              -->
 <--- -------------------------- -*/
-                                
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body {
-    font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f4f8fc;
+  /* fallback background color */
+  background-image: url("../images/neural_network.jpeg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+/* Sticky Navbar */
+#cs-navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Spacer under navbar */
+body::before {
+  content: "";
+  display: block;
+  height: 100px;
+}
+
+.hero-text {
+  width: 350px !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+  margin-top: -20px;
+  /* Adjust this value as needed */
+  margin-left: 0;
+  /* start from here */
+  transform: translateX(-50px);
+  /* moves 50px to the left */
+}
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
 
-  .loader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .hero-text {
-    width: 350px !important;
-    height: auto !important;
-    display: block;
-    margin: 0 auto;
-    margin-top: -20px; /* Adjust this value as needed */
-    margin-left: 0; /* start from here */
-    transform: translateX(-50px); /* moves 50px to the left */
-  }
+}
+
+/* -------------------------- */
+/*       Meet The Team        */
+/* -------------------------- */
+#meet-team-1332 {
+  padding: 6rem 1rem 4rem;
+  border-radius: 10px;
+  margin: 2rem auto;
+  max-width: 1300px;
+}
+
+#meet-team-1332 .cs-container {
+  width: 100%;
+  max-width: 90rem;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3rem, 6vw, 4rem);
+}
+
+#meet-team-1332 .cs-content {
+  text-align: center;
+  max-width: 40.625rem;
+}
+
+#meet-team-1332 .cs-topper {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 900;
+  color: #ffffff;
+  padding: 100px 20px 20px 20px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  /* glow effect */
+}
+
+#meet-team-1332 .cs-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fca387;
+  padding: 20px;
+  text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9);
+  /* stronger glow */
+}
+
+/* Card group */
+#meet-team-1332 .cs-card-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Individual team cards */
+#meet-team-1332 .cs-item {
+  list-style: none;
+  width: 200px;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+  border-radius: 10px;
+  background-color: white;
+}
+
+#meet-team-1332 .cs-item:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+/* Image wrapper */
+#meet-team-1332 .cs-picture {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+#meet-team-1332 .cs-picture:before {
+  content: "";
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(17, 17, 17, 0.94) 85%,
+      rgba(26, 26, 26, 0.94) 100%);
+  opacity: 0.7;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+
+#meet-team-1332 .cs-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+#meet-team-1332 .cs-item:hover .cs-picture img {
+  transform: scale(1.1);
+}
+
+/* Info Overlay */
+#meet-team-1332 .cs-info {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 3;
+}
+
+#meet-team-1332 .cs-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f6e5db;
+  transition: color 0.3s;
+  position: relative;
+}
+
+#meet-team-1332 .cs-item:hover .cs-name {
+  font-size: 0rem;
+  background: linear-gradient(45deg, #ff7300, #1487e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  transform: translateY(50px);
+  /* subtle downward shift */
+}
+
+#meet-team-1332 .cs-job {
+  font-size: 0.95rem;
+  color: #f7f7f7;
+}
+
+.about-section {
+  position: relative;
+  padding: 4rem 2rem;
+  overflow: hidden;
+  text-align: center;
+  z-index: 1;
+}
+
+.about-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, #eca22c, #59f1fe);
+  opacity: 0;
+  /* Only background has transparency */
+  z-index: -1;
+  /* Put it behind the text */
+}
+
+.about-section .cs-title {
+  background: linear-gradient(45deg, #00eaff, #5affba);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: xx-large;
+  text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0, 234, 255, 0.4);
+}
+
+.about-section .cs-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  color: #ffffff;
+  position: relative;
+  z-index: 2;
+  opacity: 1 !important;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.supervisor-text {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 1.5rem 2rem;
+  border-radius: 50px;
+  max-width: 700px;
+  color: white;
+}
+
+#meet-team-1332 .cs-item {
+  list-style: none;
+  width: 200px;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  /* required for positioning child */
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: white;
+  transition: transform 0.3s ease-in-out;
+}
+
+#meet-team-1332 .cs-hover-bio {
+  display: none;
+  position: relative;
+  bottom: -24px;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 1;
+  padding: 0.8rem;
+  padding-top: 5rem;
+  ;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+  box-sizing: border-box;
+  z-index: 10;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+#meet-team-1332 .cs-item {
+  position: relative;
+}
+
+/* Show only when hovered */
+#meet-team-1332 .cs-item:hover .cs-hover-bio {
+  display: block;
+  /* text-shadow: 0 0 6px rgba(255, 255, 255, 0.8); Glow effect behind dark text */
+}

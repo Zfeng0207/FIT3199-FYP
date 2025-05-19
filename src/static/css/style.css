@@ -2,31 +2,35 @@
 body, html {
 	height: 100%;
 	margin: 0;
-	background: linear-gradient(to right, rgb(38, 51, 61), rgb(50, 55, 65), rgb(33, 33, 78));
 	font-family: "Poppins", sans-serif;
+	background: transparent !important;
+	display: flex;
+	flex-direction: column;
   }
   
   .chat {
-	margin-top: auto;
-	margin-bottom: auto;
+	margin-top: auto;  /* Pushes to bottom */
 	padding: 1rem;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-end; /* Aligns vertically to bottom */
+	flex-grow: 1;
   }
   
   /* Chat Card Styling */
   .card {
-	height: 550px;
-	width: 100%;
-	max-width: 600px;
+	height: 800px;
+	width: 70vw; /* use viewport width instead of fixed px */
+	max-width: 1400px; /* Optional: Limit max width for better readability */
+	margin: 0 auto; /* Center horizontally */
 	border-radius: 15px !important;
 	background: linear-gradient(135deg, rgb(0, 93, 143), rgb(0, 39, 61));
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-	overflow: hidden; /* Avoid content overflow */
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
   }
+
   
   /* Card Header and Footer Adjustments */
   .card-header {
@@ -60,7 +64,7 @@ body, html {
   
   /* Input and Button Styles for Chat */
   .search, .type_msg, .attach_btn, .send_btn, .search_btn {
-	background-color: rgba(0,0,0,0.3) !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
 	border: 0 !important;
 	color: white !important;
   }
@@ -168,16 +172,20 @@ body, html {
   
   /* Message Container and Styling */
   .msg_cotainer {
+	max-width: 70%;
+	word-wrap: break-word;
+	white-space: normal;
 	margin: auto 0;
 	margin-left: 10px;
 	border-radius: 25px;
 	background: linear-gradient(45deg, rgb(42, 130, 212), rgb(140, 164, 190));
-	padding: 10px;
+	padding: 18px 16px;
 	position: relative;
 	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .msg_cotainer_send {
+	max-width: 70%;
     margin: auto 0;
     margin-right: 10px;
     border-radius: 25px;

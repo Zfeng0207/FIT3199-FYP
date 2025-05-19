@@ -3,73 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Entry & Prediction</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
+  <title>Cardiovascular Risk Assessment</title>
+
+  <!-- 1) Tailwind CSS (load first to scope Reset here) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/stroke_prediction_style.css') }}" />
-  <style>
-    :root {
-      --primary: #007bff !important; /* Blue */
-    }
-  </style>
-  
-</head>
-<body>
-
-<!-- ============================================ -->
-<!--                 Navigation                   -->
-<!-- ============================================ -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services and File Upload</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
-</head>
-<header id="cs-navigation">
-  <div class="cs-container">
-    <a href="" class="cs-logo" aria-label="back to home">
-      <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async">
-    </a>
-    <nav class="cs-nav" role="navigation">
-      <button class="cs-toggle" aria-label="mobile menu toggle">
-        <div class="cs-box">
-          <span class="cs-line cs-line1"></span>
-          <span class="cs-line cs-line2"></span>
-          <span class="cs-line cs-line3"></span>
-        </div>
-      </button>
-      <div class="cs-ul-wrapper">
-        <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
-          <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
-          <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
-          <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
-          {% if user %}
-          <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
-          {% endif %}
-          <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
-        </ul>
-      </div>
-    </nav>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
 
-    <!-- Show Login or Logout Button based on User Authentication -->
+  <style>
+    /* 1) container only shrinks in width, but stays the same height as the nav */
+    #cs-navigation .cs-logo {
+      width: auto     !important;
+      height: 4.0625rem !important; /* back to the default desktop height */
+      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
+      transform: translateX(-65px) !important;
+    }
+
+    /* 1) Allow the dropdown to overflow the nav without resizing it */
+    #cs-navigation,
+    #cs-navigation .cs-container,
+    #cs-navigation .cs-ul-wrapper {
+      overflow: visible !important;
+    }
+
+    /* 2) Desktop: make the submenu absolute, vertical, and add gap */
+    @media only screen and (min-width: 64rem) {
+      #cs-navigation .cs-dropdown {
+        position: relative; /* ensure absolute child is positioned off the li */
+      }
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important; /* take it out of the document flow */
+        top: 100% !important;          /* sit directly below the menu item */
+        left: 0 !important;
+        display: flex !important;       /* flex‑column gives us true gaps */
+        flex-direction: column !important;
+        gap: 1rem !important;           /* increase vertical space between links */
+        padding: 0.2rem 0 !important;   /* optional breathing room above/below */
+        margin: 0 !important;           /* reset any built‑in margins */
+      }
+    }
+
+    /* 3) Mobile: same absolute behavior so it won’t push content down */
+    @media only screen and (max-width: 63.9375rem) {
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin: 0 !important;
+        padding: 0.5rem 0 !important;
+      }
+    }
+  </style>  
+</head>
+
+<body class="bg-gray-50 p-0">
+
+  <!-- ============================================ -->
+  <!--                 Navigation                   -->
+  <!-- ============================================ -->
+  <header id="cs-navigation" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <div class="cs-container">
+      <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
+        <!-- larger logo via utility classes -->
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
+      </a>
+      <nav class="cs-nav" role="navigation">
+        <button class="cs-toggle" aria-label="mobile menu toggle">
+          <div class="cs-box">
+            <span class="cs-line cs-line1"></span>
+            <span class="cs-line cs-line2"></span>
+            <span class="cs-line cs-line3"></span>
+          </div>
+        </button>
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+            <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            {% endif %}
+            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            {% endif %}
+            <li class="cs-li cs-dropdown">
+              <!-- top‐level link stays as your Self Assessment page -->
+              <a href="{{ url_for('self_assesment_routing') }}"
+                 class="cs-li-link cs-drop-link">
+                Self Assessment
+                <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                </svg>
+              </a>
+              <!-- submenu items are now absolute, vertical, and spaced out -->
+              <ul class="cs-drop-ul">
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ASCVD Risk Estimator
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('abcd2_tia_routing') }}"
+                     class="cs-li-link">
+                    ABCD² Score for TIA
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
       {% if user %}
-      <!-- If the user is logged in, show the Logout button -->
       <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-      <!-- If the user is not logged in, show the Login button -->
       <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
-    {% endif %}
-  </div>
-</header>
-
+      {% endif %}
+    </div>
+  </header>
 
   <!-- Services Section -->
   <section id="services-285">
     <div class="cs-container">
       <div class="cs-content">
         <br><br><br><br><br><br>
-        <h2 class="cs-title">Data Entry & Prediction</h2>
       </div>
       <ul class="cs-card-group">
         <li class="cs-item">
@@ -77,7 +138,7 @@
             <picture class="cs-picture">
               <img class="cs-icon" src="https://www.svgrepo.com/show/532228/table-list.svg" alt="icon" width="38" height="52">
             </picture>
-            <h3 class="cs-h3">Service Number 1</h3>
+            <h3 class="cs-h3">Step 1</h3>
             <p class="cs-item-text">Download our CSV template and fill in the required columns.</p>
           </a>
         </li>
@@ -86,7 +147,7 @@
             <picture class="cs-picture">
               <img class="cs-icon" src="https://www.svgrepo.com/show/5500/upload-file.svg" alt="icon" width="38" height="52">
             </picture>
-            <h3 class="cs-h3">Service Number 2</h3>
+            <h3 class="cs-h3">Step 2</h3>
             <p class="cs-item-text">Upload the completed template and click submit.</p>
           </a>
         </li>
@@ -95,7 +156,7 @@
             <picture class="cs-picture">
               <img class="cs-icon" src="https://www.svgrepo.com/show/486820/report-text.svg" alt="icon" width="38" height="52">
             </picture>
-            <h3 class="cs-h3">Service Number 3</h3>
+            <h3 class="cs-h3">Step 3</h3>
             <p class="cs-item-text">Our model will analyze and return a prediction report.</p>
           </a>
         </li>
@@ -104,92 +165,169 @@
     </div>
   </section>
 
-  <!-- File Upload Section -->
+  <!-- File upload -->
   <div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
-      <form id="uploadForm">
-        <label class="formbold-form-label formbold-form-label-2">
-          Upload File (only CSV files are allowed)
-        </label>
-
-        <div class="formbold-mb-5 formbold-file-input">
-          <input type="file" name="file" id="file" accept=".csv" hidden />
-          <label for="file" class="formbold-dropzone">
-            <div>
-              <span class="formbold-drop-file">Drop files here</span>
-              <span class="formbold-or">Or</span>
-              <button type="button" onclick="document.getElementById('file').click()" class="formbold-browse">Browse</button>
-            </div>
-          </label>
+    <div class="cs-container">                    <!-- ← add this -->
+      <div class="formbold-form-wrapper w-full">  <!-- you can drop the max-w-none here -->
+        <form id="processForm">
+        <br><br>
+        <!-- ↓ NEW drag-and-drop zone ↓ -->
+        <div
+          id="drop-area"
+          class="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer transition-colors"
+        >
+          <p>Click or drag & drop your <span class="font-semibold">.csv</span> file to upload.</p>
+          <input type="file" id="csvFile" accept=".csv" class="hidden" />
+          <p id="file-name" class="mt-2 text-gray-700"></p>
         </div>
 
-        <div class="formbold-file-list formbold-mb-5" id="fileList" style="display: none;">
-          <div class="formbold-file-item">
-            <span class="formbold-file-name" id="fileName">filename.csv</span>
-            <button type="button" onclick="clearFile()">✕</button>
-          </div>
-          <div class="formbold-progress-bar">
-            <div class="formbold-progress" id="progressBar" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <div><br><br>
+        <div><br>
           <button class="formbold-btn w-full" type="submit">Process Data</button>
         </div>
 
+        <!-- loading overlay -->
         <div class="loader-overlay" id="loader" style="display: none;">
           <div class="loader"></div>
         </div>
-      </form>
-    </div>
-  </div>
+
+        <!-- ↓ in your form, right after the file input / loader … -->
+        <!-- Model Output -->
+        <div class="formbold-mt-4">
+          <div
+            id="predictionOutput"
+            class="mt-2 hidden w-full max-h-[60vh] overflow-y-auto border border-gray-200 rounded-lg"
+          >
+            <table class="w-full table-auto border-collapse">
+              <thead class="bg-green-600">
+                <tr>
+                  <th class="px-4 py-2 text-white text-left">Index</th>
+                  <th class="px-4 py-2 text-white text-left">Study ID</th>
+                  <th class="px-4 py-2 text-white text-left">Patient ID</th>
+                  <th class="px-4 py-2 text-white text-left">Gender</th>
+                  <th class="px-4 py-2 text-white text-left">ECG Time</th>
+                  <th class="px-4 py-2 text-white text-left">Stroke</th>
+                </tr>
+              </thead>
+              <tbody id="predictionTbody" class="bg-white divide-y divide-gray-200">
+                <!-- injected rows go here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+        <!-- your existing download link -->
+        <a id="download-link" class="mt-2 inline-block text-sm text-blue-600 hover:underline hidden">
+          ⬇️ Download full CSV
+        </a>
+        </form>
+      </div>  <!-- /.formbold-form-wrapper -->
+    </div>    <!-- /.cs-container -->
+  </div>      <!-- /.formbold-main-wrapper -->
+
 
   <script>
-    const fileInput = document.getElementById("file");
-    const fileList = document.getElementById("fileList");
-    const fileNameSpan = document.getElementById("fileName");
-    const progressBar = document.getElementById("progressBar");
+    const loader         = document.getElementById('loader');
+    const csvInput       = document.getElementById('csvFile'); 
+    const predictionDiv  = document.getElementById('predictionOutput');
+    const predictionBody = document.getElementById('predictionTbody');
+    const downloadLink   = document.getElementById('download-link');
 
-    fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
-      if (file && file.name.endsWith(".csv")) {
-        fileNameSpan.textContent = file.name;
-        fileList.style.display = "block";
-        progressBar.style.width = "0%";
-        let percent = 0;
-        const interval = setInterval(() => {
-          percent += 10;
-          progressBar.style.width = percent + "%";
-          if (percent >= 100) clearInterval(interval);
-        }, 100);
-      } else {
-        alert("Please upload a CSV file.");
-        fileInput.value = "";
-        fileList.style.display = "none";
-      }
-    });
-
-    function clearFile() {
-      fileInput.value = "";
-      fileList.style.display = "none";
-      progressBar.style.width = "0%";
-    }
-
-    document.getElementById("uploadForm").addEventListener("submit", function (e) {
+    document.getElementById('processForm').addEventListener('submit', async e => {
       e.preventDefault();
-      if (!fileInput.files[0]) {
-        alert("Please upload a file first.");
+
+      if (!csvInput.files[0]) {
+        alert('Please upload your .csv memmap file.');
         return;
       }
 
-      document.getElementById("loader").style.display = "flex";
-      setTimeout(() => {
-        document.getElementById("loader").style.display = "none";
-        alert("Data processed successfully!");
-        clearFile();
-      }, 2000);
+      loader.style.display = 'flex';
+      predictionDiv.classList.add('hidden');
+      predictionBody.innerHTML = '';
+      downloadLink.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('csv_file', csvInput.files[0]);
+
+      try {
+        const res  = await fetch('/predict_csv', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert('Error: ' + (data.error || JSON.stringify(data)));
+          return;
+        }
+
+        // build table
+        data.rows.forEach((row, idx) => {
+          const tr = document.createElement('tr');
+          if (idx % 2 === 1) tr.classList.add('bg-gray-100');
+          tr.innerHTML = `
+            <td class="px-4 py-2 whitespace-nowrap">${row.index}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.study_id}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.patient_id}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.gender}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.ecg_time}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.stroke}</td>
+          `;
+          predictionBody.appendChild(tr);
+        });
+
+        predictionDiv.classList.remove('hidden');
+        downloadLink.href       = data.download_url;
+        downloadLink.classList.remove('hidden');
+
+      } catch (err) {
+        alert('Request failed: ' + err.message);
+      } finally {
+        loader.style.display = 'none';
+      }
     });
+
+    // drag-and-drop functionality
+    const dropArea   = document.getElementById('drop-area');
+    const fileNameEl = document.getElementById('file-name');
+
+    // click on zone → open file picker
+    dropArea.addEventListener('click', () => csvInput.click());
+
+    // when a file is selected via dialog
+    csvInput.addEventListener('change', handleFiles);
+
+    // highlight on drag
+    ['dragenter','dragover'].forEach(evt =>
+      dropArea.addEventListener(evt, e => {
+        e.preventDefault();
+        dropArea.classList.add('bg-gray-100');
+      })
+    );
+    ['dragleave','drop'].forEach(evt =>
+      dropArea.addEventListener(evt, e => {
+        e.preventDefault();
+        dropArea.classList.remove('bg-gray-100');
+      })
+    );
+
+    // handle drop
+    dropArea.addEventListener('drop', e => {
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        csvInput.files = files;
+        handleFiles();
+      }
+    });
+
+    function handleFiles() {
+      const file = csvInput.files[0];
+      if (file) {
+        fileNameEl.textContent = file.name;
+      }
+  }
   </script>
+
 
 </body>
 </html>

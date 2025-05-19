@@ -5,27 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Us</title>
 
-  <!-- Load your nav bar styles first -->
+  <!-- 1) Tailwind CSS (load first to scope Reset here) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
+
+  <style>
+    /* 1) container only shrinks in width, but stays the same height as the nav */
+    #cs-navigation .cs-logo {
+      width: auto     !important;
+      height: 4.0625rem !important; /* back to the default desktop height */
+      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
+      transform: translateX(-65px) !important;
+    }
+    
+    /* 1) Allow the dropdown to overflow the nav without resizing it */
+    #cs-navigation,
+    #cs-navigation .cs-container,
+    #cs-navigation .cs-ul-wrapper {
+      overflow: visible !important;
+    }
+
+    /* 2) Desktop: make the submenu absolute, vertical, and add gap */
+    @media only screen and (min-width: 64rem) {
+      #cs-navigation .cs-dropdown {
+        position: relative; /* ensure absolute child is positioned off the li */
+      }
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important; /* take it out of the document flow */
+        top: 100% !important;          /* sit directly below the menu item */
+        left: 0 !important;
+        display: flex !important;       /* flex‑column gives us true gaps */
+        flex-direction: column !important;
+        gap: 1rem !important;           /* increase vertical space between links */
+        padding: 0.2rem 0 !important;   /* optional breathing room above/below */
+        margin: 0 !important;           /* reset any built‑in margins */
+      }
+    }
+
+    /* 3) Mobile: same absolute behavior so it won’t push content down */
+    @media only screen and (max-width: 63.9375rem) {
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin: 0 !important;
+        padding: 0.5rem 0 !important;
+      }
+    }
+  </style>  
 </head>
 
-<body>
-
-  <!-- Navigation Bar -->
-  <header id="cs-navigation">
+<body class="bg-gray-50 p-0">
+  <!-- ============================================ -->
+  <!--                 Navigation                   -->
+  <!-- ============================================ -->
+  <header id="cs-navigation" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
     <div class="cs-container">
-      <!-- Logo -->
-      <a href="" class="cs-logo" aria-label="back to home">
-        <img 
-          src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" 
-          class="hero-text" 
-          alt="Stroke Hero Logo" 
-          decoding="async"
-        />
+      <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
+        <!-- larger logo via utility classes -->
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
       </a>
 
-      <!-- Menu -->
+      <!-- Navigation Links -->
       <nav class="cs-nav" role="navigation">
         <button class="cs-toggle" aria-label="mobile menu toggle">
           <div class="cs-box">
@@ -37,137 +83,208 @@
         <div class="cs-ul-wrapper">
           <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
             <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
+            {% if user %}
             <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            {% endif %}
             <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
             {% if user %}
             <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
             {% endif %}
-            <li class="cs-li"><a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">Self Assessment</a></li>
+            <li class="cs-li cs-dropdown">
+              <!-- top‐level link stays as your Self Assessment page -->
+              <a href="{{ url_for('self_assesment_routing') }}"
+                 class="cs-li-link cs-drop-link">
+                Self Assessment
+                <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                </svg>
+              </a>
+            
+              <ul class="cs-drop-ul">
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ASCVD Risk Estimator
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}"
+                     class="cs-li-link">
+                    ABCD² Score for TIA
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
       </nav>
-
-      <!-- Show Login or Logout Button based on User Authentication -->
       {% if user %}
-        <!-- If the user is logged in, show the Logout button -->
-        <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" 
-           style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">
-          Logout
-        </a>
+      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-        <!-- If the user is not logged in, show the Login button -->
-        <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" 
-           style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">
-          Login
-        </a>
+      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
       {% endif %}
     </div>
   </header>
 
-  <!-- Hero / About Us Content -->
-  <section id="hero-1946">
+  <!-- ============================================ -->
+  <!--                    Hero                      -->
+  <!-- ============================================ -->
+  <!-- About Us / Meet the Team Section -->
+  <section id="meet-team-1332">
     <div class="cs-container">
       <div class="cs-content">
-        <h2 class="cs-title">Building Your Future Accommodation</h2>
-        <div class="cs-flex">
-          <p class="cs-text">
-            We successfully cope with tasks of varying complexity, provide long-term guarantees 
-            and regularly master new technologies.
-          </p>
-          <a href="" class="cs-button-solid">Read More</a>
-        </div>
+        <span class="cs-topper">Meet The Team</span>
+        <h2 class="cs-title">Our Awesome Team Members</h2>
       </div>
 
-      <picture class="cs-picture">
-        <source 
-          media="(min-width: 601px)"
-          srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png"
-        >
-        <source 
-          media="(max-width: 600px)"
-          srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png"
-        >
-        <img 
-          decoding="async" 
-          src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/construction-site.png" 
-          alt="construction site" 
-          width="1280" 
-          height="510"
-        />
-      </picture>
-
       <ul class="cs-card-group">
+        <!-- Zfeng -->
         <li class="cs-item">
-          <picture class="cs-icon-picture">
-            <img 
-              class="cs-icon" 
-              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
-              decoding="async" 
-              alt="icon" 
-              width="40" 
-              height="40" 
-              aria-hidden="true"
-            />
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Zfeng_Profile.jpeg') }}" alt="Darren Chen" width="305" height="407">
           </picture>
-          <div class="cs-text-group">
-            <h3 class="cs-h3">Construction</h3>
-            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          <div class="cs-info">
+            <span class="cs-name">Zfeng Loo</span>
+            <span class="cs-hover-bio">Hi my name is Zfeng, I am the Data Scientist of this project.</span>
           </div>
         </li>
+
+        <!-- Darren -->
         <li class="cs-item">
-          <picture class="cs-icon-picture">
-            <img 
-              class="cs-icon" 
-              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
-              decoding="async" 
-              alt="icon" 
-              width="40" 
-              height="40" 
-              aria-hidden="true"
-            />
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Darren_Profile.jpeg') }}" alt="Zfeng Loo" width="305" height="407">
           </picture>
-          <div class="cs-text-group">
-            <h3 class="cs-h3">Project Development</h3>
-            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          <div class="cs-info">
+            <span class="cs-name">Darren Chen</span>
+            <span class="cs-hover-bio">Hi my name is Darren, I am the Project Manager of this project.</span>
           </div>
         </li>
+
+        <!-- Darin -->
         <li class="cs-item">
-          <picture class="cs-icon-picture">
-            <img 
-              class="cs-icon" 
-              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
-              decoding="async" 
-              alt="icon" 
-              width="40" 
-              height="40" 
-              aria-hidden="true"
-            />
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Darin_Profile.jpeg') }}" alt="Darin Park" width="305" height="407">
           </picture>
-          <div class="cs-text-group">
-            <h3 class="cs-h3">Interior Design</h3>
-            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          <div class="cs-info">
+            <span class="cs-name">Darin Park</span>
+            <span class="cs-hover-bio">Hi my name is Darin, I am the Data Scientist of this project.</span>
           </div>
         </li>
+
+        <!-- Ryuji -->
         <li class="cs-item">
-          <picture class="cs-icon-picture">
-            <img 
-              class="cs-icon" 
-              src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/tool.svg" 
-              decoding="async" 
-              alt="icon" 
-              width="40" 
-              height="40" 
-              aria-hidden="true"
-            />
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Ryuji_Profile.jpeg') }}" alt="Ryuji Takamura" width="305" height="407">
           </picture>
-          <div class="cs-text-group">
-            <h3 class="cs-h3">Architecture</h3>
-            <p class="cs-item-text">Designing and Building The Most Beautiful Custom Homes.</p>
+          <div class="cs-info">
+            <span class="cs-name">Ryuji Takamura</span>
+            <span class="cs-hover-bio">Hi my name is Ryuji, I am the ML Developer of this project.</span>
+          </div>
+        </li>
+
+        <!-- Edward -->
+        <li class="cs-item">
+          <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}">
+            <source media="(min-width: 601px)" srcset="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}">
+            <img loading="lazy" decoding="async" src="{{ url_for('static', filename='images/Edward_Profile.jpeg') }}" alt="Edward Priyatna" width="305" height="407">
+          </picture>
+          <div class="cs-info">
+            <span class="cs-name">Edward Priyatna</span>
+            <span class="cs-hover-bio">Hi my name is Edward, I am the Frontend Developer of this project.</span>
           </div>
         </li>
       </ul>
     </div>
   </section>
+
+  <!-- Supervisor Section -->
+  <section class="about-section" id="supervisor" style="padding-top: 2rem;">
+    <div class="cs-container" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4rem; justify-content: center;">
+      
+      <!-- Supervisor Image (circular) -->
+      <div style="flex: 0 0 auto;">
+        <img 
+          src="{{ url_for('static', filename='images/Dr_Ong_Profile.jpeg') }}" 
+          alt="Dr. Ong Huey Fang" 
+          width="275" 
+          height="275" 
+          style="border-radius: 50%; object-fit: cover; box-shadow: 0 0 10px rgba(0,0,0,0.4);"
+        />
+      </div>
+  
+      <!-- Supervisor Intro (wider block) -->
+      <div class="supervisor-text" style="flex: 1 1 700px; max-width: 900px; color: white;">
+        <h2 class="cs-title" style="margin-bottom: 1rem;">Meet Our Supervisor</h2>
+        <p class="cs-text" style="color: #ffffff; font-size: 1.1rem; text-align: justify;">
+          Dr Ong Huey Fang joined as a lecturer in the School of Information Technology at Monash University 
+          Malaysia in 2019. She earned her bachelor’s degree from Universiti Teknologi Malaysia, and both her 
+          master’s and doctoral degrees from Universiti Putra Malaysia specialised in Intelligent Computing. 
+          While pursuing her postgraduate studies, Dr Ong taught computer science courses at undergraduate 
+          levels and actively involved in academic programme coordination at two private universities in 
+          Malaysia for more than nine years. Prior to that, she attached to the software testing group of 
+          Board Design Center Malaysia at Intel Product Malaysia for one year. In terms of professional 
+          development, she is currently a Certified Data Science Specialist and AWS Certified Cloud Practitioner.
+        </p>
+      </div>
+  
+    </div>
+  </section>
+  
+  <!-- New: Our Mission Section -->
+<section class="about-section" id="our-mission">
+  <div class="cs-container">
+    <h2 class="cs-title">Our Mission</h2>
+    <p class="cs-text">
+      Our mission is to empower healthcare decision-making through advanced, interpretable AI.
+      We strive to make stroke prediction more accessible, transparent, and actionable for both
+      medical professionals and the public.
+    </p>
+  </div>
+</section>
+
+<!-- New: The Dataset We Used -->
+<section class="about-section" id="dataset-info">
+  <div class="cs-container">
+    <h2 class="cs-title">The Dataset We Used</h2>
+    <p class="cs-text">
+      We utilized anonymized, clinically verified time-series data focusing on vital signs and symptoms
+      associated with stroke. The dataset includes features such as heart rate, blood pressure, ECG signals,
+      and patient history to support our prediction models.
+    </p>
+  </div>
+</section>
+
+<!-- New: Technologies We Used -->
+<section class="about-section" id="tech-stack">
+  <div class="cs-container">
+    <h2 class="cs-title">Technologies We Used</h2>
+    <p class="cs-text">
+      Our platform is powered by Python, Flask, and machine learning frameworks like PyTorch and Scikit-learn.
+      We also used Google Colab for model training and GitHub for collaboration and version control.
+    </p>
+  </div>
+</section>
+
+<!-- New: What's Next -->
+<section class="about-section" id="whats-next">
+  <div class="cs-container">
+    <h2 class="cs-title">What's Next?</h2>
+    <p class="cs-text">
+      Moving forward, we aim to enhance model accuracy, integrate real-time patient monitoring, and 
+      implement reinforcement learning for continuous improvement. We also plan to collaborate with
+      medical institutions for broader validation and deployment.
+    </p>
+  </div>
+</section>
 
 </body>
 </html>

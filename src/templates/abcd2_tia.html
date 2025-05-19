@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardiovascular Risk Assessment</title>
+
+  <!-- 1) Tailwind CSS (load first to scope Reset here) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation_bar_style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us_style.css') }}" />
+
+  <style>
+    body {
+      background-image: url("{{ url_for('static', filename='images/skyblue.jpeg') }}");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* 1) container only shrinks in width, but stays the same height as the nav */
+    #cs-navigation .cs-logo {
+      width: auto !important;
+      height: 4.0625rem !important;
+      /* back to the default desktop height */
+      overflow: visible;
+      /* let your hero-text spill out if you’re using negative margins */
+      transform: translateX(-65px) !important;
+    }
+
+    /* 1) Allow the dropdown to overflow the nav without resizing it */
+    #cs-navigation,
+    #cs-navigation .cs-container,
+    #cs-navigation .cs-ul-wrapper {
+      overflow: visible !important;
+    }
+
+    /* 2) Desktop: make the submenu absolute, vertical, and add gap */
+    @media only screen and (min-width: 64rem) {
+      #cs-navigation .cs-dropdown {
+        position: relative;
+        /* ensure absolute child is positioned off the li */
+      }
+
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important;
+        /* take it out of the document flow */
+        top: 100% !important;
+        /* sit directly below the menu item */
+        left: 0 !important;
+        display: flex !important;
+        /* flex‑column gives us true gaps */
+        flex-direction: column !important;
+        gap: 1rem !important;
+        /* increase vertical space between links */
+        padding: 0.2rem 0 !important;
+        /* optional breathing room above/below */
+        margin: 0 !important;
+        /* reset any built‑in margins */
+      }
+    }
+
+    /* 3) Mobile: same absolute behavior so it won’t push content down */
+    @media only screen and (max-width: 63.9375rem) {
+      #cs-navigation .cs-dropdown .cs-drop-ul {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin: 0 !important;
+        padding: 0.5rem 0 !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 p-0">
+
+  <!-- ============================================ -->
+  <!--                 Navigation                   -->
+  <!-- ============================================ -->
+  <header id="cs-navigation" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <div class="cs-container">
+      <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text"
+          alt="Stroke Hero Logo" decoding="async" />
+      </a>
+      <nav class="cs-nav" role="navigation">
+        <button class="cs-toggle" aria-label="mobile menu toggle">
+          <div class="cs-box">
+            <span class="cs-line cs-line1"></span>
+            <span class="cs-line cs-line2"></span>
+            <span class="cs-line cs-line3"></span>
+          </div>
+        </button>
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
+            <li class="cs-li"><a href="{{ url_for('home') }}" class="cs-li-link">Welcome</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('chatbot_routing') }}" class="cs-li-link">Chatbot</a></li>
+            {% endif %}
+            <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
+            {% if user %}
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke
+                Prediction</a></li>
+            {% endif %}
+            <li class="cs-li cs-dropdown">
+              <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link cs-drop-link">
+                Self Assessment
+                <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M0 0l5 6 5-6z" fill="currentColor" />
+                </svg>
+              </a>
+              <ul class="cs-drop-ul">
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">
+                    ASCVD Risk Estimator
+                  </a>
+                </li>
+                <li class="cs-drop-li">
+                  <a href="{{ url_for('abcd2_tia_routing') }}" class="cs-li-link">
+                    ABCD² Score for TIA
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      {% if user %}
+      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Spacer below fixed navbar -->
+  <div class="h-20"></div>
+
+  <section class="max-w-5xl mx-auto px-6 mt-0 mb-2">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="flex border-b">
+        <button onclick="selectTab('when')" id="tab-when"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
+          When to Use <span id="arrow-when">▼</span>
+        </button>
+        <button onclick="selectTab('pearls')" id="tab-pearls"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
+          Pearls/Pitfalls <span id="arrow-pearls">▼</span>
+        </button>
+        <button onclick="selectTab('why')" id="tab-why"
+          class="flex-1 py-2 px-4 text-center font-semibold text-[#0033cc] flex items-center justify-center gap-1">
+          Why Use <span id="arrow-why">▼</span>
+        </button>
+      </div>
+
+      <div id="info-when" class="bg-gray-100 p-4 hidden">
+        The ABCD² Score can help physicians risk stratify stroke in patients presenting with a TIA.
+      </div>
+      <div id="info-pearls" class="bg-gray-100 p-4 hidden">
+        <p>The ABCD² Score was developed to help physicians risk stratify patients presenting with a TIA for how likely
+          they are to suffer a subsequent stroke.</p>
+        <ul class="list-disc ml-5 mt-2 space-y-1">
+          <li>The largest prospective study of using the ABCD² Score in the emergency department found poor performance
+            in sensitivity/specificity.</li>
+          <li>Higher ABCD² Score correlates with higher risk of stroke.</li>
+          <li>Low baseline risk (≤2%) with a low score (0–2) results in low stroke risk (0.4–0.8%) within 7 days.</li>
+        </ul>
+        <p class="font-semibold mt-3">Points to keep in mind:</p>
+        <ul class="list-disc ml-5 mt-1 space-y-1">
+          <li>Developed for outpatient use.</li>
+          <li>Lower accuracy with non-specialists.</li>
+          <li>Less useful in patients with very low stroke risk.</li>
+        </ul>
+      </div>
+      <div id="info-why" class="bg-gray-100 p-4 hidden">
+        <ul class="list-disc ml-5 space-y-1">
+          <li>There are approximately 250,000 TIAs diagnosed annually in the U.S.</li>
+          <li>The score may guide physicians on outpatient vs. inpatient evaluation depending on risk.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Source Reference Box -->
+  <div class="max-w-5xl mx-auto px-6 mt-0 mb-2">
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded text-sm">
+      <p class="font-medium">
+        Source:
+        <a href="https://www.mdcalc.com/calc/357/abcd2-score-tia#pearls-pitfalls" target="_blank" target="_blank"
+          class="underline text-blue-800 hover:text-blue-600">
+          ABCD² Score for TIA
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <!-- spacer to offset fixed header height -->
+  <div class="h-5"></div>
+
+  <!-- ============================================ -->
+  <!--             Risk Estimator Form              -->
+  <!-- ============================================ -->
+  <section class="max-w-5xl mx-auto px-6 mt-0 mb-10">
+    <div class="bg-white w-auto p-6 rounded-xl shadow-md">
+      <h1 class="text-2xl font-bold mb-2">TIA Risk Calculator</h1>
+      <hr class="mb-6 border-t-2 border-[#0033cc]" />
+
+      <div class="space-y-6">
+        <!-- Age ≥60 years -->
+        <div>
+          <div class="font-medium mb-2">Age ≥ 60 years</div>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="age0" onclick="setScore('age', 0)"
+              class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300">
+              No <span class="ml-1 text-gray-500">0</span>
+            </button>
+            <button id="age1" onclick="setScore('age', 1)" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700">
+              Yes <span class="ml-1 text-[#0033cc]">+1</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BP ≥140/90 mmHg -->
+        <div>
+          <div class="font-medium mb-2">BP ≥ 140/90 mmHg</div>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="bp0" onclick="setScore('bp', 0)"
+              class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300">
+              No <span class="ml-1 text-gray-500">0</span>
+            </button>
+            <button id="bp1" onclick="setScore('bp', 1)" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700">
+              Yes <span class="ml-1 text-[#0033cc]">+1</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Clinical features of the TIA -->
+        <div>
+          <div class="font-medium mb-2">Clinical features of the TIA</div>
+          <div class="bg-white rounded border border-gray-300 divide-y divide-gray-200">
+            <button id="features2" onclick="setScore('features', 2)" class="w-full flex justify-between py-2 px-4">
+              <span>Unilateral weakness</span>
+              <span class="text-[#0033cc]">+2</span>
+            </button>
+            <button id="features1" onclick="setScore('features', 1)" class="w-full flex justify-between py-2 px-4">
+              <span>Speech disturbance without weakness</span>
+              <span class="text-[#0033cc]">+1</span>
+            </button>
+            <button id="features0" onclick="setScore('features', 0)" class="w-full flex justify-between py-2 px-4">
+              <span>Other symptoms</span>
+              <span class="text-gray-500">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Duration of symptoms -->
+        <div>
+          <div class="font-medium mb-2">Duration of symptoms</div>
+          <div class="bg-white rounded border border-gray-300 divide-y divide-gray-200">
+            <button id="duration0" onclick="setScore('duration', 0)" class="w-full flex justify-between py-2 px-4">
+              <span>&lt; 10 minutes</span>
+              <span class="text-gray-500">0</span>
+            </button>
+            <button id="duration1" onclick="setScore('duration', 1)" class="w-full flex justify-between py-2 px-4">
+              <span>10–59 minutes</span>
+              <span class="text-[#0033cc]">+1</span>
+            </button>
+            <button id="duration2" onclick="setScore('duration', 2)" class="w-full flex justify-between py-2 px-4">
+              <span>≥ 60 minutes</span>
+              <span class="text-[#0033cc]">+2</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- History of diabetes -->
+        <div>
+          <div class="font-medium mb-2">History of diabetes</div>
+          <div class="flex rounded overflow-hidden border border-gray-300">
+            <button id="diabetes0" onclick="setScore('diabetes', 0)"
+              class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 border-r border-gray-300">
+              No <span class="ml-1 text-gray-500">0</span>
+            </button>
+            <button id="diabetes1" onclick="setScore('diabetes', 1)" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700">
+              Yes <span class="ml-1 text-[#0033cc]">+1</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calculate Button (Centered and Bigger) -->
+        <div class="mt-6 flex justify-center relative">
+          <button id="calculate-button" onclick="handleCalculateClick()"
+            class="bg-[#0033cc] hover:bg-[#3399ff] text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+            disabled>
+            Calculate
+          </button>
+        </div>
+
+        <!-- Result Container (Responsive Height, Aligned Layout) -->
+        <div id="result"
+          class="hidden mt-6 bg-[#3399ff] text-white rounded-lg p-4 text-left relative flex flex-col justify-between min-h-[160px]">
+          <!-- Score and risk result text -->
+          <div id="result-text" class="mb-4 leading-relaxed text-sm">
+            <!-- Content will be injected here -->
+          </div>
+
+          <!-- Copy Button at bottom right -->
+          <div id="copy-button" class="hidden absolute bottom-4 right-4">
+            <button onclick="copyResult()"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-md text-sm">
+              Copy Results
+            </button>
+          </div>
+        </div>
+
+
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    let currentTab = 'pearls';
+    let expanded = true;
+
+    const tabs = ['when', 'pearls', 'why'];
+
+    function updateTabs() {
+      tabs.forEach(id => {
+        const tabBtn = document.getElementById(`tab-${id}`);
+        const arrow = document.getElementById(`arrow-${id}`);
+        const isActive = id === currentTab;
+
+        tabBtn.classList.remove('text-[#0033cc]', 'border-b-2', 'border-[#0033cc]');
+        arrow.textContent = '▼';
+
+        if (isActive) {
+          if (expanded) {
+            arrow.textContent = '▲';
+            tabBtn.classList.add('text-[#0033cc]', 'border-b-2', 'border-[#0033cc]');
+          }
+        }
+      });
+    }
+
+    function selectTab(tab) {
+      const newInfo = document.getElementById(`info-${tab}`);
+      const oldInfo = document.getElementById(`info-${currentTab}`);
+
+      if (tab === currentTab) {
+        expanded = !expanded;
+        newInfo.classList.toggle('hidden');
+      } else {
+        oldInfo.classList.add('hidden');
+        newInfo.classList.remove('hidden');
+        currentTab = tab;
+        expanded = true;
+      }
+
+      updateTabs();
+    }
+
+    // Init
+    document.getElementById('info-pearls').classList.remove('hidden');
+    updateTabs();
+  </script>
+
+
+  <script>
+    const state = {
+      age: null,
+      bp: null,
+      features: null,
+      duration: null,
+      diabetes: null
+    };
+
+    function setScore(category, value) {
+      state[category] = value;
+      const max = (category === 'features' || category === 'duration') ? 2 : 1;
+
+      for (let i = 0; i <= max; i++) {
+        const btn = document.getElementById(`${category}${i}`);
+        btn.classList.remove('bg-[#3399ff]', 'text-white', 'font-bold');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+        btn.querySelectorAll('span').forEach(span => {
+          span.classList.remove('text-white', 'text-[#0033cc]', 'text-gray-500');
+          const txt = span.textContent.trim();
+          span.classList.add(txt.startsWith('+') ? 'text-[#0033cc]' : 'text-gray-500');
+        });
+      }
+
+      const sel = document.getElementById(`${category}${value}`);
+      sel.classList.remove('bg-gray-100', 'text-gray-700');
+      sel.classList.add('bg-[#3399ff]', 'text-white', 'font-bold');
+      sel.querySelectorAll('span').forEach(span => {
+        span.classList.remove('text-[#0033cc]', 'text-gray-500');
+        span.classList.add('text-white');
+      });
+
+      checkAllAnswered();
+    }
+
+    function calculateScore() {
+      const score = Object.values(state).reduce((a, b) => a + b, 0);
+      let riskLevel = "";
+      let riskDetails = "";
+
+      if (score <= 3) {
+        riskLevel = "Low Risk";
+        riskDetails = `2-Day Stroke Risk: 1.0%<br>7-Day: 1.2%<br>90-Day: 3.1%`;
+      } else if (score <= 5) {
+        riskLevel = "Moderate Risk";
+        riskDetails = `2-Day Stroke Risk: 4.1%<br>7-Day: 5.9%<br>90-Day: 9.8%`;
+      } else {
+        riskLevel = "High Risk";
+        riskDetails = `2-Day Stroke Risk: 8.1%<br>7-Day: 11.7%<br>90-Day: 17.8%`;
+      }
+
+      document.getElementById('result-text').innerHTML = `
+        <div class="text-lg font-semibold mb-2">${riskLevel} <span class="font-normal text-base">(Total: ${score} points)</span></div>
+        <div class="text-sm leading-relaxed">${riskDetails}</div>
+      `;
+
+      document.getElementById('result').classList.remove('hidden');
+      document.getElementById('copy-button').classList.remove('hidden');
+    }
+
+    function copyResult() {
+      const resultText = document.getElementById('result-text');
+      const rawHtml = resultText.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = rawHtml;
+      const lines = tempDiv.textContent.split('\n');
+      const cleanLines = lines.map(line => line.trim());
+      const plainText = cleanLines.join('\n');
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(plainText).then(() => {
+        alert('Results copied to clipboard!');
+      }).catch(err => {
+        alert('Failed to copy results: ' + err);
+      });
+    }
+
+    function handleCalculateClick() {
+      const allAnswered = Object.values(state).every(val => val !== null);
+
+      if (allAnswered) {
+        calculateScore();
+      }
+    }
+
+    function checkAllAnswered() {
+      const allAnswered = Object.values(state).every(val => val !== null);
+      const button = document.getElementById("calculate-button");
+
+      button.disabled = !allAnswered;
+    }
+
+
+
+  </script>
+</body>
+
+</html>
