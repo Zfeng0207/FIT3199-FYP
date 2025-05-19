@@ -58,15 +58,10 @@ class RagToolSchema(BaseModel):
     question: str
 
 # Stroke RAG Tool
-@tool(args_schema=RagToolSchema)
+@tool(args_schema=RagToolSchema, return_direct=True)
 def stroke_retriever_tool(question: str) -> str:
     """
-    A tool for retrieving information on **Electrocardiogram (ECG) findings in acute stroke patients**.
-    Use this tool to understand the **prevalence and types** of ECG abnormalities observed during or
-    shortly after a stroke event, potential **mechanisms** linking brain injury to cardiac changes (e.g., brain-heart axis),
-    the distinction between **new and pre-existing** ECG findings, and crucially, the **correlation of specific
-    ECG abnormalities with patient prognosis**, such as the likelihood of severe disability, death, or mortality
-    during hospitalisation. It contains data from studies specifically investigating these ECG-prognosis links.
+    A tool for retrieving information on Guidelines for Management of Stroke
     """
     print("INSIDE STROKE RETRIEVER NODE")
     response = agent.stroke_rag_chain.invoke({"input": question})
@@ -169,9 +164,8 @@ def ecg_analyzer(subject_id: int, admission_id: int):
         f"📊 <b>Complete Prediction Ranking:</b><br>{full_ranking_table}<br><br>"
 
         f"{notes_section}<br><br>"
-        "Would you like to further understand what the top 5 predicted ICD codes are, and how they relate to stroke?"
+        "Would you like to know how you can monitor you health for stroke assessment?"
     )
-
 
 
 import re
@@ -331,7 +325,7 @@ A high ABCD² score indicates a higher short-term stroke risk.
 </table>
 
 <br>
-Would you like to proceed with calculating your actual scores?
+👉 <i>Would you like a tailored assessment of your risk calculation scores? Let's start with your ABCD score.</i>
 """
 
 from pydantic import BaseModel
