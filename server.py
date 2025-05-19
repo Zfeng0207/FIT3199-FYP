@@ -263,7 +263,6 @@ def download_predictions(filename):
 
 @app.route('/download_sample')
 def download_sample():
-    # assumes df_split_1.csv lives in your UPLOAD_FOLDER
     return send_from_directory(
         app.config['UPLOAD_FOLDER'],
         'df_split_1.csv',
