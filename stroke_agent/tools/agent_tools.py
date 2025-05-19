@@ -60,7 +60,14 @@ class RagToolSchema(BaseModel):
 # Stroke RAG Tool
 @tool(args_schema=RagToolSchema)
 def stroke_retriever_tool(question: str) -> str:
-    """Retrieve semantically similar documents to answer user questions related to Stroke"""
+    """
+    A tool for retrieving information on **Electrocardiogram (ECG) findings in acute stroke patients**.
+    Use this tool to understand the **prevalence and types** of ECG abnormalities observed during or
+    shortly after a stroke event, potential **mechanisms** linking brain injury to cardiac changes (e.g., brain-heart axis),
+    the distinction between **new and pre-existing** ECG findings, and crucially, the **correlation of specific
+    ECG abnormalities with patient prognosis**, such as the likelihood of severe disability, death, or mortality
+    during hospitalisation. It contains data from studies specifically investigating these ECG-prognosis links.
+    """
     print("INSIDE STROKE RETRIEVER NODE")
     response = agent.stroke_rag_chain.invoke({"input": question})
     return response.get("answer")
@@ -68,7 +75,15 @@ def stroke_retriever_tool(question: str) -> str:
 # Prevention RAG Tool
 @tool(args_schema=RagToolSchema)
 def prevention_retriever_tool(question: str) -> str:
-    """Retrieve semantically similar documents to answer user questions related to Stroke Prevention"""
+    """
+    A tool for retrieving information on **technologies and methods for stroke monitoring and early detection**,
+    particularly focusing on the **pre-hospital or continuous monitoring** context. Use this tool to learn about the
+    importance of early detection within the 'Golden Hour', the **limitations of current stroke identification**
+    methods, the need for continuous monitoring (e.g., during sleep, sedation, or for those living alone), and various
+    **specific technological approaches** being explored or used for stroke detection (e.g., EEG, NIRS, Doppler ultrasound,
+    motion sensors, pulse monitoring). It covers the present and future landscape of technology aimed at
+    improving stroke detection time and patient outcomes.
+    """
     print("INSIDE PREVENTION RETRIEVER NODE")
     response = agent.prevention_rag_chain.invoke({"input": question})
     return response.get("answer")
@@ -90,7 +105,18 @@ class AnalyzerToolSchema(BaseModel):
 
 @tool(args_schema=AnalyzerToolSchema)
 def ecg_analyzer(subject_id: int, admission_id: int):
-    """Tool to retrieve the top 5 diseases predicted by the ECG data of a patient."""
+    """
+    Generates a detailed ECG prediction summary for a given subject and admission ID, based on deep learning model outputs.
+
+    The tool returns:
+    - Subject and admission identifiers.
+    - The Top 5 predicted ICD conditions with confidence scores.
+    - A complete ranking of all predicted conditions in a table.
+    - Notes on model usage and prediction confidence.
+
+    🔒 Do not summarize, interpret, or omit any prediction content.
+
+    """
     print("INSIDE ANALYZER NODE")
     # time.sleep(6)
 
@@ -124,15 +150,28 @@ def ecg_analyzer(subject_id: int, admission_id: int):
         "- Additional diagnoses were predicted with lower confidence and are excluded from this summary."
     )
 
-    return (
-        f"📈 **ECG Analysis Summary**\n"
-        f"**Subject ID:** `{subject_id}`\n"
-        f"**Admission ID:** `{admission_id}`\n\n"
-        f"🔍 **Top 5 Predicted Conditions:**\n{top5_formatted}\n\n"
-        f"📊 **Complete Prediction Ranking:**\n{full_ranking}\n\n"
-        f"{notes_section}\n\n"
-        "Would you like to further understand what the top 5 predicted ICD codes are, and how they relate to stroke? "
+    full_ranking_table = (
+        "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse: collapse;'>"
+        "<tr><th>ICD Code</th><th>Condition</th><th>Prediction Score</th></tr>"
     )
+    for code, score in score_pairs:
+        full_ranking_table += f"<tr><td>{code}</td><td>{icd_code_dict[code]}</td><td>{score:.2f}</td></tr>"
+    full_ranking_table += "</table>"
+
+
+    return (
+        f"📈 <b>ECG Analysis Summary</b><br>"
+        f"<b>Subject ID:</b> `{subject_id}`<br>"
+        f"<b>Admission ID:</b> `{admission_id}`<br><br>"
+
+        f"🔍 <b>Top 5 Predicted Conditions:</b><br>{top5_formatted}<br><br>"
+
+        f"📊 <b>Complete Prediction Ranking:</b><br>{full_ranking_table}<br><br>"
+
+        f"{notes_section}<br><br>"
+        "Would you like to further understand what the top 5 predicted ICD codes are, and how they relate to stroke?"
+    )
+
 
 
 import re
@@ -223,122 +262,144 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from langchain.tools import tool
 
-class RiskExplanationSchema(BaseModel):
-    question: str
 
-@tool(args_schema=RiskExplanationSchema)
+@tool
 def explain_risk_tools() -> str:
     """
-    Explains the ASCVD Risk Estimator and ABCD² Score for stroke prevention planning.
-    Triggered after the user agrees to know how they can monitor their health to assess their risk of stroke.
+    Explains the ASCVD Risk Estimator and ABCD² Score and provides a comparison table.
     """
 
-    print("INSIDE RISK CALCULATORS EXPLAINATION NODE")
+    print("INSIDE RISK CALCULATORS EXPLANATION NODE")
 
     return """
 ✅ Based on your condition, here’s how we’ll assess your stroke and cardiovascular risk:
 
-📊 **ASCVD Risk Estimator (Atherosclerotic Cardiovascular Disease)**:
+📊 <b>ASCVD Risk Estimator (Atherosclerotic Cardiovascular Disease)</b>:  
 Estimates your 10-year and 30-year risk of heart attack or stroke based on:
-- Age, sex, race
-- Blood pressure
-- Cholesterol levels
-- Diabetes, smoking, medications
-
+<ul>
+  <li>Age, sex, race</li>
+  <li>Blood pressure</li>
+  <li>Cholesterol levels</li>
+  <li>Diabetes, smoking, medications</li>
+</ul>
 The output guides how aggressively we should manage your lifestyle and medical therapy.
 
-🧠 **ABCD² Score for TIA**:
-Predicts short-term stroke risk after a transient ischemic attack (TIA), using:
-- Age ≥60 (1 point)
-- BP ≥140/90 mmHg (1 point)
-- Clinical symptoms: weakness (2), speech disturbance (1)
-- Duration ≥60 min (2), 10–59 min (1)
-- Diabetes (1 point)
+🧠 <b>ABCD² Score for TIA (Transient Ischemic Attack)</b>:  
+Predicts short-term stroke risk after a TIA using:
+<ul>
+  <li>Age ≥60 (1 point)</li>
+  <li>BP ≥140/90 mmHg (1 point)</li>
+  <li>Clinical symptoms: weakness (2), speech disturbance (1)</li>
+  <li>Duration ≥60 min (2), 10–59 min (1)</li>
+  <li>Diabetes (1 point)</li>
+</ul>
+A high ABCD² score indicates a higher short-term stroke risk.
 
-A high ABCD² score = higher short-term stroke risk. Let’s now interpret your actual scores.
+<br><br>
+<h4>📊 Comparison Table: ASCVD vs ABCD² Score</h4>
+<table border="1" cellpadding="6" style="border-collapse: collapse; text-align: left;">
+  <tr>
+    <th>Feature</th>
+    <th>ASCVD Risk Estimator</th>
+    <th>ABCD² Score</th>
+  </tr>
+  <tr>
+    <td><b>Purpose</b></td>
+    <td>Estimate long-term risk of heart attack or stroke</td>
+    <td>Predict short-term stroke risk after a TIA</td>
+  </tr>
+  <tr>
+    <td><b>Time Horizon</b></td>
+    <td>10 and 30 years</td>
+    <td>2 to 7 days</td>
+  </tr>
+  <tr>
+    <td><b>Inputs</b></td>
+    <td>Age, sex, race, BP, cholesterol, diabetes, smoking</td>
+    <td>Age, BP, symptoms, duration, diabetes</td>
+  </tr>
+  <tr>
+    <td><b>Scoring Output</b></td>
+    <td>% probability of cardiovascular event</td>
+    <td>0–7 point score</td>
+  </tr>
+  <tr>
+    <td><b>Use Case</b></td>
+    <td>Primary prevention in general population</td>
+    <td>Emergency risk stratification after TIA</td>
+  </tr>
+</table>
+
+<br>
+Would you like to proceed with calculating your actual scores?
 """
 
-class RiskInterpretationSchema(BaseModel):
-    ten_year_total_cvd: float
-    ten_year_ascvd: float
-    ten_year_heart_failure: float
-    ten_year_chd: float
-    ten_year_stroke: float
-    thirty_year_total_cvd: float
-    thirty_year_ascvd: float
-    thirty_year_heart_failure: float
-    thirty_year_chd: float
-    thirty_year_stroke: float
-    abcd2_score: int
-
-import re
 from pydantic import BaseModel
-from typing import Annotated
-from langchain.tools import tool
+from langchain.tools import tool  # or your custom decorator
+import re
+
+from pydantic import BaseModel, Field
 
 class RiskInterpretationSchema(BaseModel):
-    input_string: str
-    abcd2_score: int
+    ten_year_total_cvd: float = Field(..., ge=0, description="10-year total cardiovascular disease risk (%)")
+    ten_year_ascvd: float = Field(..., ge=0, description="10-year ASCVD risk (%)")
+    ten_year_heart_failure: float = Field(..., ge=0, description="10-year heart failure risk (%)")
+    ten_year_chd: float = Field(..., ge=0, description="10-year coronary heart disease risk (%)")
+    ten_year_stroke: float = Field(..., ge=0, description="10-year stroke risk (%)")
 
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "input_string": "...",
-                "abcd2_score": 3
-            }
-        }
-    }
+    thirty_year_total_cvd: float = Field(..., ge=0, description="30-year total cardiovascular disease risk (%)")
+    thirty_year_ascvd: float = Field(..., ge=0, description="30-year ASCVD risk (%)")
+    thirty_year_heart_failure: float = Field(..., ge=0, description="30-year heart failure risk (%)")
+    thirty_year_chd: float = Field(..., ge=0, description="30-year coronary heart disease risk (%)")
+    thirty_year_stroke: float = Field(..., ge=0, description="30-year stroke risk (%)")
 
 @tool(args_schema=RiskInterpretationSchema)
-def interpret_risk_scores(data: RiskInterpretationSchema) -> str:
+def interpret_risk_scores(
+    ten_year_total_cvd: float,
+    ten_year_ascvd: float,
+    ten_year_heart_failure: float,
+    ten_year_chd: float,
+    ten_year_stroke: float,
+    thirty_year_total_cvd: float,
+    thirty_year_ascvd: float,
+    thirty_year_heart_failure: float,
+    thirty_year_chd: float,
+    thirty_year_stroke: float
+) -> str:
     """
-    Interprets cardiovascular and stroke risk results from a formatted input string and ABCD² score.
+    Interprets cardiovascular and stroke risk results from structured input scores.
     """
-    # Extract all percentage values
-    percentages = re.findall(r"(\d+\.\d+)%", data.input_string)
-    
-    if len(percentages) != 10:
-        return "❌ Error: Could not extract exactly 10 percentage values from input string."
 
-    # Convert to float
-    values = [float(p) for p in percentages]
-
-    # Map them to their respective risk categories
-    risk_data = {
-        "ten_year_total_cvd": values[0],
-        "ten_year_ascvd": values[1],
-        "ten_year_heart_failure": values[2],
-        "ten_year_chd": values[3],
-        "ten_year_stroke": values[4],
-        "thirty_year_total_cvd": values[5],
-        "thirty_year_ascvd": values[6],
-        "thirty_year_heart_failure": values[7],
-        "thirty_year_chd": values[8],
-        "thirty_year_stroke": values[9],
-    }
-
-    abcd2 = data.abcd2_score
-    abcd2_risk = "Low" if abcd2 <= 3 else "Moderate" if abcd2 <= 5 else "High"
+    stroke_risk_score = ten_year_stroke
 
     return f"""
-🩺 **10-Year Risk:**
-- Total CVD: {risk_data['ten_year_total_cvd']}%
-- ASCVD: {risk_data['ten_year_ascvd']}%
-- Heart Failure: {risk_data['ten_year_heart_failure']}%
-- CHD: {risk_data['ten_year_chd']}%
-- Stroke: {risk_data['ten_year_stroke']}%
+<h5>🧠 Stroke Risk Interpretation</h5>
 
-🕒 **30-Year Risk:**
-- Total CVD: {risk_data['thirty_year_total_cvd']}%
-- ASCVD: {risk_data['thirty_year_ascvd']}%
-- Heart Failure: {risk_data['thirty_year_heart_failure']}%
-- CHD: {risk_data['thirty_year_chd']}%
-- Stroke: {risk_data['thirty_year_stroke']}%
+<b>Known Stroke-Related Diagnoses (ICD Codes):</b>
+<ul>
+  <li><b>I63</b> – Cerebral infarction</li>
+  <li><b>I64</b> – Stroke, unspecified type</li>
+  <li><b>I67.89</b> – Other cerebrovascular diseases</li>
+  <li><b>I69.30</b> – Sequelae of stroke</li>
+  <li><b>I61</b> – Intracerebral hemorrhage</li>
+</ul>
 
-🧠 **ABCD² Score: {abcd2}** → {abcd2_risk} Risk
-- 2-Day: {'1.0%' if abcd2 <= 3 else '4.1%' if abcd2 <= 5 else '8.1%'}
-- 7-Day: {'1.2%' if abcd2 <= 3 else '5.9%' if abcd2 <= 5 else '11.7%'}
-- 90-Day: {'3.1%' if abcd2 <= 3 else '9.8%' if abcd2 <= 5 else '17.8%'}
+<b>Combined with model-based risk scores, this suggests the patient has both a clinical history and elevated probability of future stroke events.</b><br><br>
 
-✔ Let's now recommend preventive actions tailored to your profile.
+<h5>📊 10-Year Predicted Risk:</h5>
+<ul>
+  <li>Stroke: <b>{ten_year_stroke:.2f}%</b></li>
+  <li>Total CVD: {ten_year_total_cvd:.2f}%</li>
+  <li>ASCVD: {ten_year_ascvd:.2f}%</li>
+</ul>
+
+<h5>⏳ 30-Year Predicted Stroke Risk:</h5>
+<ul>
+  <li><b>{thirty_year_stroke:.2f}%</b> (significantly elevated)</li>
+</ul>
+
+🧠 <i>This combination of clinical codes and risk indicators places the patient in a high vigilance category for stroke monitoring.</i><br><br>
+
+<b>✅ Would you like to receive a prevention plan tailored to your risk profile?</b>
+
 """

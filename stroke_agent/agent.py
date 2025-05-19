@@ -59,7 +59,7 @@ prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity
 prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
 prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
 
-bot_tools = [ecg_analyzer]
+bot_tools = [ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool, explain_risk_tools,interpret_risk_scores]
 
 llm_with_tools = llm.bind_tools(bot_tools)
 
@@ -113,8 +113,8 @@ stroke_prompt = ("system",
 "\n   👉 <i>Would you like a further explanation of the Top 5 Predicted Conditions?</i>"
 "\n- ONLY if the user answers yes, THEN the explanation tool (e.g., `explain_risk_tools`) should run and return formatted results."
 
-"\n- After the explanation, append this follow-up *without answering it yet*:"
-"\n   👉 <i>Would you like to know more about how you can monitor your health to assess your risk of stroke?</i>"
+"\n- After `explain_risk_tools` runs, append this follow-up *without answering it yet*:"
+"\n   👉 <i>Would you like a tailored assessment of your risk calculation scores? Let's start with your ABCD score.</i>"
 
 "\n🛑 DO NOT answer either follow-up question in the same step as asking it."
 
