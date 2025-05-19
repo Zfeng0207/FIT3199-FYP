@@ -19,7 +19,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 embeddings = download_hugging_face_embeddings()
 
 # ---- INDEX 1: strokeindex ----
-stroke_data = load_pdf_file(data='/Users/zfeng/Documents/Stroke Hero/FIT3199-FYP/embedding_model/stroke_pdf')
+stroke_data = load_pdf_file(data='embedding_model/stroke_pdf')
 stroke_chunks = text_split(stroke_data)
 
 pc.create_index(
@@ -36,7 +36,7 @@ stroke_docsearch = PineconeVectorStore.from_documents(
 )
 
 # ---- INDEX 2: preventionindex ----
-prevention_data = load_pdf_file(data='/Users/zfeng/Documents/Stroke Hero/FIT3199-FYP/embedding_model/prevention_pdf')
+prevention_data = load_pdf_file(data='embedding_model/prevention_pdf')
 prevention_chunks = text_split(prevention_data)
 
 pc.create_index(

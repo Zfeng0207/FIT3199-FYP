@@ -237,7 +237,7 @@ def predict_csv():
 
     try:
         # Run prediction using the simplified one-CSV method
-        preds_df = predict_stroke(csv_with_ecg=csv_path, full_model='/Users/zfeng/Documents/Stroke Hero/FIT3199-FYP/testing_calling_model/full_model.pkl')
+        preds_df = predict_stroke(csv_with_ecg=csv_path, full_model='testing_calling_model/full_model.pkl')
     except Exception as e:
         return jsonify(error=str(e)), 500
 
