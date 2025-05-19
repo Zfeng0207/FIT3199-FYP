@@ -116,7 +116,7 @@ def chat():
     # Default: standard text query handled by LangGraph
     response = graph.invoke(
         {"messages": [("user", msg)]},
-        {"configurable": {"thread_id": thread_id}}
+        {"configurable": {"thread_id": "fwew2f12"}}
     )
 
     print("Response:", response["messages"][-1].content)

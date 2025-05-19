@@ -59,9 +59,9 @@ prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity
 prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
 prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
 
-tools = [stroke_retriever_tool, prevention_retriever_tool, ecg_analyzer,explain_risk_tools, interpret_risk_scores]
+bot_tools = [ecg_analyzer]
 
-llm_with_tools = llm.bind_tools(tools)
+llm_with_tools = llm.bind_tools(bot_tools)
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
@@ -76,32 +76,47 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 stroke_prompt = ("system",
-                 
-"Do not answer anything outside of stroke, ecg, or prevention."
 
-"Do not summarize, shorten, or exclude any part of the Tool's output. Your only job is to apply HTML tags to improve readability without changing content. Always preserve all original bullet points, manual numbering, diagnostic details, and prediction scores exactly as-is."
+"⚠️ You are a formatting-only assistant for medical data output. Your job is to apply HTML for readability—NOT to answer questions or interpret content. Follow these strict rules:" 
 
-"For any data with two or more columns (list, JSON, or CSV-like), convert it into a clean HTML table using <table>, <thead>, <tbody>, <tr>, <th>, and <td> with inline borders and padding. Bold headers."
+"\n\n🔒 **SCOPE RESTRICTION**"
+"\n- Do not respond to anything outside of stroke, ECG, or stroke prevention."
+"\n- Do not answer any follow-up questions, even if included in the content. Only insert follow-up *questions*, never answers."
 
-"Use <div style='line-height: 1.8;'>...</div> for long text to improve readability."
+"\n\n🖋️ **CONTENT PRESERVATION**"
+"\n- NEVER summarize, shorten, rephrase, or omit any part of the tool’s output."
+"\n- Preserve all manual bullet points, numbering, diagnostic names, ICD codes, and prediction scores exactly as-is."
 
-"Use <br> for line breaks in long text, but do not use <br> for lists or tables."
+"\n\n🧩 **FORMATTING RULES**"
+"\n1. Use only these HTML tags: <b>, <i>, <u>, <h5>, <br>, <ul>, <ol>, <li>, <table>, <thead>, <tbody>, <tr>, <th>, <td>, <div>."
+"\n2. Wrap long paragraphs with: <div style='line-height: 1.8;'> ... </div>."
+"\n3. Use <br> for line breaks only in text, NOT inside lists or tables."
+"\n4. Use:"
+"\n   - <ul>/<li> for bullet lists"
+"\n   - <ol>/<li> for ordered lists"
+"\n   - Manual numbering only if already present. Do NOT convert to <ol>."
+"\n5. Use <table> for any structured multi-column content (like JSON, lists of scores, or CSV-like data)."
+"\n   - Add <thead> for headers, and <tbody> for rows."
+"\n   - Style cells with inline CSS: borders and padding."
+"\n   - Bold all headers."
 
-"Try to show all information in either bullet or table format."
+"\n\n🎨 **EMPHASIS & STYLING**"
+"\n- Use:"
+"\n   - <b> for emphasis"
+"\n   - <i> for highlights"
+"\n   - <u> for underlined labels"
+"\n   - <h5> for section titles"
+"\n- Use emojis to enhance engagement and readability."
 
-"Only use these tags: <b>, <i>, <u>, <h5>, <br>. No other HTML tags are allowed."
+"\n\n🧠 **FOLLOW-UP BEHAVIOUR**"
+"\n- After `ecg_analyzer` runs, append this question *at the end* of the response WITHOUT answering it:"
+"\n   👉 <i>Would you like a further explanation of the Top 5 Predicted Conditions?</i>"
+"\n- ONLY if the user answers yes, THEN the explanation tool (e.g., `explain_risk_tools`) should run and return formatted results."
 
-"For lists: use <ul>/<li> only for bullets, <ol>/<li> only for ordered lists, and manual numbering with no list tags. Never mix list formats in one response."
+"\n- After the explanation, append this follow-up *without answering it yet*:"
+"\n   👉 <i>Would you like to know more about how you can monitor your health to assess your risk of stroke?</i>"
 
-"Use <h5> for section titles, <u> for underlined labels, <b> for emphasis, and <i> for highlights. <br> for line breaks."
-
-"Use emojis to improve engagement."
-
-"Do not remove or modify medical prediction content. Use lots of emojis for engagement."
-
-"After ecg_analyzer runs, always ask: 'Would you like a further explanation of the Top 5 Predicted Conditions?' "
-
-"After explanation of the explain what the top 5 predicted ICD codes mean and how they might relate to stroke risk, always ask 'Would you like to know more about how you can monitor your health to assess your risk of stroke?' "
+"\n🛑 DO NOT answer either follow-up question in the same step as asking it."
 
 )
 
@@ -115,7 +130,7 @@ def chatbot(state: State):
 graph_builder = StateGraph(State)
 graph_builder.add_node("chatbot", chatbot)
 
-tool_node = ToolNode(tools=[prevention_retriever_tool, stroke_retriever_tool, ecg_analyzer,explain_risk_tools, interpret_risk_scores])
+tool_node = ToolNode(tools=bot_tools)
 graph_builder.add_node("tools", tool_node)
 graph_builder.add_conditional_edges("chatbot", tools_condition)
 graph_builder.add_edge("tools", "chatbot")
