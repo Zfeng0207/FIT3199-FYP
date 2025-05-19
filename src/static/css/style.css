@@ -10,7 +10,7 @@ body, html {
   
   .chat {
 	margin-top: auto;  /* Pushes to bottom */
-	padding: 1rem;
+	padding: 0rem;
 	display: flex;
 	justify-content: center;
 	align-items: flex-end; /* Aligns vertically to bottom */
@@ -19,7 +19,7 @@ body, html {
   
   /* Chat Card Styling */
   .card {
-	height: 800px;
+	height: 680px;
 	width: 70vw; /* use viewport width instead of fixed px */
 	max-width: 1400px; /* Optional: Limit max width for better readability */
 	margin: 0 auto; /* Center horizontally */
