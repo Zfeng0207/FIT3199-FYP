@@ -36,7 +36,7 @@ from langchain.schema.messages import ToolMessage
 import uuid
 import stroke_agent.tools.agent_tools as agent_tools
 import sys
-
+import time
 # 1) Make sure we can import your modules
 basedir = os.path.dirname(__file__)
 sys.path.append(os.path.join(basedir, "testing_calling_model"))
@@ -109,6 +109,7 @@ def chat():
     import pandas as pd
     if any(word in msg.lower() for word in ["visualize", "plot", "graph", "chart", "diagram", "draw", "display", "render", "illustrate", "show"]):
         print("ECG VISUALIZER INVOKED")
+        time.sleep(6)
         return agent_tools.generate_patient_ecg_plot_html(msg)
          
     # Default: standard text query handled by LangGraph
