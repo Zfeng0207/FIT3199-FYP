@@ -69,7 +69,6 @@ load_dotenv()
 
 # API Keys
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
 FLASKAPP_API_KEY = os.environ.get('FLASKAPP_API_KEY')
 OPENAI_AGENT_API_KEY = os.environ.get('OPENAI_AGENT_API_KEY')
@@ -80,7 +79,6 @@ LANGSMITH_PROJECT=os.environ.get('LANGSMITH_PROJECT')
 
 # Set environment
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["OPENROUTER_API_KEY"] = OPENROUTER_API_KEY
 os.environ["FLASKAPP_API_KEY"] = FLASKAPP_API_KEY
 os.environ["OPENAI_AGENT_API_KEY"] = OPENAI_AGENT_API_KEY
