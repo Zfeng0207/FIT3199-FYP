@@ -7,20 +7,13 @@ from src.helper import download_hugging_face_embeddings
 from dotenv import load_dotenv
 import os
 from src.prompt import *
-from langchain.tools import tool
-from pydantic import BaseModel
 from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.prebuilt import tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-from langchain.tools import tool
-import numpy as np
-import matplotlib.pyplot as plt
-import io
-from pydantic import BaseModel
-from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool,explain_risk_tools,interpret_risk_scores
+from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool,explain_risk_tools,interpret_risk_scores
 
 load_dotenv()
 

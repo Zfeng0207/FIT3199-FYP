@@ -2,20 +2,16 @@ import os
 import io
 import base64
 import ast
-from typing import List
-import time
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from langchain.tools import tool
 
 # from stroke_agent.stroke_data.icd_mapping_dict import icd_code_dict
 import stroke_agent.agent as agent
-from flask import Flask, request, send_file
 
 icd_code_dict = {
     "I481": "Persistent atrial fibrillation",
