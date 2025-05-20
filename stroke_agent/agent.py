@@ -13,7 +13,7 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.prebuilt import tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool,explain_risk_tools,interpret_risk_scores
+from stroke_agent.tools.agent_tools import ecg_analyzer, prevention_retriever_tool, stroke_retriever_tool,explain_risk_tools,interpret_risk_scores
 
 load_dotenv()
 
