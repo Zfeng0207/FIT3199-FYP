@@ -19,7 +19,7 @@ body, html {
   
   /* Chat Card Styling */
   .card {
-	height: 680px;
+	height: 700px;
 	width: 70vw; /* use viewport width instead of fixed px */
 	max-width: 1400px; /* Optional: Limit max width for better readability */
 	margin: 0 auto; /* Center horizontally */

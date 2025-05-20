@@ -7,13 +7,20 @@ from src.helper import download_hugging_face_embeddings
 from dotenv import load_dotenv
 import os
 from src.prompt import *
+from langchain.tools import tool
+from pydantic import BaseModel
 from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.prebuilt import tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-from stroke_agent.tools.agent_tools import ecg_analyzer, prevention_retriever_tool, stroke_retriever_tool,explain_risk_tools,interpret_risk_scores
+from langchain.tools import tool
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+from pydantic import BaseModel
+from stroke_agent.tools.agent_tools import ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool,explain_risk_tools,interpret_risk_scores
 
 load_dotenv()
 
@@ -35,24 +42,24 @@ embeddings = download_hugging_face_embeddings()
 
 # Stroke RAG chain
 stroke_docsearch = PineconeVectorStore.from_existing_index(
-    index_name="strokeindex",
+    index_name="medicalbot",
     embedding=embeddings
 )
 stroke_retriever = stroke_docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 stroke_qa_chain = create_stuff_documents_chain(llm, prompt)
 stroke_rag_chain = create_retrieval_chain(stroke_retriever, stroke_qa_chain)
 
-# Prevention RAG chain
-prevention_docsearch = PineconeVectorStore.from_existing_index(
-    index_name="preventionindex",
-    embedding=embeddings
-)
+# # Prevention RAG chain
+# prevention_docsearch = PineconeVectorStore.from_existing_index(
+#     index_name="preventionindex",
+#     embedding=embeddings
+# )
 
-prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
-prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
+# prevention_retriever = prevention_docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+# prevention_qa_chain = create_stuff_documents_chain(llm, prompt)
+# prevention_rag_chain = create_retrieval_chain(prevention_retriever, prevention_qa_chain)
 
-bot_tools = [ecg_analyzer, stroke_retriever_tool, prevention_retriever_tool, explain_risk_tools,interpret_risk_scores]
+bot_tools = [ecg_analyzer, stroke_retriever_tool, explain_risk_tools,interpret_risk_scores]
 
 llm_with_tools = llm.bind_tools(bot_tools)
 
@@ -102,8 +109,8 @@ stroke_prompt = ("system",
 "\n- Use emojis to enhance engagement and readability."
 
 "\n\n🧠 **FOLLOW-UP BEHAVIOUR**"
-"\n- After `ecg_analyzer` runs, append this question *at the end* of the response WITHOUT answering it:"
-"\n   👉 <i>Would you like a further explanation of the Top 5 Predicted Conditions?</i>"
+"\n- Only after `ecg_analyzer` runs, where the predicted conditions were given, append this question *at the end* of the response WITHOUT answering it:"
+"\n   👉 <i>Would you like to know how you can monitor you health for stroke assessment?</i>"
 "\n- ONLY if the user answers yes, THEN the explanation tool (e.g., `explain_risk_tools`) should run and return formatted results."
 
 "\n- After `explain_risk_tools` runs, append this follow-up *without answering it yet*:"
