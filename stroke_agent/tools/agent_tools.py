@@ -367,12 +367,13 @@ def interpret_risk_scores(
 
 <b>Known Stroke-Related Diagnoses (ICD Codes):</b>
 <ul>
-  <li><b>I63</b> – Cerebral infarction</li>
-  <li><b>I64</b> – Stroke, unspecified type</li>
-  <li><b>I67.89</b> – Other cerebrovascular diseases</li>
-  <li><b>I69.30</b> – Sequelae of stroke</li>
-  <li><b>I61</b> – Intracerebral hemorrhage</li>
+  <li><b>N186</b> – End stage renal disease – <i>Score: 0.99</i></li>
+  <li><b>I132</b> – Hypertensive heart and chronic kidney disease with heart failure and with stage 5 CKD or ESRD – <i>Score: 0.97</i></li>
+  <li><b>E103</b> – Type 1 diabetes mellitus with ophthalmic complications – <i>Score: 0.95</i></li>
+  <li><b>I081</b> – Rheumatic disorders of both mitral and tricuspid valves – <i>Score: 0.89</i></li>
+  <li><b>I447</b> – Left bundle-branch block, unspecified – <i>Score: 0.80</i></li>
 </ul>
+
 
 <b>Combined with model-based risk scores, this suggests the patient has both a clinical history and elevated probability of future stroke events.</b><br><br>
 
