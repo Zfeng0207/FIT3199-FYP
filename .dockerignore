@@ -46,5 +46,5 @@ uploads/*
 *.log 
 
 # Data Science
-ECG_deep_learning/
-VS_machine_learning/
+data_science/
+data_engineering/

@@ -1,0 +1,451 @@
+
+/*-- -------------------------- -->
+<---          Services          -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #services-285 {
+        /* centers the button */
+        text-align: center;
+        padding: var(--sectionPadding);
+    }
+    #services-285 .cs-container {
+        width: 100%;
+        max-width: 80rem;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* 48px - 64px */
+        gap: clamp(3rem, 6vw, 4rem);
+    }
+    #services-285 .cs-content {
+        /* set text align to left if content needs to be left aligned */
+        text-align: center;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        /* centers content horizontally, set to flex-start to left align */
+        align-items: center;
+    }
+
+    #services-285 .cs-card-group {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+        row-gap: 1rem;
+    }
+    #services-285 .cs-item {
+        list-style: none;
+        width: 100%;
+        max-width: 31.25rem;
+        /* 32px - 40px top & bottom */
+        /* 28px - 40px left & right */
+        padding: clamp(2rem, 3vw, 2.5rem) clamp(1.75rem, 3vw, 2.5rem);
+        background-color: #fafbfc;
+        box-sizing: border-box;
+        transition:
+            background-color 0.3s,
+            transform 0.3s;
+    }
+    #services-285 .cs-item:hover {
+        background-color: var(--primary);
+        transform: translateY(-0.4375rem);
+    }
+    #services-285 .cs-item:hover .cs-picture:before {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+    #services-285 .cs-item:hover .cs-h3,
+    #services-285 .cs-item:hover .cs-item-text {
+        color: #fff;
+    }
+    #services-285 .cs-link {
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    #services-285 .cs-picture {
+        margin: 0;
+        margin-bottom: 1.5rem;
+        /* 68px - 88px */
+        width: clamp(4.25rem, 4vw, 5.5rem);
+        height: clamp(4.25rem, 4vw, 5.5rem);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background-color: var(--primary);
+        position: relative;
+        z-index: 1;
+    }
+    #services-285 .cs-picture:before {
+        /* floating hover box */
+        content: "";
+        width: 130%;
+        height: 130%;
+        background-color: transparent;
+        opacity: 0;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        position: absolute;
+        display: block;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* prevents the mouse from interacting with it */
+        pointer-events: none;
+        z-index: 10;
+        transition:
+            width 0.5s,
+            height 0.5s,
+            opacity 0.4s;
+    }
+    #services-285 .cs-icon {
+        /* 45px - 54px */
+        height: clamp(2.8125rem, 3vw, 3.375rem);
+        width: auto;
+    }
+    #services-285 .cs-h3 {
+        font-size: 1.25rem;
+        font-weight: 900;
+        text-align: center;
+        line-height: 1.2em;
+        margin: 0;
+        margin-bottom: 0.75rem;
+        color: var(--headerColor);
+        transition: color 0.3s;
+    }
+    #services-285 .cs-item-text {
+        font-size: 1rem;
+        text-align: center;
+        line-height: 1.5em;
+        margin: 0;
+        color: var(--bodyTextColor);
+        transition: color 0.3s;
+    }
+    #services-285 .cs-button-solid {
+        font-size: 1rem;
+        /* 46px - 56px */
+        line-height: clamp(2.875rem, 5.5vw, 3.5rem);
+        text-decoration: none;
+        font-weight: 700;
+        text-align: center;
+        margin: 0;
+        color: #fff;
+        min-width: 9.375rem;
+        padding: 0 1.5rem;
+        background-color: var(--primary);
+        border-radius: 0.25rem;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        /* prevents padding from adding to the width */
+        box-sizing: border-box;
+    }
+    #services-285 .cs-button-solid:before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 0%;
+        background: #000;
+        opacity: 1;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        border-radius: 0.25rem;
+        transition: width 0.3s;
+    }
+    #services-285 .cs-button-solid:hover:before {
+        width: 100%;
+    }
+}
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #services-285 .cs-card-group {
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        /* 16px - 20px */
+        column-gap: clamp(1rem, 2vw, 1.25rem);
+    }
+}
+
+/*-- -------------------------- -->
+<---          Form              -->
+<--- -------------------------- -*/
+                                  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Inter", sans-serif;
+  }
+  .formbold-mb-5 {
+    margin-bottom: 20px;
+  }
+  .formbold-pt-3 {
+    padding-top: 12px;
+  }
+  .formbold-main-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  .formbold-form-wrapper {
+    margin: 0 auto;
+    max-width: none !important;
+    width: 100%;
+    background: white;
+  }
+  .formbold-form-label {
+    display: block;
+    font-weight: 500;
+    font-size: 16px;
+    color: #07074d;
+    margin-bottom: 12px;
+  }
+  .formbold-form-label-2 {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .formbold-form-input {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    font-weight: 500;
+    font-size: 16px;
+    color: #6b7280;
+    outline: none;
+    resize: none;
+  }
+  .formbold-form-input:focus {
+    border-color: #6a64f1;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .formbold-btn {
+    text-align: center;
+    font-size: 16px;
+    border-radius: 6px;
+    padding: 14px 32px;
+    border: none;
+    font-weight: 600;
+    background-color: #6a64f1;
+    color: white;
+    cursor: pointer;
+  }
+  .formbold-btn:hover {
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .formbold--mx-3 {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+  .formbold-px-3 {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .flex {
+    display: flex;
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .w-full {
+    width: 100%;
+  }
+
+  .formbold-file-input input {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .formbold-file-input label {
+    position: relative;
+    border: 1px dashed #e0e0e0;
+    border-radius: 6px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    text-align: center;
+  }
+  .formbold-drop-file {
+    display: block;
+    font-weight: 600;
+    color: #07074d;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .formbold-or {
+    font-weight: 500;
+    font-size: 16px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .formbold-browse {
+    font-weight: 500;
+    font-size: 16px;
+    color: #07074d;
+    display: inline-block;
+    padding: 8px 28px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+  }
+
+  .formbold-file-list {
+    border-radius: 6px;
+    background: #f5f7fb;
+    padding: 16px 32px;
+  }
+
+  .formbold-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .formbold-file-item button {
+    color: #07074d;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .formbold-file-name {
+    font-weight: 500;
+    font-size: 16px;
+    color: #07074d;
+    padding-right: 12px;
+  }
+  .formbold-progress-bar {
+    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    height: 6px;
+    border-radius: 8px;
+    background: #e2e5ef;
+  }
+
+  .formbold-progress {
+    position: absolute;
+    width: 75%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: #6a64f1;
+    border-radius: 8px;
+  }
+
+  @media (min-width: 540px) {
+    .sm\:w-half {
+      width: 50%;
+    }
+  }
+
+  .formbold-file-input {
+    position: relative;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 6px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  .formbold-file-input label {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .formbold-file-input label div {
+    pointer-events: none; /* So clicking inside div doesn't trigger the file input */
+  }
+  
+  .formbold-file-input input[type="file"] {
+    display: none; /* Hide default file input */
+  }
+  
+  .loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .hero-text {
+    width: 350px !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+    margin-top: -20px; /* Adjust this value as needed */
+    margin-left: 0; /* start from here */
+    transform: translateX(-50px); /* moves 50px to the left */
+  }
+
+  /*—————————————————————————————*/
+/* Make the file‐upload area span the same 80 rem container */
+/*—————————————————————————————*/
+.formbold-main-wrapper {
+  /* stop centering shrink‐to‐fit items */
+  display: block !important;
+}
+
+.formbold-main-wrapper > .cs-container {
+  /* match the services section container */
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+/* the form wrapper already has width:100%; max-width:none,
+   so your #drop-area (a block element) will now fill that container */

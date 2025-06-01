@@ -3,10 +3,10 @@ from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from src.helper import download_hugging_face_embeddings
+from app.helper import download_hugging_face_embeddings
 from dotenv import load_dotenv
 import os
-from src.prompt import *
+from app.prompt import *
 from langchain.tools import tool
 from pydantic import BaseModel
 from typing import Annotated, TypedDict
