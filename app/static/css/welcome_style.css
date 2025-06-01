@@ -1,0 +1,228 @@
+/* =======================
+   Global Styles (Core)
+   ======================= */
+:root {
+    --primary: #ff6a3e;
+    --primaryLight: #ffba43;
+    --secondary: #ffba43;
+    --secondaryLight: #ffba43;
+    --headerColor: #1a1a1a;
+    --bodyTextColor: #4e4b66;
+    --bodyTextColorWhite: #fafbfc;
+    --topperFontSize: clamp(0.8125rem, 1.6vw, 1rem);
+    --headerFontSize: clamp(1.9375rem, 3.9vw, 3.0625rem);
+    --bodyFontSize: 1rem;
+    --sectionPadding: clamp(3.75rem, 7.82vw, 6.25rem) 1rem;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+.cs-topper {
+    font-size: var(--topperFontSize);
+    line-height: 1.2em;
+    text-transform: uppercase;
+    text-align: inherit;
+    letter-spacing: .1em;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.cs-title {
+    font-size: var(--headerFontSize);
+    font-weight: 900;
+    line-height: 1.2em;
+    text-align: inherit;
+    max-width: 43.75rem;
+    margin: 0 0 1rem 0;
+    color: var(--headerColor);
+    position: relative;
+}
+
+.cs-text {
+    font-size: var(--bodyFontSize);
+    line-height: 1.5em;
+    text-align: inherit;
+    width: 100%;
+    max-width: 40.625rem;
+    margin: 0;
+    color: var(--bodyTextColor);
+}
+
+
+/* =======================
+   Hero Section Styles
+   ======================= */
+
+@media only screen and (min-width: 0rem) {
+    #hero-82 {
+        text-align: center;
+        padding: clamp(17rem, 35vw, 26rem) 1rem 0;
+        padding-bottom: clamp(8.125rem, 12.5vw, 25em);
+        position: relative;
+        z-index: 1;
+    }
+
+    #hero-82 .cs-background {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -2;
+    }
+
+    #hero-82 .cs-background:before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        background: #000;
+        opacity: 0.4;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    #hero-82 .cs-background img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .cs-background-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        z-index: -1;
+        /* Makes it appear behind content */
+        opacity: 1;
+    }
+
+    #hero-82 .cs-container {
+        width: 100%;
+        max-width: 67.5rem;
+        margin: auto;
+    }
+
+    #hero-82 .cs-title {
+        font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
+        font-weight: 800;
+        /* Slightly bolder */
+        line-height: 1.2em;
+        text-align: center;
+        max-width: 51.8125rem;
+        margin: 0 auto clamp(1rem, 4vw, 1.5rem);
+        color: #fff;
+        position: relative;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        /* 💥 Glow effect */
+        letter-spacing: 0.5px;
+        /* Optional: add slight spacing */
+    }
+
+    #hero-82 .cs-title:after {
+        content: "";
+        width: 6.25rem;
+        height: 0.5rem;
+        margin: clamp(1rem, 4vw, 1.5rem) auto clamp(1rem, 4vw, 1.5rem);
+        background: var(--primary);
+        opacity: 1;
+        text-shadow: 10px 10px 10px rgba(0, 0, 0, 0.6);
+        /* Subtle glow for readability */
+        position: relative;
+        display: block;
+    }
+
+    #hero-82 .cs-text {
+        font-size: clamp(1rem, 1.95vw, 1.5625rem);
+        line-height: 1.5em;
+        text-align: center;
+        width: 100%;
+        max-width: clamp(29rem, 60vw, 50rem);
+        margin: 0 auto;
+        margin-bottom: clamp(2.5rem, 4vw, 3rem);
+        color: #fff;
+        text-shadow: 20px 20px 20px rgba(0, 0, 0, 0.6);
+        /* Subtle glow for readability */
+        font-weight: 500;
+        /* Slightly bolder */
+        letter-spacing: 0.3px;
+        /* Optional: slight spacing for elegance */
+    }
+
+    #hero-82 .cs-login-btn {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        /* Initial gradient background */
+        background: linear-gradient(45deg, #14acd2, #0eafd7);
+        color: #fff;
+        border: none;
+        border-radius: 1rem;
+        /* More elegant, increased radius */
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        /* Ensure pseudo-element doesn't overflow */
+        transition: transform 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    #hero-82 .cs-login-btn:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        /* Hover gradient background for the pseudo-element */
+        background: linear-gradient(45deg, #ff7300, #1487e5);
+        transition: width 0.3s ease;
+        z-index: -1;
+        /* Place behind the button text */
+        border-radius: 1rem;
+    }
+
+    #hero-82 .cs-login-btn:hover:before {
+        width: 100%;
+    }
+
+    #hero-82 .cs-login-btn:hover {
+        background: linear-gradient(45deg, #a37c21, #1c7d9c);
+        transform: translateY(-3px);
+    }
+}
+
+.hero-text {
+    width: 350px !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+    margin-top: -20px;
+    /* Adjust this value as needed */
+    margin-left: 0;
+    /* start from here */
+    transform: translateX(-50px);
+    /* moves 50px to the left */
+}

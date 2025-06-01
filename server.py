@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template, redirect, send_from_directory, url_for, session
 
 from dotenv import load_dotenv
-from src.prompt import *
+from app.prompt import *
 import os
 import openai
 from werkzeug.utils import secure_filename
@@ -28,10 +28,10 @@ import sys
 import time
 # 1) Make sure we can import your modules
 basedir = os.path.dirname(__file__)
-sys.path.append(os.path.join(basedir, "testing_calling_model"))
+sys.path.append(os.path.join(basedir, "model_inferencing"))
 
 # 2) Monkey-patch __main__ for torch.load unpickling
-import testing_calling_model.rnn_attention_model as rnn_attention_model
+import model_inferencing.rnn_attention_model as rnn_attention_model
 import __main__
 __main__.RNNAttentionModel = rnn_attention_model.RNNAttentionModel
 __main__.ConvNormPool    = rnn_attention_model.ConvNormPool
@@ -39,17 +39,17 @@ __main__.Swish           = rnn_attention_model.Swish
 __main__.RNN             = rnn_attention_model.RNN
 
 # 3) Now import predict_stroke exactly once from the module that defines it
-from testing_calling_model.calling_model import predict_stroke
+from model_inferencing.calling_model import predict_stroke
 
 # 4) Configure Flask and uploads…
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__,
-            template_folder='src/templates',
-            static_folder='src/static')
+            template_folder='app/templates',
+            static_folder='app/static')
 
-UPLOAD_FOLDER = os.path.join(basedir, "uploads")
+UPLOAD_FOLDER = os.path.join(basedir, "app/uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -200,7 +200,7 @@ def home():
     print("User:", user)
 
     try:
-        with open('data/Country_Stroke_Count_with_ISO3_Standardised.csv', 'r', encoding='utf-8') as f:
+        with open('app/data/Country_Stroke_Count_with_ISO3_Standardised.csv', 'r', encoding='utf-8') as f:
             stroke_csv = f.read()
     except Exception as e:
         print("❌ Exception reading CSV:", e)
