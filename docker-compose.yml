@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5000"
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+    environment:
+      - FLASK_APP=server.py
+      - FLASK_ENV=development
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - FLASKAPP_API_KEY=${FLASKAPP_API_KEY}
+      - OPENAI_AGENT_API_KEY=${OPENAI_AGENT_API_KEY}
+      - LANGSMITH_TRACING=${LANGSMITH_TRACING}
+      - LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - APP_SECRET_KEY=${APP_SECRET_KEY}
+    restart: unless-stopped 
