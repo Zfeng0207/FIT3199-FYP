@@ -27,6 +27,24 @@ Download the [MIMIC-IV-ECG dataset](https://physionet.org/content/mimic-iv-ecg/1
 pip install -r requirements.txt
 ````
 
+3. Environment Variables Setup
+
+To run this project, you need to create a `.env` file in the root directory and define the following environment variables with your own credentials:
+
+```env
+PINECONE_API_KEY=""
+OPENROUTER_API_KEY=""
+FLASKAPP_API_KEY=""
+AUTH0_CLIENT_ID=""
+AUTH0_CLIENT_SECRET=""
+AUTH0_DOMAIN=""
+APP_SECRET_KEY=""
+OPENAI_AGENT_API_KEY=""
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=""
+LANGSMITH_API_KEY=""
+LANGSMITH_PROJECT=""
+
 2. Run the application:
 
 ```bash
