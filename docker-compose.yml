@@ -23,4 +23,15 @@ services:
       - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
       - APP_SECRET_KEY=${APP_SECRET_KEY}
+    develop:
+      watch:
+        - path: ./server.py
+          target: /app/server.py
+          action: sync
+        - path: ./templates
+          target: /app/templates
+          action: sync
+        - path: ./static
+          target: /app/static
+          action: sync
     restart: unless-stopped 

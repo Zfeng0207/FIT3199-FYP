@@ -124,7 +124,6 @@ def chatbot(state: State):
     system_prompt = stroke_prompt
     # Prepend the system prompt to the messages
     messages = [system_prompt] + state["messages"]
-    print("State Messages with System Prompt:", messages)
     return {"messages": [llm_with_tools.invoke(messages)]}
 
 graph_builder = StateGraph(State)

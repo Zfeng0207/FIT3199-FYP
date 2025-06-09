@@ -1,5 +1,7 @@
 :root {
   --primary: #185969; /* Stroke Hero blue */
+  --nav-height: 4.0625rem;
+  --nav-padding: 1rem;
 }
 
 /*-- -------------------------- -->
@@ -294,6 +296,325 @@
       width: 100%;
     }
   }
+
+/* Base Navigation Styles */
+#cs-navigation {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: fixed;
+  z-index: 10000;
+}
+
+#cs-navigation .cs-container {
+  width: 100%;
+  max-width: 80rem;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--nav-padding);
+}
+
+#cs-navigation .cs-logo {
+  height: var(--nav-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#cs-navigation .cs-logo img {
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Mobile Navigation (0-767px) */
+@media only screen and (max-width: 47.9375rem) {
+  #cs-navigation {
+    padding: 0.5rem 0;
+  }
+
+  #cs-navigation .cs-container {
+    padding: 0 1rem;
+  }
+
+  #cs-navigation .cs-logo {
+    width: 60%;
+    max-width: 12rem;
+  }
+
+  #cs-navigation .cs-toggle {
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+    z-index: 100;
+  }
+
+  #cs-navigation .cs-ul-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--primary);
+    padding: 6rem 1rem 1rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  #cs-navigation .cs-ul-wrapper.cs-active {
+    transform: translateX(0);
+  }
+
+  #cs-navigation .cs-ul {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #cs-navigation .cs-li {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+
+  #cs-navigation .cs-li-link {
+    font-size: 1.125rem;
+    color: #fff;
+  }
+
+  #cs-navigation .cs-button-solid {
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
+  }
+}
+
+/* Tablet Navigation (768px - 1023px) */
+@media only screen and (min-width: 48rem) and (max-width: 63.9375rem) {
+  #cs-navigation {
+    padding: 0.75rem 0;
+  }
+
+  #cs-navigation .cs-container {
+    padding: 0 1.5rem;
+  }
+
+  #cs-navigation .cs-logo {
+    width: 40%;
+    max-width: 15rem;
+  }
+
+  #cs-navigation .cs-ul {
+    gap: 1rem;
+  }
+
+  #cs-navigation .cs-li-link {
+    font-size: 0.9375rem;
+  }
+
+  #cs-navigation .cs-button-solid {
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Desktop Navigation (1024px and above) */
+@media only screen and (min-width: 64rem) {
+  #cs-navigation {
+    padding: 0;
+  }
+
+  #cs-navigation .cs-container {
+    padding: 0 2rem;
+  }
+
+  #cs-navigation .cs-logo {
+    width: 18.4%;
+    max-width: 21.875rem;
+    margin-right: auto;
+  }
+
+  #cs-navigation .cs-toggle {
+    display: none;
+  }
+
+  #cs-navigation .cs-ul-wrapper {
+    position: static;
+    width: auto;
+    height: auto;
+    background-color: transparent;
+    padding: 0;
+    transform: none;
+  }
+
+  #cs-navigation .cs-ul {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: clamp(1.25rem, 2.6vw, 2.25rem);
+  }
+
+  #cs-navigation .cs-li {
+    padding: 2rem 0;
+    flex: none;
+  }
+
+  #cs-navigation .cs-li-link {
+    font-size: clamp(0.875rem, 1vw, 1rem);
+    color: var(--bodyTextColor);
+  }
+
+  #cs-navigation .cs-button-solid {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Large Desktop Navigation (1440px and above) */
+@media only screen and (min-width: 90rem) {
+  #cs-navigation .cs-container {
+    max-width: 90rem;
+    padding: 0 3rem;
+  }
+
+  #cs-navigation .cs-ul {
+    gap: 2.5rem;
+  }
+
+  #cs-navigation .cs-li-link {
+    font-size: 1.125rem;
+  }
+}
+
+/* Dropdown Navigation Styles */
+@media only screen and (max-width: 63.9375rem) {
+  #cs-navigation .cs-dropdown {
+    width: 100%;
+  }
+
+  #cs-navigation .cs-drop-ul {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+  }
+
+  #cs-navigation .cs-drop-li {
+    padding: 0.5rem 0;
+  }
+
+  #cs-navigation .cs-li-link.cs-drop-link {
+    color: #fff;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 64rem) {
+  #cs-navigation .cs-dropdown {
+    position: relative;
+  }
+
+  #cs-navigation .cs-drop-ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 12.5rem;
+    background-color: #fff;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 10px 16px;
+    border-bottom: 5px solid var(--primary);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+  }
+
+  #cs-navigation .cs-dropdown:hover .cs-drop-ul {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  #cs-navigation .cs-drop-li {
+    padding: 0;
+  }
+
+  #cs-navigation .cs-li-link.cs-drop-link {
+    padding: 0.75rem 1rem;
+    color: var(--bodyTextColor);
+    transition: background-color 0.3s ease;
+  }
+
+  #cs-navigation .cs-li-link.cs-drop-link:hover {
+    background-color: #f7f7f7;
+  }
+}
+
+/* Navigation Button Styles */
+#cs-navigation .cs-button-solid {
+  background: linear-gradient(45deg, #0d3e4b, #0eafd7);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#cs-navigation .cs-button-solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile Menu Toggle Button */
+#cs-navigation .cs-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+#cs-navigation .cs-box {
+  width: 1.5rem;
+  height: 1.25rem;
+  position: relative;
+}
+
+#cs-navigation .cs-line {
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary);
+  position: absolute;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+#cs-navigation .cs-line1 {
+  top: 0;
+}
+
+#cs-navigation .cs-line2 {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#cs-navigation .cs-line3 {
+  bottom: 0;
+}
+
+#cs-navigation .cs-toggle.cs-active .cs-line1 {
+  transform: translateY(0.5rem) rotate(45deg);
+}
+
+#cs-navigation .cs-toggle.cs-active .cs-line2 {
+  opacity: 0;
+}
+
+#cs-navigation .cs-toggle.cs-active .cs-line3 {
+  transform: translateY(-0.5rem) rotate(-45deg);
+}
 
   
 

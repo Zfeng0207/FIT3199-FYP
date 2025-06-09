@@ -107,7 +107,6 @@ def chat():
         {"configurable": {"thread_id": "fwew2f12"}}
     )
 
-    print("Response:", response["messages"][-1].content)
     return Response(response["messages"][-1].content, mimetype="text/html")
 
 @app.route('/data-entry')

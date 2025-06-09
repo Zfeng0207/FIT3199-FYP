@@ -209,6 +209,53 @@
         padding: 0.5rem 0 !important;
       }
     }
+
+    /* Loading Animation Styles */
+    .typing-indicator {
+      display: none;
+      padding: 10px 15px;
+      background: #f0f0f0;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .typing-indicator span {
+      height: 8px;
+      width: 8px;
+      background-color: #9E9EA1;
+      display: block;
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+
+    .typing-indicator span:nth-of-type(1) {
+      animation: 1s blink infinite 0.3333s;
+    }
+
+    .typing-indicator span:nth-of-type(2) {
+      animation: 1s blink infinite 0.6666s;
+    }
+
+    .typing-indicator span:nth-of-type(3) {
+      animation: 1s blink infinite 0.9999s;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 1;
+      }
+    }
   </style>
 
 </head>
@@ -307,11 +354,17 @@
               </div>
             </div>
           </div>
-          <div id="messageFormeight" class="card-body msg_card_body"></div>
+          <div id="messageFormeight" class="card-body msg_card_body">
+            <div class="typing-indicator" style="display: none;">
+              Stroke Hero is thinking
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
           <div class="card-footer">
             <form id="messageArea" class="input-group">
               <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
-          
               <div class="input-group-append">
                 <button id="clearChat" type="button" style="
                 background-color: rgba(0, 0, 0, 0.3);
@@ -398,9 +451,9 @@
         const date = new Date();
         const str_time = `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`;
         const rawText = inputField.val();
-  
+
         if (!rawText.trim()) return;
-  
+
         const userHtml = `
           <div class="d-flex justify-content-end mb-4">
             <div class="msg_cotainer_send">
@@ -415,13 +468,21 @@
         localStorage.removeItem("chatInput");
         chatContainer.append(userHtml);
         localStorage.setItem("chatHistory", chatContainer.html());
-  
+
+        // Show typing indicator and disable input
+        $(".typing-indicator").show();
+        inputField.prop('disabled', true);
+
         $.ajax({
           data: { msg: rawText },
           type: "POST",
           url: "/get",
           xhrFields: { responseType: 'html' },
           success: function (data, status, xhr) {
+            // Hide typing indicator and enable input
+            $(".typing-indicator").hide();
+            inputField.prop('disabled', false);
+            
             const contentType = xhr.getResponseHeader("Content-Type");
             let botHtml = "";
   
@@ -473,6 +534,9 @@
             localStorage.setItem("chatHistory", chatContainer.html());
           },
           error: function (xhr, status, error) {
+            // Hide typing indicator and enable input on error
+            $(".typing-indicator").hide();
+            inputField.prop('disabled', false);
             console.error("AJAX error:", error);
           }
         });
