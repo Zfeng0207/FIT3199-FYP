@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Stroke Hero | Welcome</title>
@@ -42,9 +43,11 @@
 
     /* 1) container only shrinks in width, but stays the same height as the nav */
     #cs-navigation .cs-logo {
-      width: auto     !important;
-      height: 4.0625rem !important; /* back to the default desktop height */
-      overflow: visible;            /* let your hero-text spill out if you’re using negative margins */
+      width: auto !important;
+      height: 4.0625rem !important;
+      /* back to the default desktop height */
+      overflow: visible;
+      /* let your hero-text spill out if you’re using negative margins */
       transform: translateX(-65px) !important;
     }
 
@@ -58,17 +61,25 @@
     /* 2) Desktop: make the submenu absolute, vertical, and add gap */
     @media only screen and (min-width: 64rem) {
       #cs-navigation .cs-dropdown {
-        position: relative; /* ensure absolute child is positioned off the li */
+        position: relative;
+        /* ensure absolute child is positioned off the li */
       }
+
       #cs-navigation .cs-dropdown .cs-drop-ul {
-        position: absolute !important; /* take it out of the document flow */
-        top: 100% !important;          /* sit directly below the menu item */
+        position: absolute !important;
+        /* take it out of the document flow */
+        top: 100% !important;
+        /* sit directly below the menu item */
         left: 0 !important;
-        display: flex !important;       /* flex‑column gives us true gaps */
+        display: flex !important;
+        /* flex‑column gives us true gaps */
         flex-direction: column !important;
-        gap: 1rem !important;           /* increase vertical space between links */
-        padding: 0.2rem 0 !important;   /* optional breathing room above/below */
-        margin: 0 !important;           /* reset any built‑in margins */
+        gap: 1rem !important;
+        /* increase vertical space between links */
+        padding: 0.2rem 0 !important;
+        /* optional breathing room above/below */
+        margin: 0 !important;
+        /* reset any built‑in margins */
       }
     }
 
@@ -87,6 +98,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- ✅ Background Video -->
@@ -101,7 +113,8 @@
     <div class="cs-container">
       <a href="{{ url_for('home') }}" class="cs-logo" aria-label="back to home">
         <!-- larger logo via utility classes -->
-        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text" alt="Stroke Hero Logo" decoding="async"/>
+        <img src="{{ url_for('static', filename='images/stroke_hero_text.svg') }}" class="hero-text"
+          alt="Stroke Hero Logo" decoding="async" />
       </a>
 
       <!-- Navigation Links -->
@@ -121,28 +134,26 @@
             {% endif %}
             <li class="cs-li"><a href="{{ url_for('about_us_routing') }}" class="cs-li-link">About Us</a></li>
             {% if user %}
-            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke Prediction</a></li>
+            <li class="cs-li"><a href="{{ url_for('stroke_prediction_routing') }}" class="cs-li-link">Stroke
+                Prediction</a></li>
             {% endif %}
             <li class="cs-li cs-dropdown">
               <!-- top‐level link stays as your Self Assessment page -->
-              <a href="{{ url_for('self_assesment_routing') }}"
-                 class="cs-li-link cs-drop-link">
+              <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link cs-drop-link">
                 Self Assessment
                 <svg class="cs-drop-icon" viewBox="0 0 10 6" aria-hidden="true">
-                  <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+                  <path d="M0 0l5 6 5-6z" fill="currentColor" />
                 </svg>
               </a>
-            
+
               <ul class="cs-drop-ul">
                 <li class="cs-drop-li">
-                  <a href="{{ url_for('self_assesment_routing') }}"
-                     class="cs-li-link">
+                  <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">
                     ASCVD Risk Estimator
                   </a>
                 </li>
                 <li class="cs-drop-li">
-                  <a href="{{ url_for('self_assesment_routing') }}"
-                     class="cs-li-link">
+                  <a href="{{ url_for('self_assesment_routing') }}" class="cs-li-link">
                     ABCD² Score for TIA
                   </a>
                 </li>
@@ -152,9 +163,11 @@
         </div>
       </nav>
       {% if user %}
-      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
+      <a href="{{ url_for('logout') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Logout</a>
       {% else %}
-      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button" style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
+      <a href="{{ url_for('login') }}" class="cs-button-solid cs-nav-button"
+        style="background: linear-gradient(45deg, #0d3e4b, #0eafd7);">Login</a>
       {% endif %}
     </div>
   </header>
@@ -163,30 +176,33 @@
   <section id="hero-82">
     <div class="cs-container">
       <h1 class="cs-title">Welcome to Stroke Hero</h1>
-      <p class="cs-text">Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk detection.</p>
+      <p class="cs-text">Stroke Hero is an AI-powered platform designed to raise awareness and support early stroke risk
+        detection.</p>
     </div>
   </section>
 
-    <!-- ✅ Stroke Hero Explainer Video -->
-    <h2 style="text-align:center; color:white; font-size:2rem; margin-top:3rem; text-shadow: 1px 1px 6px black;">
-      How Stroke Hero Works
-    </h2>
-    
-    <div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
-      <video controls autoplay muted loop playsinline style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-        <source src="{{ url_for('static', filename='videos/Final_Welcome_Page_Video.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
+  <!-- ✅ Stroke Hero Explainer Video -->
+  <h2 style="text-align:center; color:white; font-size:2rem; margin-top:3rem; text-shadow: 1px 1px 6px black;">
+    How Stroke Hero Works
+  </h2>
+
+  <div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
+    <video controls autoplay muted loop playsinline
+      style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+      <source src="{{ url_for('static', filename='videos/Final_Welcome_Page_Video.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 
   <!-- ✅ Interactive Map Section -->
   <!-- ✅ Interactive Map Section -->
   <section style="padding: 4rem 1rem;">
-  <div class="cs-container">
-    <h2 style="text-align:center; font-size:2rem; margin-bottom:2rem; color: white; text-shadow: 1px 1px 6px black;">Explore Global Stroke Burden (2021)</h2>
-    <div id="container"></div>
-    <pre id="csv">{{ stroke_csv | safe }}</pre>
-  </div>
+    <div class="cs-container">
+      <h2 style="text-align:center; font-size:2rem; margin-bottom:2rem; color: white; text-shadow: 1px 1px 6px black;">
+        Explore Global Stroke Burden (2021)</h2>
+      <div id="container"></div>
+      <pre id="csv">{{ stroke_csv | safe }}</pre>
+    </div>
   </section>
 
   <!-- ✅ Scripts -->
@@ -196,68 +212,69 @@
   <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
 
   <script>
-  (async () => {
-    const topology = await fetch(
-      'https://code.highcharts.com/mapdata/custom/world.topo.json'
-    ).then(response => response.json());
+    (async () => {
+      const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+      ).then(response => response.json());
 
-    Highcharts.mapChart('container', {
-      chart: {
-        map: topology
-      },
-      title: {
-        text: 'Stroke Rate per 100,000 People by Country (2021)',
-        align: 'left'
-      },
-      credits: {
-        enabled: true,
-        text: 'Data source: Global, regional, and national burden of stroke and its risk factors, 1990–2021',
-        href: '#'
-      },
-      mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-          verticalAlign: 'bottom'
-        }
-      },
-      colorAxis: {
-        min: 0,
-        max: 233,
-        stops: [
-        [0.0, '#00bfff'],  // DeepSkyBlue (better contrast than cyan)
-        [0.33, '#7fff00'], // Chartreuse (bright green)
-        [0.66, '#ffff00'], // Yellow
-        [1.0, '#ff0000']   // Red
-        ]
-      },
-      data: {
-        csv: document.getElementById('csv').innerText,
-        seriesMapping: [{
-          code: 0,  // ISO-3
-          value: 1 // Stroke count
-        }]
-      },
-      tooltip: {
-        valueDecimals: 0,
-        valueSuffix: ' stroke cases per 100,000 people'
-      },
-      series: [{
-        name: 'Stroke Cases',
-        joinBy: ['iso-a3', 'code'],
-        dataLabels: {
-          enabled: false,
-          allowOverlap: false,
-          format: '{point.value:.0f}',
-          style: {
-            fontWeight: 'normal',
-            textOutline: 'none',
-            color: '#000'
+      Highcharts.mapChart('container', {
+        chart: {
+          map: topology
+        },
+        title: {
+          text: 'Stroke Rate per 100,000 People by Country (2021)',
+          align: 'left'
+        },
+        credits: {
+          enabled: true,
+          text: 'Data source: Global, regional, and national burden of stroke and its risk factors, 1990–2021',
+          href: '#'
+        },
+        mapNavigation: {
+          enabled: true,
+          buttonOptions: {
+            verticalAlign: 'bottom'
           }
-        }
-      }]
-    });
-  })();
+        },
+        colorAxis: {
+          min: 0,
+          max: 233,
+          stops: [
+            [0.0, '#7fff00'],  // Low rate = Green
+            [0.33, '#ffff00'], // Mid-low = Yellow
+            [0.66, '#ff9900'], // Mid-high = Orange
+            [1.0, '#ff0000']   // High rate = Red
+          ]
+        },
+        data: {
+          csv: document.getElementById('csv').innerText,
+          seriesMapping: [{
+            code: 0,  // ISO-3
+            value: 1 // Stroke count
+          }]
+        },
+        tooltip: {
+          valueDecimals: 0,
+          valueSuffix: ' stroke cases per 100,000 people'
+        },
+        series: [{
+          name: 'Stroke Cases',
+          joinBy: ['iso-a3', 'code'],
+          dataLabels: {
+            enabled: false,
+            allowOverlap: false,
+            format: '{point.value:.0f}',
+            style: {
+              fontWeight: 'normal',
+              textOutline: 'none',
+              color: '#000'
+            }
+          }
+        }]
+      });
+    })();
   </script>
 
 </body>
+
 </html>
